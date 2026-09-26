@@ -1,0 +1,109 @@
+---
+/*
+ * Contact > Sent (/contact/sent): where a plain form post lands after the function accepts it
+ * (with JavaScript the form shows the same confirmation in place). The 404's centered composition
+ * on the hero wash: eyebrow, H1, one line, what happens next as a short numbered list, then the
+ * actions (Home is the primary one, then Send another message, as in the in-place success). The page
+ * is noindex (src/pages/contact/sent.astro).
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import Button from "../../ui/Button.astro";
+import { CONTACT_HREF } from "../../../data/site";
+
+const next = [
+  "We read every message.",
+  "We reply by email to the address you gave.",
+  "No reply after a few days? Check your spam or junk folder, then write to us again.",
+];
+---
+
+<Section pad="cta" wash labelledby="sent-title" class="sent-section">
+  <div class="sent" data-reveal>
+    <SectionIntro level={1} align="center" eyebrow="Contact" title="Message sent." id="sent-title" />
+    <p class="lead sent__lead">Thank you for writing to us.</p>
+
+    <div class="sent__next">
+      <h2 class="sent__next-title">What happens next</h2>
+      <ol class="sent__steps" role="list">
+        {
+          next.map((text, i) => (
+            <li>
+              <span class="sent__num tnum" aria-hidden="true">
+                {i + 1}
+              </span>
+              <span>{text}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <nav class="sent__nav" aria-label="Next steps" data-row="sent-actions">
+      <Button href="/">Back to home</Button>
+      <Button href={CONTACT_HREF} variant="secondary">Send another message</Button>
+    </nav>
+  </div>
+</Section>
+
+<style>
+  .sent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .sent__lead {
+    max-width: var(--measure);
+    margin-top: var(--gap-h2-text);
+  }
+  .sent__next {
+    width: 100%;
+    max-width: 34rem;
+    margin-top: var(--space-10);
+    padding: clamp(1.25rem, 0.9rem + 1.4vw, 2rem);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+    text-align: left;
+  }
+  .sent__next-title {
+    font-family: var(--font-sans);
+    font-size: var(--fs-h4);
+    line-height: var(--lh-h4);
+    font-weight: var(--fw-semibold);
+  }
+  .sent__steps {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+  }
+  .sent__steps li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--mist-700);
+  }
+  .sent__num {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    background: var(--navy-950);
+    color: #ffffff;
+    font-size: var(--fs-small);
+    line-height: 1;
+    font-weight: var(--fw-semibold);
+  }
+  .sent__nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--gap-text-action);
+  }
+</style>

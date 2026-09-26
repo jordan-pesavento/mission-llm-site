@@ -53,6 +53,14 @@
   --color-link: var(--ink); /* links are ink with an underline, as in the reference */
   --color-focus: var(--accent);
   --color-selection: rgb(43 99 224 / 0.18);
+  /* Form fields and form errors (the contact form). The field edge is mist-500 (4.8:1 on the white
+     field) so the boundary is always visible. Red is only ever an error signal, never decoration. */
+  --color-field: #ffffff;
+  --color-field-line: var(--mist-500);
+  --color-field-line-hover: var(--mist-700);
+  --color-danger: #b3261e; /* 6.5:1 on white, 5.9:1 on the danger tint */
+  --color-danger-bg: #fdf1f0;
+  --color-danger-line: #e7b4ae;
 
   /* Dark band (tone="dark"): white headings, mist-300 body, as the reference's zinc-950 bands. */
   --band-bg: var(--navy-950);

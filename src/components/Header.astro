@@ -243,7 +243,12 @@ const isCurrent = (href: string) => !href.includes("#") && href !== "/" && path 
   }
 
   @media (max-width: 1023.98px) {
-    /* Without JS: the nav wraps into a row under the bar. */
+    /* Without JS: the nav wraps into a row (or two) under the bar, so the header is 121 to 165px tall.
+       It scrolls away with the page instead of staying on top, so it never covers a #fragment target
+       (global.css sets scroll-padding-top to match) or a large share of a phone's screen. */
+    :global(html:not(.js)) .site-header {
+      position: static;
+    }
     .site-nav {
       order: 3;
       display: flex;

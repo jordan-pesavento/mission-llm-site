@@ -1,0 +1,14 @@
+---
+/*
+ * Contact > Sent (/contact/sent): the confirmation after a plain form post. Not indexed: it only makes
+ * sense right after sending, so it stays out of search results and out of public/sitemap.xml.
+ */
+import Base from "../../layouts/Base.astro";
+import { PAGES } from "../../data/site";
+import ContactSent from "../../components/sections/contact/ContactSent.astro";
+---
+
+<Base title={PAGES.contactSent.title} description={PAGES.contactSent.description}>
+  <meta slot="head" name="robots" content="noindex" />
+  <ContactSent />
+</Base>

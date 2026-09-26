@@ -1,12 +1,16 @@
 // Honesty and copy guard for the built site. Run after `npm run build`: npm run check:copy
 // Fails (exit 1) on: em dashes or emojis in visible text, certification, compliance or affiliation
 // claims, LMS integration or invented study features (quizzes, flashcards, grading), "every answer"
-// overclaims, "cite" wording (inline citations are in development), "Sigmatech", Space Force or DoD names outside the non-affiliation line, and any Download link
-// that does not point to /download. Lists every TODO placeholder link, and every entry shown as
+// overclaims, "cite" wording (inline citations are in development), "Sigmatech", Space Force or DoD
+// names outside the non-affiliation line, any Download link that does not point to /download, any
+// "Contact us" link that does not point to /contact, a contact form that does not post to
+// /api/contact or lacks a no-JavaScript notice for an error code the function can return, and a
+// /contact/sent page that is not noindex. Lists every TODO placeholder link, and every entry shown as
 // "Soon" text until its destination exists, so none ships unnoticed.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { ERROR_MESSAGES, FIELDS, HONEYPOT } from "../src/lib/contact-rules.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = path.join(ROOT, "dist");
@@ -95,11 +99,29 @@ for (const file of pages) {
     const label = visibleText(m[2]).trim();
     const href = (attrs.match(/href="([^"]*)"/) || [])[1] || "";
     if (/^download$/i.test(label) && href !== "/download") fail(`Download link points to "${href}"`);
+    if (/^contact us$/i.test(label) && href !== "/contact") fail(`Contact us link points to "${href}"`);
     if (href === "#" || /example\.com/.test(href)) {
       const key = `${label || "(no text)"} -> ${href}`;
       todos.set(key, (todos.get(key) || new Set()).add(rel));
     }
   }
+  if (rel === "contact/index.html") {
+    const formTag = (html.match(/<form\b[^>]*>/i) || [""])[0];
+    if (!/\bmethod="post"/i.test(formTag) || !/\baction="\/api\/contact"/.test(formTag))
+      fail('contact form must be <form method="post" action="/api/contact">');
+    // Without JavaScript, every ?error=<code> the function can send needs its own notice (#error-<code>),
+    // and every ?fields= combination its jump target (#error-invalid-<fields>).
+    for (const code of Object.keys(ERROR_MESSAGES)) {
+      if (code !== "network" && !html.includes(`id="error-${code}"`)) fail(`no notice for ?error=${code}`);
+    }
+    for (let mask = 1; mask < 1 << FIELDS.length; mask++) {
+      const id = `error-invalid-${FIELDS.filter((_, i) => mask & (1 << i)).join("-")}`;
+      if (!html.includes(`id="${id}"`)) fail(`no jump target #${id}`);
+    }
+    if (!html.includes(`name="${HONEYPOT}"`) || /\bname="website"/.test(html)) fail(`honeypot must be named ${HONEYPOT}`);
+  }
+  if (rel === "contact/sent/index.html" && !/<meta name="robots" content="noindex"/.test(html)) fail("/contact/sent must be noindex");
+
   // Entries whose destination does not exist yet render as "Soon" text (Header, Footer).
   for (const m of html.matchAll(/<span\b[^>]*aria-disabled="true"[^>]*data-todo="([^"]*)"[^>]*>([\s\S]*?)<\/span>/gi)) {
     const label = visibleText(m[2]).replace(/\s*Soon$/, "").trim();
