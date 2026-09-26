@@ -6,17 +6,22 @@
  *
  * Method tabs use src/scripts/tabs.ts (data-tabs-hash, so /download#p-helm opens Helm).
  * Panel ids: p-source (first, the default), p-docker, p-compose, p-kubernetes, p-helm, p-openshift.
- * Arrow keys in either axis move between methods (tabs.ts), whether the list is a grid or a rail.
+ * Arrow keys in either axis move between methods (tabs.ts), whether the list is a grid or a column.
  * Without JS the tablists stay hidden and every panel renders in order under its own h3.
- * Layout: below 960 the tabs are a 2-up (phone) or 3-up grid above the panel; from 960 they are a
- * sticky vertical rail in columns 1 to 4 beside the panel; from 1280 the section heading joins
- * the rail, matching the heading rail of the other Download sections.
+ * Visual system (reference, anythingllm.com feature sections): eyebrow and H2, 48 to 58px, then two
+ * columns from 1024 (5fr | 12fr, the 94px split gap). The method list reads like the reference's
+ * accordion: 60px rows, Clash Display 400 18/24 titles, mist-300 separators; the selected row is
+ * ink with an arrow, the others mist-600. The list sticks under the header while the panel scrolls.
+ * Below 1024 the methods are a 2-up (phones) or 3-up grid of 44px, radius-8 controls above the
+ * panel (secondary ring; the selected one is solid navy like the primary button).
+ * Cloud templates and Without containers follow on hairline rows in the same two columns.
  * The container methods end with "Then open http://localhost:3001" (the Ollama pattern). The
  * cluster methods do not: their address is the ingress, route or service you configure.
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 import CodeBlock from "../../ui/CodeBlock.astro";
+import Icon from "../../ui/Icon.astro";
 import { LOCAL_URL } from "../../../data/site";
 import { fences } from "./_commands";
 
@@ -53,11 +58,11 @@ const CLOUD = [
 ];
 ---
 
-<Section id="options" tone="light" hairline labelledby="options-title">
+<Section id="options" divider labelledby="options-title">
+  <div data-reveal>
+    <SectionIntro eyebrow="From one container to a cluster." title="Install options" id="options-title" />
+  </div>
   <div class="opts" data-tabs data-tabs-hash data-install>
-    <div class="opts__head" data-reveal>
-      <SectionIntro title="Install options" id="options-title" />
-    </div>
 
     <div
       class="opts__tabs"
@@ -79,7 +84,8 @@ const CLOUD = [
             aria-selected={i === 0 ? "true" : "false"}
             tabindex={i === 0 ? undefined : "-1"}
           >
-            {m.label}
+            <span class="opts__tab-label">{m.label}</span>
+            <Icon name="arrow-right" size={20} class="opts__tab-icon" />
           </button>
         ))
       }
@@ -92,7 +98,6 @@ const CLOUD = [
           <h3 class="h3">Build from source</h3>
           <p class="body">Build the image yourself from the repository. This is the supported path today.</p>
         </div>
-        <!-- TODO: REPOSITORY_URL stays a placeholder until repository access is decided. -->
         <CodeBlock label="Terminal" lang={sourceBuild.lang} code={sourceBuild.code} />
         <p class="body panel__prose">
           Then run it with the <a href="#p-docker">Docker command</a>, using <code>mission-llm:latest</code> as the image
@@ -100,7 +105,7 @@ const CLOUD = [
         </p>
         <CodeBlock label="Terminal" lang={sourceCompose.lang} code={sourceCompose.code} />
         <p class="panel__next">Then open <code>{LOCAL_URL}</code></p>
-        <ul class="panel__notes" role="list">
+        <ul class="dot-list panel__notes" role="list">
           <li>
             The build downloads packages from the internet. For a disconnected site, build on a connected machine and move
             the image across with your approved transfer process.
@@ -127,7 +132,7 @@ const CLOUD = [
           </div>
         </div>
         <p class="panel__next">Then open <code>{LOCAL_URL}</code></p>
-        <ul class="panel__notes" role="list">
+        <ul class="dot-list panel__notes" role="list">
           <li>To turn off telemetry from the first start, add <code>-e DISABLE_TELEMETRY="true"</code> before the image name.</li>
           <li>
             Model runtime on the same machine: in Mission LLM, use <code>http://host.docker.internal:PORT</code> instead of <code>localhost</code>. On Linux, also add <code class="code-flag" set:html={flag("--add-host=host.docker.internal:host-gateway")} /> to the run command.
@@ -146,7 +151,7 @@ const CLOUD = [
           <CodeBlock label="Terminal" lang={composeUp.lang} code={composeUp.code} />
         </div>
         <p class="panel__next">Then open <code>{LOCAL_URL}</code></p>
-        <ul class="panel__notes" role="list">
+        <ul class="dot-list panel__notes" role="list">
           <li>Any setting from <code>docker/.env.example</code> can go in the <code>environment</code> list.</li>
         </ul>
       </div>
@@ -189,7 +194,7 @@ const CLOUD = [
           <CodeBlock label="values-secret.yaml" lang={helmValues.lang} code={helmValues.code} />
           <CodeBlock label="Terminal" lang={helmInstall.lang} code={helmInstall.code} />
         </div>
-        <ul class="panel__notes" role="list">
+        <ul class="dot-list panel__notes" role="list">
           <li>
             Keep API keys and other secrets in Kubernetes Secrets. The chart's <code>config</code> values render to a
             ConfigMap, which is not encrypted.
@@ -283,140 +288,118 @@ const CLOUD = [
 </script>
 
 <style>
-  /* ---------- Frame: heading, method tabs, panel ---------- */
+  /* ---------- Frame: method list and panel ---------- */
   .opts {
     display: grid;
-    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
-    column-gap: var(--grid-gap);
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-6);
+    margin-top: var(--gap-h2-content);
   }
-  /* Explicit classes, not .opts > *: the scoped wildcard would outrank the media queries. */
-  .opts__head,
   .opts__tabs,
   .opts__panels {
-    grid-column: 1 / -1;
     min-width: 0;
   }
-  .opts__head {
-    margin-bottom: var(--gap-visual);
-  }
 
-  /* Tabs: 2-up on phones, 3-up from 640 (equal height, one line each). */
+  /* Below 1024: a grid of 44px controls, 2-up on phones and 3-up from 640. */
   .opts__tabs {
-    --tab-cols: 2;
     display: grid;
-    grid-template-columns: repeat(var(--tab-cols), minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-2);
-    margin-bottom: var(--space-6);
   }
   @media (min-width: 640px) {
     .opts__tabs {
-      --tab-cols: 3;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
   .opts__tab {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 48px;
+    height: 44px;
     padding-inline: var(--space-3);
-    border-radius: var(--radius-md);
-    background: var(--color-surface);
-    box-shadow: inset 0 0 0 1px var(--color-hairline-strong);
-    font-size: var(--fs-ui);
-    line-height: 1;
-    font-weight: 500;
+    border-radius: var(--radius-sm);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-medium);
     white-space: nowrap;
-    color: var(--color-text-2);
+    color: var(--color-heading);
+  }
+  /* Transitions only while hovered: the two layouts swap styles at 1024, and a full-page capture
+     (which briefly resizes the viewport) must not catch a tab mid-fade. */
+  .opts__tab:hover {
+    background: rgb(11 20 48 / 0.04);
     transition:
       color var(--dur-hover) var(--ease-standard),
-      box-shadow var(--dur-hover) var(--ease-standard),
       background-color var(--dur-hover) var(--ease-standard);
   }
-  .opts__tab:hover {
-    color: var(--color-text);
-    box-shadow: inset 0 0 0 1px var(--btn-secondary-ring-hover);
-  }
   .opts__tab[aria-selected="true"] {
-    color: var(--color-text);
-    box-shadow: inset 0 0 0 2px var(--color-accent);
+    background: var(--navy-950);
+    box-shadow: none;
+    color: #ffffff;
+  }
+  .opts__tab :global(.opts__tab-icon) {
+    display: none;
   }
   .opts__tab:focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
   }
 
-  /* From 960: a sticky vertical rail in columns 1 to 4, the panel in 5 to 12. */
-  @media (min-width: 960px) {
+  /* From 1024: the reference's accordion rows, sticky beside the panel. */
+  @media (min-width: 1024px) {
     .opts {
-      grid-template-rows: auto 1fr;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 12fr);
+      column-gap: var(--split-gap);
+      align-items: start;
     }
     .opts__tabs {
-      grid-column: 1 / span 4;
-      grid-row: 2;
-      align-self: start;
       position: sticky;
-      top: calc(var(--header-h) + var(--space-6));
+      top: calc(var(--header-h) + 1px + var(--space-6));
       grid-template-columns: minmax(0, 1fr);
       gap: 0;
-      margin: 0;
-      box-shadow: inset 1px 0 0 var(--color-hairline-strong);
-    }
-    .opts__panels {
-      grid-column: 5 / -1;
-      grid-row: 2;
     }
     .opts__tab {
-      position: relative;
-      /* No box-shadow transition here: a media query change (for example a full-page capture) must not animate the phone ring away. */
-      transition:
-        color var(--dur-hover) var(--ease-standard),
-        background-color var(--dur-hover) var(--ease-standard);
-      justify-content: flex-start;
-      padding-inline: var(--space-5);
-      border-radius: 0 var(--radius-md) var(--radius-md) 0;
-      background: transparent;
+      justify-content: space-between;
+      gap: var(--space-4);
+      height: auto;
+      min-height: 60px;
+      padding: 18px 0;
+      border-radius: 0;
+      border-bottom: 1px solid var(--color-line);
       box-shadow: none;
-    }
-    .opts__tab::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 10px;
-      bottom: 10px;
-      width: 2px;
-      border-radius: 2px;
-      background: transparent;
-      transition: background-color var(--dur-hover) var(--ease-standard);
+      font-family: var(--font-display);
+      font-size: var(--fs-acc);
+      line-height: var(--lh-acc);
+      font-weight: var(--fw-acc);
+      text-align: left;
+      color: var(--color-text-muted);
     }
     .opts__tab:hover {
-      box-shadow: none;
-      background: var(--btn-secondary-bg-hover);
+      background: none;
+      color: var(--color-heading);
+    }
+    .opts__tab:hover .opts__tab-label {
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 5px;
     }
     .opts__tab[aria-selected="true"] {
-      box-shadow: none;
-      background: transparent;
-      font-weight: 600;
+      background: none;
+      color: var(--color-heading);
     }
-    .opts__tab[aria-selected="true"]::before {
-      background: var(--color-accent);
-      top: 6px;
-      bottom: 6px;
+    .opts__tab :global(.opts__tab-icon) {
+      display: inline-block;
+      visibility: hidden;
+    }
+    .opts__tab[aria-selected="true"] :global(.opts__tab-icon) {
+      visibility: visible;
     }
     .opts__tab:focus-visible {
-      outline-offset: -2px;
-      border-radius: var(--radius-md);
-    }
-  }
-  /* From 1280: the section heading joins the rail above the tabs. */
-  @media (min-width: 1280px) {
-    .opts__head {
-      grid-column: 1 / span 4;
-      grid-row: 1;
-      margin-bottom: var(--space-7);
-    }
-    .opts__panels {
-      grid-row: 1 / span 2;
+      outline-offset: 4px;
+      border-radius: var(--radius-sm);
     }
   }
 
@@ -435,7 +418,7 @@ const CLOUD = [
   .panel + .panel {
     margin-top: var(--space-8);
     padding-top: var(--space-8);
-    border-top: 1px solid var(--color-hairline);
+    border-top: 1px solid var(--color-line);
   }
   :global(.js) .panel + .panel {
     margin-top: 0;
@@ -445,9 +428,12 @@ const CLOUD = [
   .panel__head {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-3);
+    gap: var(--space-2);
     max-width: var(--measure);
     margin-bottom: var(--space-2);
+  }
+  .panel__head .body {
+    color: var(--color-text-muted);
   }
   .panel__code {
     display: grid;
@@ -457,6 +443,7 @@ const CLOUD = [
   }
   .panel__prose {
     max-width: var(--measure);
+    color: var(--color-text-muted);
   }
   .panel__next {
     display: flex;
@@ -464,11 +451,11 @@ const CLOUD = [
     align-items: center;
     gap: var(--space-2) var(--space-3);
     padding-block: var(--space-4);
-    border-bottom: 1px solid var(--color-hairline);
+    border-bottom: 1px solid var(--color-line);
     font-size: var(--fs-body);
-    line-height: var(--lh-ui);
-    font-weight: 500;
-    color: var(--color-text);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-medium);
+    color: var(--color-heading);
   }
   .panel__next code {
     font-size: 0.95em;
@@ -482,56 +469,31 @@ const CLOUD = [
     }
   }
   .panel__notes {
-    display: grid;
-    gap: var(--space-3);
     max-width: var(--measure);
-    color: var(--color-text-2);
   }
-  .panel__notes li {
-    position: relative;
-    padding-left: var(--space-5);
-  }
-  .panel__notes li::before {
-    content: "";
-    position: absolute;
-    left: 3px;
-    top: calc(0.5lh - 3px);
-    width: 6px;
-    height: 6px;
-    border-radius: var(--radius-full);
-    background: var(--color-text-3);
+  .panel__notes > li {
+    color: var(--color-text-muted);
   }
   .panel__steps {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 0;
     min-width: 0;
   }
   .panel__steps li {
     display: grid;
-    grid-template-columns: 32px minmax(0, 1fr);
+    grid-template-columns: 2rem minmax(0, 1fr);
     gap: var(--space-4);
     padding-block: var(--space-4);
-    border-top: 1px solid var(--color-hairline);
-    color: var(--color-text-2);
+    border-top: 1px solid var(--color-line);
+    color: var(--color-text-muted);
   }
   .panel__steps li:last-child {
     padding-bottom: 0;
   }
   .panel__num {
-    display: inline-grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-full);
-    box-shadow: inset 0 0 0 1px var(--color-hairline-strong);
-    font-size: 0.9375rem;
-    line-height: 1;
-    font-weight: 600;
-    color: var(--color-text);
-  }
-  .panel__steps p {
-    padding-top: 2px;
+    font-size: var(--fs-h4);
+    line-height: var(--lh-body);
+    color: var(--mist-500);
   }
   .panel__step-body {
     display: grid;
@@ -551,34 +513,32 @@ const CLOUD = [
     display: inline-grid;
     grid-template-columns: repeat(2, minmax(0, max-content));
     justify-self: start;
-    gap: var(--space-1);
-    padding: var(--space-1);
-    border-radius: var(--radius-md);
-    box-shadow: inset 0 0 0 1px var(--color-hairline-strong);
-    background: var(--color-surface);
+    gap: var(--space-2);
   }
   .os__tab {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
-    padding-inline: var(--space-4);
+    height: 44px;
+    padding-inline: var(--space-5);
     border-radius: var(--radius-sm);
-    font-size: var(--fs-ui);
-    line-height: 1;
-    font-weight: 500;
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-medium);
     white-space: nowrap;
-    color: var(--color-text-2);
+    color: var(--color-heading);
     transition:
       color var(--dur-hover) var(--ease-standard),
       background-color var(--dur-hover) var(--ease-standard);
   }
   .os__tab:hover {
-    color: var(--color-text);
+    background: rgb(11 20 48 / 0.04);
   }
   .os__tab[aria-selected="true"] {
-    background: var(--navy-900);
-    color: var(--silver-50);
+    background: var(--navy-950);
+    box-shadow: none;
+    color: #ffffff;
   }
   .os__tab:focus-visible {
     outline: 2px solid var(--color-focus);
@@ -588,36 +548,32 @@ const CLOUD = [
 
   /* ---------- Cloud templates and Without containers ---------- */
   .more {
-    margin-top: var(--gap-visual);
+    margin-top: var(--space-24);
   }
   .more__row {
     display: grid;
-    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
-    column-gap: var(--grid-gap);
+    grid-template-columns: minmax(0, 1fr);
     row-gap: var(--space-5);
-    padding-block: var(--space-7);
-    border-top: 1px solid var(--color-hairline);
+    padding-block: var(--space-8);
+    border-top: 1px solid var(--color-line);
   }
   .more__row:last-child {
     padding-bottom: 0;
   }
   .more__title,
   .more__body {
-    grid-column: 1 / -1;
     min-width: 0;
   }
-  @media (min-width: 960px) {
-    .more__title {
-      grid-column: 1 / span 4;
-    }
-    .more__body {
-      grid-column: 5 / -1;
+  @media (min-width: 1024px) {
+    .more__row {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 12fr);
+      column-gap: var(--split-gap);
     }
   }
   .cloud {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    column-gap: var(--grid-gap);
+    column-gap: var(--card-gap);
   }
   @media (min-width: 640px) {
     .cloud {
@@ -626,7 +582,7 @@ const CLOUD = [
   }
   .cloud > div {
     padding-block: var(--space-4);
-    border-bottom: 1px solid var(--color-hairline);
+    border-bottom: 1px solid var(--color-line);
   }
   .cloud > div:first-child {
     padding-top: 0;
@@ -638,15 +594,18 @@ const CLOUD = [
   }
   .cloud dt {
     font-size: var(--fs-body);
-    line-height: var(--lh-h4);
-    font-weight: 600;
-    color: var(--color-text);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-semibold);
+    color: var(--color-heading);
   }
   .cloud dd {
     margin-top: var(--space-1);
-    color: var(--color-text-2);
+    color: var(--color-text-muted);
   }
   .more__note {
     margin-top: var(--space-6);
+  }
+  .more__body .body {
+    color: var(--color-text-muted);
   }
 </style>

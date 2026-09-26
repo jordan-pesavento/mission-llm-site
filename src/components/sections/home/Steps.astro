@@ -1,0 +1,117 @@
+---
+/*
+ * Four steps from install to answers. Replica of the reference's "Up and running in a few clicks."
+ * (section-1440x900-04): pad "section" (96 to 128), H2 48/48 (SectionIntro size="lg", 36/40 below
+ * 1024), then a row of four columns 96px below it (64 on phones).
+ * Columns (1440: 4 x 318 with 40 gaps): a 1px mist-300 rule on the left and 24px inset; the number
+ * (Plus Jakarta Sans 32/40 400, proportional digits, mist-500) 4px below the top of the rule; the title (.h4 20/28 600,
+ * 56px tall) 40px lower; a 250 x 250 illustration 20px lower; then 16/24 mist-600 text (max 250)
+ * 20px lower. The rule runs the height of the tallest column. Two columns from 768, four from 1024,
+ * stacked on phones with 48px between steps.
+ * Illustrations: public/images/steps/*.svg, isometric line drawings in the reference's style (thin
+ * mist and ink strokes, page-colored occlusion only, no gradients or stock art). They show only
+ * real things: the Docker layers and port 3001, a local model runtime, the upload panel and the
+ * Users page with the three real roles. Decorative (alt=""); the title and text carry the step.
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+
+const steps = [
+  {
+    title: "Install with Docker",
+    body: "One container serves the app and API on port 3001, with your data in one storage folder.",
+    visual: "/images/steps/install.svg",
+  },
+  {
+    title: "Connect a local model",
+    body: "Point it at Ollama, LM Studio or another runtime on your network. Cloud providers work too.",
+    visual: "/images/steps/model.svg",
+  },
+  {
+    title: "Add your documents",
+    body: "Drop files into a workspace. Mission LLM parses, embeds and indexes them on your server.",
+    visual: "/images/steps/documents.svg",
+  },
+  {
+    title: "Invite your team",
+    body: "Turn on multi-user mode, invite people, and give each person a role and workspaces.",
+    visual: "/images/steps/team.svg",
+  },
+];
+---
+
+<Section id="steps" labelledby="steps-title">
+  <SectionIntro title="Four steps from install to answers." size="lg" id="steps-title" />
+  <ol class="steps" role="list" data-reveal>
+    {
+      steps.map((s, i) => (
+        <li class="step">
+          <span class="step__num">{i + 1}</span>
+          <h3 class="h4 step__title">{s.title}</h3>
+          <img class="step__visual" src={s.visual} width="250" height="250" alt="" loading="lazy" decoding="async" />
+          <p class="step__body">{s.body}</p>
+        </li>
+      ))
+    }
+  </ol>
+</Section>
+
+<style>
+  .steps {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-12); /* 48 between stacked steps (reference 390) */
+    column-gap: var(--space-10); /* 40 (reference: 4 x 318 + 3 x 40 = 1392 at 1440) */
+    /* H2 to the row: 64 at 390, 96 from 1440 (reference). */
+    margin-top: clamp(4rem, 3.257rem + 3.048vw, 6rem);
+  }
+  @media (min-width: 768px) {
+    .steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .steps {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .step {
+    min-width: 0;
+    padding-top: var(--space-1);
+    padding-left: var(--space-6);
+    border-left: 1px solid var(--color-line);
+  }
+  /* From 1024 the rules are at least the reference's 550px, so the section keeps its 950px rhythm
+     even though our step texts are shorter than the reference's. */
+  @media (min-width: 1024px) {
+    .step {
+      min-height: 34.375rem;
+    }
+  }
+  .step__num {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: var(--fs-step-num);
+    line-height: var(--lh-step-num);
+    font-weight: var(--fw-regular);
+    color: var(--mist-500);
+  }
+  .step__title {
+    min-height: 3.5rem; /* 56: two title lines, so every illustration starts on one line */
+    margin-top: var(--space-10);
+  }
+  .step__visual {
+    width: 250px;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    margin-top: var(--space-5);
+  }
+  .step__body {
+    max-width: 250px;
+    margin-top: var(--space-5);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--mist-600);
+  }
+</style>

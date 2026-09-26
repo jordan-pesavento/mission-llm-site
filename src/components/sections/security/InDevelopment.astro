@@ -1,14 +1,13 @@
 ---
 /*
- * Security > In development (copy.md): intro plus seven groups, verbatim. Silver band.
+ * Security > In development (copy.md): intro plus seven groups, verbatim. Package C.
  * Nothing here ships today, so every group carries the In development badge and the visual
- * language is the site's "not yet" set: dashed hairlines, hollow bullets, muted text.
+ * language is the site's "not yet" set: dashed mist-400 rules, hollow bullets, muted text.
  * Items stay at the capability level; the precise gaps behind them belong in the hardening guide.
- * Layout keeps the copy order and balances the uneven groups without boxes: from 640, the first
- * four groups share one grid (two columns, two rows, filled column by column: Identity and access,
- * Audit and oversight | Data protection, Disconnected operations), so the second-row headings and
- * their dashed rules sit on one line. The three one-line groups follow as a closing row (stacked,
- * three columns from 1680).
+ * Layout keeps the copy order and balances the uneven groups without boxes: from 640, the first four
+ * groups share one grid (two columns, two rows, filled column by column: Identity and access, Audit
+ * and oversight | Data protection, Disconnected operations), so the second-row headings and their
+ * dashed rules sit on one line. The three one-line groups follow (stacked, three columns from 1280).
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
@@ -57,7 +56,8 @@ const GROUPS: { title: string; items: string[] }[] = [
   },
   {
     title: "Hardening",
-    items: ["Hardened HTTP defaults."],
+    // SERVER_HOST and COLLECTOR_HOST: mission-llm commit c590dee0, not on master yet.
+    items: ["Hardened HTTP defaults.", "A loopback-only listen address for the server and the document processor."],
   },
   {
     title: "Answer quality",
@@ -70,14 +70,16 @@ const GROUPS: { title: string; items: string[] }[] = [
 ];
 ---
 
-<Section id="in-development" tone="silver" labelledby="in-development-title">
-  <SectionIntro
-    title="In development"
-    id="in-development-title"
-    lead="These items are not in the current release. They move to ‘Available today’ only when they ship. Dates are not published."
-  />
+<Section id="in-development" divider labelledby="in-development-title">
+  <div data-reveal>
+    <SectionIntro
+      title="In development"
+      id="in-development-title"
+      lead="These items are not in the current release. They move to ‘Available today’ only when they ship. Dates are not published."
+    />
+  </div>
 
-  <div class="idv">
+  <div class="idv" data-reveal="2">
     {
       GROUPS.map((group, i) => {
         const id = `idv-${i}`;
@@ -105,17 +107,21 @@ const GROUPS: { title: string; items: string[] }[] = [
   .idv {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    column-gap: calc(var(--grid-gap) * 2);
-    margin-top: var(--gap-visual);
+    column-gap: var(--split-gap);
+    margin-top: var(--gap-h2-content);
   }
   .idv-group {
     min-width: 0;
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-12);
+    border-top: 1px dashed var(--mist-400);
   }
   @media (min-width: 640px) {
     /* Groups 1 to 4 fill a 2 x 2 block column by column; the one-line groups follow, full width. */
     .idv {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       grid-template-rows: auto auto;
+      column-gap: var(--card-gap);
     }
     .idv-group:nth-child(1) {
       grid-area: 1 / 1;
@@ -133,7 +139,12 @@ const GROUPS: { title: string; items: string[] }[] = [
       grid-column: 1 / -1;
     }
   }
-  @media (min-width: 1680px) {
+  @media (min-width: 1024px) {
+    .idv {
+      column-gap: var(--split-gap);
+    }
+  }
+  @media (min-width: 1280px) {
     .idv {
       grid-template-columns: repeat(6, minmax(0, 1fr));
     }
@@ -151,12 +162,8 @@ const GROUPS: { title: string; items: string[] }[] = [
     }
     .idv-group--short {
       grid-column: span 2;
+      padding-bottom: 0;
     }
-  }
-  .idv-group {
-    padding-top: var(--space-5);
-    padding-bottom: var(--space-7);
-    border-top: 1px dashed var(--color-hairline-dashed);
   }
   .idv-group__head {
     display: flex;
@@ -164,29 +171,36 @@ const GROUPS: { title: string; items: string[] }[] = [
     align-items: center;
     gap: var(--space-2) var(--space-4);
   }
-  .idv-group__head h3 {
-    color: var(--color-text);
+  /* Phones: the badge sits on its own line under every group title, so no group wraps differently. */
+  @media (max-width: 639.98px) {
+    .idv-group__head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
   .idv-group__items {
     margin-top: var(--space-4);
+    max-width: var(--measure);
   }
   .idv-group__items li {
     position: relative;
     padding-left: var(--space-6);
-    color: var(--color-text-2);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body-relaxed);
+    color: var(--color-text-muted);
   }
   .idv-group__items li + li {
-    margin-top: var(--space-3);
+    margin-top: var(--space-2);
   }
   /* Hollow bullet: not shipped yet (the Available-today lists use solid rules and dots). */
   .idv-group__items li::before {
     content: "";
     position: absolute;
     left: 2px;
-    top: 0.58em;
+    top: calc(var(--lh-body-relaxed) / 2 - 4.5px);
     width: 9px;
     height: 9px;
     border-radius: var(--radius-full);
-    box-shadow: inset 0 0 0 1.5px var(--color-text-3);
+    box-shadow: inset 0 0 0 1.5px var(--mist-500);
   }
 </style>

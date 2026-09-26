@@ -1,5 +1,5 @@
 # Mission LLM website. Everything public may be indexed.
-# TODO: once the production domain is chosen, add @astrojs/sitemap and a line such as
-#   Sitemap: https://<domain>/sitemap-index.xml
 User-agent: *
 Allow: /
+
+Sitemap: https://mission-llm.com/sitemap.xml

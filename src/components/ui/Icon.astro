@@ -1,6 +1,7 @@
 ---
 /*
- * Phosphor icon, regular weight, inlined as SVG at build time (no icon font, no client JS).
+ * Phosphor icon, inlined as SVG at build time (no icon font, no client JS). Regular weight by
+ * default; weight="bold" or "fill" for the few places that need a heavier glyph (the hero actions).
  * Usage: <Icon name="arrow-right" /> or <Icon name="copy" size={16} label="Copy" />
  * Browse names at https://phosphoricons.com (files: node_modules/@phosphor-icons/core/assets/regular).
  * Icons inherit currentColor. Decorative by default (aria-hidden); pass `label` when the icon
@@ -12,13 +13,19 @@ import path from "node:path";
 interface Props {
   name: string;
   size?: number | string;
+  weight?: "regular" | "bold" | "fill";
   label?: string;
   class?: string;
 }
 
-const { name, size = 20, label, class: className } = Astro.props;
-const file = path.join(process.cwd(), "node_modules/@phosphor-icons/core/assets/regular", `${name}.svg`);
-if (!fs.existsSync(file)) throw new Error(`Icon "${name}" not found in @phosphor-icons/core (regular)`);
+const { name, size = 20, weight = "regular", label, class: className } = Astro.props;
+const file = path.join(
+  process.cwd(),
+  "node_modules/@phosphor-icons/core/assets",
+  weight,
+  weight === "regular" ? `${name}.svg` : `${name}-${weight}.svg`,
+);
+if (!fs.existsSync(file)) throw new Error(`Icon "${name}" not found in @phosphor-icons/core (${weight})`);
 const raw = fs.readFileSync(file, "utf8");
 const inner = raw.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
 const dim = typeof size === "number" ? `${size}` : size;

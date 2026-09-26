@@ -1,29 +1,39 @@
 ---
 /*
- * Home. Section order follows the design brief page flow. Frozen for section builders:
- * packages A (Hero, ProofStrip, ProductTour, GroundedAnswers) and B (DeployAnywhere,
- * SecurityControl, OpenSourceFoundation, FinalCta) edit only their own section files.
- * Tone sequence: light, light, light, DARK, light, silver, light, DARK + dark footer.
+ * Home (site v2). Section order follows the reference (anythingllm.com) one to one, with honest
+ * substitutions. This file is owned by the foundation; builders edit only their own section files.
+ *   A: Hero, Stats, FeaturesProduct (#product)
+ *   B: GroundedBand (#grounded, dark), FeaturesSecurity (#control), Steps (#steps), DeployBand (#deploy, dark)
+ *   C: Resources (#resources), OpenSource (#open-source), FinalCta
+ * Tone sequence: light (wash), light, light, DARK, light, light, DARK, light, light, light, then the
+ * dark footer. The reference's partner-logo strip becomes Works: plain-type names of the local
+ * runtimes and deployment targets it works with (no customers or logos).
  */
 import Base from "../layouts/Base.astro";
 import { PAGES } from "../data/site";
 import Hero from "../components/sections/home/Hero.astro";
-import ProofStrip from "../components/sections/home/ProofStrip.astro";
-import ProductTour from "../components/sections/home/ProductTour.astro";
-import GroundedAnswers from "../components/sections/home/GroundedAnswers.astro";
-import DeployAnywhere from "../components/sections/home/DeployAnywhere.astro";
-import SecurityControl from "../components/sections/home/SecurityControl.astro";
-import OpenSourceFoundation from "../components/sections/home/OpenSourceFoundation.astro";
+import Works from "../components/sections/home/Works.astro";
+import Stats from "../components/sections/home/Stats.astro";
+import FeaturesProduct from "../components/sections/home/FeaturesProduct.astro";
+import GroundedBand from "../components/sections/home/GroundedBand.astro";
+import FeaturesSecurity from "../components/sections/home/FeaturesSecurity.astro";
+import Steps from "../components/sections/home/Steps.astro";
+import DeployBand from "../components/sections/home/DeployBand.astro";
+import Resources from "../components/sections/home/Resources.astro";
+import OpenSource from "../components/sections/home/OpenSource.astro";
 import FinalCta from "../components/sections/home/FinalCta.astro";
 ---
 
 <Base title={PAGES.home.title} description={PAGES.home.description}>
   <Hero />
-  <ProofStrip />
-  <ProductTour />
-  <GroundedAnswers />
-  <DeployAnywhere />
-  <SecurityControl />
-  <OpenSourceFoundation />
+  <Works />
+  <Stats />
+  <FeaturesProduct />
+  <GroundedBand />
+  <FeaturesSecurity />
+  <Steps />
+  <DeployBand />
+  <Resources />
+  <OpenSource />
   <FinalCta />
 </Base>

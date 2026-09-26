@@ -1,17 +1,20 @@
 ---
 /*
  * Base layout: document head (meta, fonts, icons), skip link, header, <main id="main">, footer,
- * and the one-time section reveal. Every page uses it:
+ * and the one-time reveal. Every page uses it:
  *   <Base title={PAGES.home.title} description={PAGES.home.description}> ...sections... </Base>
- * Fonts are self-hosted (Fontsource, latin subset): Plex Sans 400/500/600 and Plex Mono 400.
+ * Fonts are self-hosted, no font CDN at runtime: Clash Display 400/500/600 (ITF Free Font License,
+ * public/fonts/clash-display, declared in src/styles/fonts.css), Plus Jakarta Sans 400/500/600/700 and
+ * JetBrains Mono 400 (SIL OFL, @fontsource, latin subset).
  */
-import "@fontsource/ibm-plex-sans/latin-400.css";
-import "@fontsource/ibm-plex-sans/latin-500.css";
-import "@fontsource/ibm-plex-sans/latin-600.css";
-import "@fontsource/ibm-plex-mono/latin-400.css";
+import "@fontsource/plus-jakarta-sans/latin-400.css";
+import "@fontsource/plus-jakarta-sans/latin-500.css";
+import "@fontsource/plus-jakarta-sans/latin-600.css";
+import "@fontsource/plus-jakarta-sans/latin-700.css";
+import "@fontsource/jetbrains-mono/latin-400.css";
 import "../styles/global.css";
-import plexSans400 from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url";
-import plexSans500 from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-500-normal.woff2?url";
+import jakarta400 from "@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff2?url";
+import jakarta600 from "@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff2?url";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { SITE } from "../data/site";
@@ -22,9 +25,8 @@ interface Props {
 }
 
 const { title, description = SITE.description } = Astro.props;
-// Canonical URL, og:url and the share image need absolute URLs, so they are emitted only once
-// SITE.origin is set (TODO: production domain not chosen; set astro.config `site` at the same
-// time and add @astrojs/sitemap). The image is public/og/mission-llm.png (1200x630).
+// Canonical URL, og:url and the share image need absolute URLs, built from SITE.origin
+// (https://mission-llm.com, same as astro.config `site`). The image is public/og/mission-llm.png (1200x630).
 const canonical = SITE.origin ? new URL(Astro.url.pathname, SITE.origin).href : undefined;
 const shareImage = SITE.origin ? new URL(SITE.shareImage, SITE.origin).href : undefined;
 ---
@@ -55,8 +57,9 @@ const shareImage = SITE.origin ? new URL(SITE.shareImage, SITE.origin).href : un
     {shareImage && <meta property="og:image:alt" content={SITE.shareImageAlt} />}
     {shareImage && <meta name="twitter:image" content={shareImage} />}
     <meta name="twitter:card" content={shareImage ? "summary_large_image" : "summary"} />
-    <link rel="preload" href={plexSans400} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={plexSans500} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/clash-display/ClashDisplay-Medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={jakarta400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={jakarta600} as="font" type="font/woff2" crossorigin />
     <script is:inline>
       document.documentElement.classList.add("js");
     </script>

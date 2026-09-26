@@ -1,22 +1,35 @@
 ---
 /*
- * Section: one full-width band of a page.
- * - tone: "light" (paper, default), "silver" (stage gradient) or "dark" (navy band). Every token
- *   is remapped inside the tone, so Button, Badge, CodeBlock and Screenshot adapt on their own.
- *   Never place two dark bands next to each other (the Home closing CTA merges into the footer).
- * - pad: "section" (clamp 72 to 160px, default), "strip" (clamp 40 to 64px), "flush-top" or "none".
- * - hairline: a 1px top rule, used between adjacent bands of the same tone instead of more space.
- * - contain: wraps the slot in <Container> (default true). Set false for full-bleed layouts and
- *   place your own <Container> inside.
- * - labelledby: id of the section heading (SectionIntro sets it from `id`).
- * Usage: <Section id="deploy" labelledby="deploy-title"> <SectionIntro id="deploy-title" .../> </Section>
+ * Section: one full-width band of a page, with the reference's vertical rhythm.
+ * - tone: "light" (page, default) or "dark" (the navy band; every semantic token is remapped inside,
+ *   so Button, ArrowLink, Eyebrow, Screenshot, CodeBlock and Badge adapt on their own).
+ *   Never place two dark bands next to each other.
+ * - pad (top and bottom padding, phone value at 390 to desktop value at 1440):
+ *     "hero"     64 to 112 top, 80 to 112 bottom
+ *     "stats"    64
+ *     "feature"  64 to 112 (accordion sections)
+ *     "band"     64 to 192 (grounded dark band, 800px tall at 1440)
+ *     "band-sm"  80 to 96 (deploy dark band)
+ *     "section"  96 to 128 (default: steps, resource cards, open source)
+ *     "cta"      112 to 144 (final CTA)
+ *     "none"
+ * - wash: the hero's top-to-bottom mist fade (hero only).
+ * - divider: a 1px dotted rule at the section's bottom edge, content width (reference: under the
+ *   stats strip and under the open source section).
+ * - contain: wraps the slot in <Container> (default true). Set false to place your own.
+ * - labelledby: id of the section heading. label: aria-label when there is no visible heading.
+ * Legacy props for the v1 pages (do not use in new code): tone "silver" (renders light),
+ * pad "strip" (= stats) and "flush-top", hairline (1px solid top rule).
+ * Usage: <Section id="product" pad="feature" labelledby="product-title"> ... </Section>
  */
 import Container from "./Container.astro";
 
 interface Props {
   id?: string;
-  tone?: "light" | "silver" | "dark";
-  pad?: "section" | "strip" | "flush-top" | "none";
+  tone?: "light" | "dark" | "silver";
+  pad?: "hero" | "stats" | "feature" | "band" | "band-sm" | "section" | "cta" | "none" | "strip" | "flush-top";
+  wash?: boolean;
+  divider?: boolean;
   hairline?: boolean;
   contain?: boolean;
   labelledby?: string;
@@ -30,6 +43,8 @@ const {
   id,
   tone = "light",
   pad = "section",
+  wash = false,
+  divider = false,
   hairline = false,
   contain = true,
   labelledby,
@@ -38,24 +53,66 @@ const {
   class: className,
   ...rest
 } = Astro.props;
+const padClass = pad === "strip" ? "stats" : pad;
 ---
 
 <Tag
   id={id}
-  data-tone={tone}
+  data-tone={tone === "silver" ? "light" : tone}
   aria-labelledby={labelledby}
   aria-label={label}
   class:list={[
     "section",
-    {
-      "section--strip": pad === "strip",
-      "section--flush": pad === "none",
-      "section--flush-top": pad === "flush-top",
-      "section--hairline": hairline,
-    },
+    `section--pad-${padClass}`,
+    { "section--wash": wash, "section--divider": divider, "section--hairline": hairline },
     className,
   ]}
   {...rest}
 >
   {contain ? <Container><slot /></Container> : <slot />}
 </Tag>
+
+<style>
+  .section--pad-hero {
+    padding-top: var(--pad-hero-top);
+    padding-bottom: var(--pad-hero-bottom);
+  }
+  .section--pad-stats {
+    padding-block: var(--pad-stats);
+  }
+  .section--pad-feature {
+    padding-block: var(--pad-feature);
+  }
+  .section--pad-band {
+    padding-block: var(--pad-band);
+  }
+  .section--pad-band-sm {
+    padding-block: var(--pad-band-sm);
+  }
+  .section--pad-section {
+    padding-block: var(--pad-section);
+  }
+  .section--pad-cta {
+    padding-block: var(--pad-cta);
+  }
+  .section--pad-flush-top {
+    padding-bottom: var(--pad-section);
+  }
+  .section--wash {
+    background-color: var(--mist-200);
+    background-image: var(--hero-wash);
+  }
+  .section--divider::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: min(100% - 2 * var(--gutter), var(--content-max));
+    transform: translateX(-50%);
+    border-bottom: 1px dotted var(--color-line);
+    pointer-events: none;
+  }
+  .section--hairline {
+    border-top: 1px solid var(--color-line);
+  }
+</style>

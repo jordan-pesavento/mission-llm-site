@@ -1,8 +1,23 @@
 /*
- * Mission LLM site: base styles and shared utilities.
- * Tokens live in tokens.css. Section components keep their own layout in scoped <style> blocks
- * and reuse the utilities below for type, grid and tone so every page steps down together.
+ * Mission LLM site v2: base styles and shared utilities.
+ * Tokens live in tokens.css. Section components keep their own layout in scoped <style> blocks and
+ * reuse the type and layout utilities below, so every section steps down together.
+ *
+ * Type utilities (reference sizes at 1440):
+ *   .h1        Clash Display 500, 60/63 (48 on phones), -0.025em
+ *   .h2        Clash Display 500, 36/40, -0.025em
+ *   .h2-lg     Clash Display 500, 48/48 from 1024 (36/40 below)
+ *   .h2-cta    Clash Display 500, 48/48 at every width (final CTA)
+ *   .h3        Clash Display 500, 24/32 (resource cards)
+ *   .h4        Plus Jakarta Sans 600, 20/28 (step titles)
+ *   .eyebrow   Plus Jakarta Sans 500, 20/28, sentence case, muted (the line above an H2)
+ *   .label     Plus Jakarta Sans 500, 14/20, uppercase, tracked (the hero's small label)
+ *   .lead      18/28 (hero subhead)
+ *   .body      16/24;  .body-relaxed 16/26 (paragraphs beside an H2)
+ *   .small     14/20 (non-sentence labels only: stat labels, dates, legal)
+ * Layout utilities: .container, .split (two columns from 1024; see the modifiers), .divider-dotted.
  */
+@import "./fonts.css";
 @import "./tokens.css";
 
 /* ---------- Reset ---------- */
@@ -17,20 +32,19 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  scroll-padding-top: calc(var(--header-h) + var(--space-4));
+  scroll-padding-top: calc(var(--header-h) + 1px + var(--space-4));
   hanging-punctuation: first last;
 }
-/* No smooth scrolling: it adds nothing for readers and swallows programmatic scroll steps. */
 body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--color-page);
+  background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: var(--fs-body);
   line-height: var(--lh-body);
-  font-weight: 400;
+  font-weight: var(--fw-regular);
   font-synthesis: none;
   font-kerning: normal;
   -webkit-font-smoothing: antialiased;
@@ -87,7 +101,7 @@ table {
 :focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
-  border-radius: var(--radius-xs);
+  border-radius: 4px;
 }
 
 /* ---------- Typography ---------- */
@@ -97,8 +111,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: var(--fw-h2);
-  color: var(--color-text);
+  font-family: var(--font-display);
+  font-weight: var(--fw-medium);
+  color: var(--color-heading);
   text-wrap: balance;
   overflow-wrap: break-word;
 }
@@ -110,66 +125,91 @@ blockquote {
   text-wrap: pretty;
   overflow-wrap: break-word;
 }
-.display {
-  font-size: var(--fs-display);
-  line-height: var(--lh-display);
-  letter-spacing: var(--ls-display);
-  font-weight: var(--fw-display);
-  max-width: 22ch;
+.h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  letter-spacing: var(--ls-h1);
+  font-weight: var(--fw-medium);
+  color: var(--color-heading);
 }
 .h2 {
+  font-family: var(--font-display);
   font-size: var(--fs-h2);
   line-height: var(--lh-h2);
   letter-spacing: var(--ls-h2);
-  font-weight: var(--fw-h2);
-  max-width: 22ch;
+  font-weight: var(--fw-medium);
+  color: var(--color-heading);
+}
+.h2-lg {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2-lg);
+  line-height: var(--lh-h2-lg);
+  letter-spacing: var(--ls-h2-lg);
+  font-weight: var(--fw-medium);
+  color: var(--color-heading);
+}
+.h2-cta {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2-cta);
+  line-height: var(--lh-h2-cta);
+  letter-spacing: var(--ls-h2-lg);
+  font-weight: var(--fw-medium);
+  color: var(--color-heading);
 }
 .h3 {
+  font-family: var(--font-display);
   font-size: var(--fs-h3);
   line-height: var(--lh-h3);
-  letter-spacing: var(--ls-h3);
-  font-weight: var(--fw-h3);
+  letter-spacing: 0;
+  font-weight: var(--fw-medium);
+  color: var(--color-heading);
 }
 .h4 {
+  font-family: var(--font-sans);
   font-size: var(--fs-h4);
   line-height: var(--lh-h4);
-  font-weight: var(--fw-h4);
   letter-spacing: 0;
+  font-weight: var(--fw-semibold);
+  color: var(--color-heading);
+}
+.eyebrow {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  line-height: var(--lh-eyebrow);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-muted);
+}
+.label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--mist-550);
 }
 .lead {
   font-size: var(--fs-lead);
   line-height: var(--lh-lead);
-  color: var(--color-text-2);
-  max-width: 52ch;
+  color: var(--mist-550);
 }
 .body {
   font-size: var(--fs-body);
   line-height: var(--lh-body);
-  color: var(--color-text-2);
+  color: var(--color-text);
 }
-.ui-text {
-  font-size: var(--fs-ui);
-  line-height: var(--lh-ui);
-  font-weight: var(--fw-ui);
+.body-relaxed {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body-relaxed);
+  color: var(--color-text-muted);
 }
-.caption {
-  font-size: var(--fs-ui);
-  line-height: var(--lh-ui);
-  color: var(--color-text-3);
-}
-.legal {
-  font-size: var(--fs-legal);
-  line-height: var(--lh-legal);
-  color: var(--color-text-3);
-}
-.eyebrow {
-  display: block;
-  font-size: var(--fs-eyebrow);
-  line-height: var(--lh-eyebrow);
-  letter-spacing: var(--ls-eyebrow);
-  font-weight: var(--fw-eyebrow);
-  text-transform: uppercase;
-  color: var(--color-eyebrow);
+.small {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-text-quiet);
 }
 .measure {
   max-width: var(--measure);
@@ -182,19 +222,20 @@ blockquote {
 }
 strong,
 b {
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 a {
   color: var(--color-link);
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
+  text-underline-offset: 0.25em;
   text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
-  transition: color var(--dur-hover) var(--ease-standard), text-decoration-color var(--dur-hover) var(--ease-standard);
+  transition:
+    color var(--dur-hover) var(--ease-standard),
+    text-decoration-color var(--dur-hover) var(--ease-standard);
 }
 a:hover {
-  color: var(--color-link-hover);
   text-decoration-color: currentColor;
 }
 
@@ -204,14 +245,15 @@ samp {
   font-family: var(--font-mono);
   font-size: 0.9em;
   font-weight: 400;
+  /* Commands show every character as typed ("--build" never joins into one long dash). */
+  font-variant-ligatures: none;
 }
-/* Inline commands, settings and paths never break mid-token (a break at a hyphen reads as part of
-   the flag). Long flags opt in to breaks after "=" and ":" with .code-flag (nowrap spans and <wbr>). */
+/* Inline commands and settings never break mid-token. Long flags opt in with .code-flag. */
 :not(pre) > code {
   padding: 0.1em 0.35em;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-text) 6%, transparent);
-  box-shadow: inset 0 0 0 1px var(--color-hairline);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-heading) 6%, transparent);
+  box-shadow: inset 0 0 0 1px var(--color-line-soft);
   white-space: nowrap;
   overflow-wrap: normal;
 }
@@ -221,7 +263,7 @@ samp {
   box-decoration-break: clone;
 }
 
-/* Long-form text: lists and paragraphs with the site's rhythm. */
+/* Long-form text. */
 .prose > * + * {
   margin-top: 1em;
 }
@@ -233,21 +275,119 @@ samp {
   margin-top: 0.5em;
 }
 .prose li::marker {
-  color: var(--color-text-3);
+  color: var(--mist-400);
 }
-
-/* Vertical rhythm helper: children spaced by --flow (default 16px). */
 .flow > * + * {
   margin-top: var(--flow, var(--space-4));
 }
 
-/* ---------- Layout ---------- */
-.container {
-  width: var(--container);
-  margin-inline: auto;
+/* Dot list (dark band bullets): 16/26 lines with a small round marker, as in the reference. */
+.dot-list {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+.dot-list > li {
+  position: relative;
+  padding-left: 1.25rem;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body-relaxed);
+  color: var(--color-text);
+}
+.dot-list > li::before {
+  content: "";
+  position: absolute;
+  left: 0.125rem;
+  top: calc(var(--lh-body-relaxed) / 2 - 3px);
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--mist-500);
 }
 
-/* 12-column layout grid (4 below 640, 8 from 640, 12 from 960). Place children with grid-column. */
+/* ---------- Layout ---------- */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/*
+ * .split: the reference's two-column compositions, stacked below 1024 (first child on top).
+ *   .split--hero     text 11fr | visual 20fr, 48 gap, centered vertically (hero)
+ *   .split--feature  screenshot 11fr | accordion 9fr, 94 gap, centered (feature sections)
+ *   .split--band     text 9fr | screenshot 11fr, 94 gap, centered (dark bands)
+ * Stacked gap below 1024: --split-stack-gap (default 40px).
+ */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--split-stack-gap, 2.5rem);
+  align-items: center;
+}
+@media (min-width: 1024px) {
+  .split--hero {
+    grid-template-columns: var(--hero-cols);
+    column-gap: var(--hero-gap);
+  }
+  .split--feature {
+    grid-template-columns: var(--feature-cols);
+    column-gap: var(--split-gap);
+  }
+  .split--band {
+    grid-template-columns: var(--band-cols);
+    column-gap: var(--split-gap);
+  }
+}
+
+/* A 1px dotted rule in the hairline color (reference: under the stats strip and the open source
+   section). Put it on the element whose bottom edge it marks, inside the container width. */
+.divider-dotted {
+  border-bottom: 1px dotted var(--color-line);
+}
+
+/* ---------- Tones and sections ---------- */
+/* The reference's feature sections are exactly 800px tall at every desktop width (1440 and 1920).
+   Put this on a Section whose content is shorter; the padding stays, the extra goes below. */
+@media (min-width: 1024px) {
+  .section--h800 {
+    min-height: 800px;
+  }
+}
+[data-tone] {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+.section {
+  position: relative;
+}
+
+/* ---------- Legacy layout helpers (v1 pages; do not use in new code) ---------- */
+.display {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  letter-spacing: var(--ls-h1);
+  font-weight: var(--fw-medium);
+  max-width: 22ch;
+}
+.caption {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-text-quiet);
+}
+.legal {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-text-quiet);
+}
+.ui-text {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: var(--fw-medium);
+}
 .layout-grid {
   display: grid;
   grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
@@ -256,65 +396,25 @@ samp {
 .layout-grid > * {
   grid-column: 1 / -1;
 }
-
-/* Card grid: 1-up below 640, 2-up 640 to 1279, 4-up from 1280. Author 2, 4 or 8 items. */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(var(--card-cols), minmax(0, 1fr));
   gap: var(--grid-gap);
   align-items: stretch;
 }
-/* Two equal columns from 960 (today vs in development, edition cards). */
 .split-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--grid-gap);
   align-items: stretch;
 }
-@media (min-width: 960px) {
+@media (min-width: 1024px) {
   .split-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* ---------- Tones and sections ---------- */
-/* background-color is the solid fallback (and what contrast audits read); the image adds the gentle step. */
-[data-tone] {
-  background-color: var(--color-page);
-  color: var(--color-text);
-}
-[data-tone="silver"] {
-  background-color: var(--silver-50);
-  background-image: linear-gradient(180deg, var(--silver-50), var(--silver-100));
-}
-[data-tone="dark"] {
-  background-color: var(--navy-950);
-  background-image: linear-gradient(180deg, var(--navy-950), var(--navy-900));
-}
-.section {
-  position: relative;
-  padding-block: var(--section-pad);
-}
-.section--strip {
-  padding-block: var(--strip-pad);
-}
-.section--flush {
-  padding-block: 0;
-}
-.section--flush-top {
-  padding-top: 0;
-}
-/* Adjacent bands of the same tone are separated by a hairline, not extra space. */
-.section--hairline {
-  border-top: 1px solid var(--color-hairline);
-}
-[data-tone="dark"].section--hairline {
-  border-top-color: rgb(169 186 214 / 0.08);
-}
-
-/* ---------- Data table (requirements, outbound connections, comparison) ----------
- * Cells hold reading sentences, so they use the 18px body size; only the column labels (thead and
- * the stacked data-label captions) use the 16px UI size. */
+/* ---------- Data table (requirements, outbound connections, comparison) ---------- */
 .data-table {
   width: 100%;
   font-size: var(--fs-body);
@@ -322,43 +422,37 @@ samp {
   text-align: left;
   font-variant-numeric: tabular-nums;
 }
-.data-table thead th {
-  font-size: var(--fs-ui);
-  line-height: var(--lh-ui);
-}
 .data-table caption {
   text-align: left;
   caption-side: top;
   padding-bottom: var(--space-4);
-  color: var(--color-text-3);
+  color: var(--color-text-quiet);
 }
 .data-table th,
 .data-table td {
-  padding: var(--space-4) var(--space-5) var(--space-4) 0;
+  padding: var(--space-4) var(--space-6) var(--space-4) 0;
   vertical-align: top;
-  border-bottom: 1px solid var(--color-hairline);
+  border-bottom: 1px solid var(--color-line);
 }
 .data-table th:last-child,
 .data-table td:last-child {
   padding-right: 0;
 }
 .data-table thead th {
-  font-weight: 600;
-  color: var(--color-text);
-  border-bottom-color: var(--color-hairline-strong);
+  font-weight: var(--fw-semibold);
+  color: var(--color-heading);
+  font-family: var(--font-sans);
   padding-top: 0;
 }
 .data-table tbody th {
-  font-weight: 600;
-  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  color: var(--color-heading);
 }
 .data-table td {
-  color: var(--color-text-2);
+  color: var(--color-text-muted);
 }
-/*
- * Stacked variant for phones: add class="data-table data-table--stack" and data-label="Column"
- * on every td. Below 640 each row becomes a block with the column name above each value.
- */
+/* Stacked variant for phones: class="data-table data-table--stack" and data-label on every td. */
 @media (max-width: 639.98px) {
   .data-table--stack thead {
     position: absolute;
@@ -379,10 +473,7 @@ samp {
   }
   .data-table--stack tr {
     padding-block: var(--space-4);
-    border-bottom: 1px solid var(--color-hairline);
-  }
-  .data-table--stack tr:first-child {
-    border-top: 1px solid var(--color-hairline-strong);
+    border-bottom: 1px solid var(--color-line);
   }
   .data-table--stack th,
   .data-table--stack td {
@@ -395,39 +486,39 @@ samp {
   .data-table--stack td[data-label]::before {
     content: attr(data-label);
     display: block;
-    font-size: var(--fs-ui);
-    line-height: var(--lh-ui);
-    font-weight: 600;
-    color: var(--color-text-3);
+    font-size: var(--fs-small);
+    line-height: var(--lh-small);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-quiet);
   }
 }
 
 /* ---------- Definition list (security controls) ---------- */
 .dl-grid > div {
-  padding-block: var(--space-5);
-  border-top: 1px solid var(--color-hairline);
+  padding-block: var(--space-6);
+  border-top: 1px solid var(--color-line);
 }
 .dl-grid dt {
-  font-weight: 600;
-  color: var(--color-text);
+  font-weight: var(--fw-semibold);
+  color: var(--color-heading);
 }
 .dl-grid dd {
   margin-top: var(--space-2);
-  color: var(--color-text-2);
+  color: var(--color-text-muted);
 }
 
-/* ---------- Note / callout block ---------- */
+/* ---------- Note / callout ---------- */
 .note {
-  padding: var(--space-5) var(--space-5) var(--space-5) calc(var(--space-5) + 3px);
-  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-sm);
   background: var(--color-surface);
-  box-shadow: inset 0 0 0 1px var(--color-hairline), inset 3px 0 0 var(--color-accent);
-  color: var(--color-text-2);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+  color: var(--color-text-muted);
   font-size: var(--fs-body);
-  line-height: var(--lh-body);
+  line-height: var(--lh-body-relaxed);
 }
 .note strong {
-  color: var(--color-text);
+  color: var(--color-heading);
 }
 
 /* ---------- Accessibility helpers ---------- */
@@ -448,23 +539,22 @@ samp {
   left: var(--space-3);
   z-index: 100;
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--navy-950);
-  color: var(--silver-50);
-  font-size: var(--fs-ui);
-  font-weight: var(--fw-ui);
+  color: #ffffff;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
   text-decoration: none;
   transform: translateY(-200%);
 }
 .skip-link:focus-visible {
   transform: none;
-  color: var(--silver-50);
+  color: #ffffff;
 }
 
-/* ---------- Motion: reveal once per section ----------
- * Mark up to 3 elements per section with data-reveal (optionally data-reveal="2" for order).
- * Only hidden when JS runs (html.js) and the user has no reduced-motion preference, so the
- * page renders complete without JS. Base.astro adds .is-in when the element enters the view.
+/* ---------- Motion: reveal once per element ----------
+ * Mark up to 3 elements per section with data-reveal (optionally data-reveal="2" or "3" for order).
+ * Hidden only when JS runs and motion is allowed, so the page is complete without JS.
  */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {

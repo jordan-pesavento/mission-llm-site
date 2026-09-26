@@ -1,8 +1,9 @@
 ---
 /*
- * Container: the shared content width, min(100% - 2 * gutter, 1720px), centered.
- * Bands and screenshot stages may bleed full width outside it; text measure is capped inside.
- * Usage: <Container> ... </Container>  or  <Container as="nav" class="layout-grid"> ... </Container>
+ * Container: the reference's content box. 1476px wide at most with 24px side padding, so content is
+ * 1392px at 1440 and 1428px from 1476 up (anythingllm.com measurements). Header and footer are
+ * full-bleed and do not use it.
+ * Usage: <Container> ... </Container>  or  <Container as="nav" class="split split--feature"> ... </Container>
  */
 interface Props {
   as?: "div" | "nav" | "header" | "footer" | "article" | "aside";

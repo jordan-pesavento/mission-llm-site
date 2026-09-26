@@ -1,14 +1,14 @@
 ---
 /*
- * SectionIntro: eyebrow, heading and lead with the shared rhythm
- * (eyebrow to heading 16px, heading to lead 24px). Use it at the top of every section so all
- * pages share one heading system.
- * - level: 1 for page heroes (display size), 2 for sections (default), 3 for sub-blocks.
- * - id: set on the heading; pass the same value to <Section labelledby>.
- * - lead: one short paragraph (lead size). Put longer text in the default slot below it.
- * - srOnly: keep the heading for screen readers and outline but hide it visually
- *   (for example the proof strip's "At a glance").
- * Usage: <SectionIntro eyebrow="Deployment" title="Deploy it where your data already lives." id="deploy-title" lead="..." />
+ * SectionIntro: eyebrow, heading and paragraph with the reference's rhythm (eyebrow to heading 16,
+ * heading to paragraph 20, paragraph max 576px at 16/26).
+ * - size: "h2" (36/40, default), "lg" (48/48 from 1024, 36/40 below: "Up and running...", "Blog"),
+ *   "cta" (48/48 everywhere: final CTA). level={1} renders the H1 scale (page heroes).
+ * - level: heading element (1, 2 or 3). id: set on the heading; pass it to <Section labelledby>.
+ * - lead: one short paragraph under the heading. More content can go in the default slot.
+ * - align: "left" (default) or "center" (final CTA, 404).
+ * - srOnly: keep the heading for screen readers and the outline, hide it visually.
+ * Usage: <SectionIntro eyebrow="Ready on day one." title="Preconfigured for your mission." id="product-title" />
  */
 interface Props {
   title: string;
@@ -16,13 +16,15 @@ interface Props {
   lead?: string;
   id?: string;
   level?: 1 | 2 | 3;
+  size?: "h2" | "lg" | "cta";
+  align?: "left" | "center";
   srOnly?: boolean;
   class?: string;
 }
 
-const { title, eyebrow, lead, id, level = 2, srOnly = false, class: className } = Astro.props;
+const { title, eyebrow, lead, id, level = 2, size = "h2", align = "left", srOnly = false, class: className } = Astro.props;
 const Heading = `h${level}` as "h1" | "h2" | "h3";
-const headingClass = level === 1 ? "display" : level === 2 ? "h2" : "h3";
+const headingClass = level === 1 ? "h1" : size === "lg" ? "h2-lg" : size === "cta" ? "h2-cta" : "h2";
 ---
 
 {
@@ -31,25 +33,36 @@ const headingClass = level === 1 ? "display" : level === 2 ? "h2" : "h3";
       {title}
     </Heading>
   ) : (
-    <div class:list={["intro", className]}>
-      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <div class:list={["intro", `intro--${align}`, className]}>
+      {eyebrow && <p class="eyebrow intro__eyebrow">{eyebrow}</p>}
       <Heading id={id} class:list={[headingClass, "intro__title"]}>
         {title}
       </Heading>
-      {lead && <p class="lead intro__lead">{lead}</p>}
+      {lead && <p class="body-relaxed intro__lead">{lead}</p>}
       <slot />
     </div>
   )
 }
 
 <style>
-  .intro .eyebrow {
+  .intro__eyebrow {
     margin-bottom: var(--gap-eyebrow);
   }
   .intro__lead {
-    margin-top: var(--gap-heading);
+    margin-top: var(--gap-h2-text);
+    max-width: var(--measure);
   }
-  .intro > :global(:not(.eyebrow, .intro__title, .intro__lead)) {
-    margin-top: var(--space-5);
+  .intro--center {
+    text-align: center;
+  }
+  .intro--center .intro__title {
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+  .intro--center .intro__lead {
+    margin-inline: auto;
+  }
+  .intro > :global(:not(.intro__eyebrow, .intro__title, .intro__lead)) {
+    margin-top: var(--space-6);
   }
 </style>

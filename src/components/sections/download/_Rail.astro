@@ -1,9 +1,11 @@
 ---
 /*
- * Private layout for the Download sections (work package C): the heading rail.
- * Below 1280 the heading stacks above the content. From 1280 the heading (and the optional
- * "aside" slot under it) sits in columns 1 to 4 and the content in columns 5 to 12, so every
- * Download section lines up with the install options panel.
+ * Private layout for the subpages (package C): the heading rail.
+ * Below 1024 the heading stacks above the content (48 to 58px apart, the reference's H2-to-content
+ * gap). From 1024 the heading (and the optional "aside" slot under it) sits in a left column and the
+ * content in a right column, 5fr | 12fr with the reference's 94px split gap, so every rail on
+ * /download, /security and /editions lines up with the install method list.
+ * The heading can stick while the content scrolls (sticky), for long tables.
  * Usage: <Rail title="System requirements" id="requirements-title"> ...content... </Rail>
  */
 import SectionIntro from "../../ui/SectionIntro.astro";
@@ -11,14 +13,16 @@ import SectionIntro from "../../ui/SectionIntro.astro";
 interface Props {
   title: string;
   id: string;
+  eyebrow?: string;
+  sticky?: boolean;
 }
-const { title, id } = Astro.props;
+const { title, id, eyebrow, sticky = false } = Astro.props;
 const hasAside = Astro.slots.has("aside");
 ---
 
-<div class="rail">
+<div class:list={["rail", { "rail--sticky": sticky }]}>
   <div class="rail__head" data-reveal>
-    <SectionIntro title={title} id={id} />
+    <SectionIntro title={title} id={id} eyebrow={eyebrow} />
     {hasAside && <div class="rail__aside"><slot name="aside" /></div>}
   </div>
   <div class="rail__body" data-reveal="2"><slot /></div>
@@ -27,25 +31,26 @@ const hasAside = Astro.slots.has("aside");
 <style>
   .rail {
     display: grid;
-    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
-    column-gap: var(--grid-gap);
-    row-gap: var(--gap-visual);
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--gap-h2-content);
   }
   .rail__head,
   .rail__body {
-    grid-column: 1 / -1;
     min-width: 0;
   }
   .rail__aside {
-    margin-top: var(--gap-heading);
+    margin-top: var(--gap-h2-text);
     max-width: var(--measure);
   }
-  @media (min-width: 1280px) {
-    .rail__head {
-      grid-column: 1 / span 4;
+  @media (min-width: 1024px) {
+    .rail {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 12fr);
+      column-gap: var(--split-gap);
     }
-    .rail__body {
-      grid-column: 5 / -1;
+    .rail--sticky .rail__head {
+      position: sticky;
+      top: calc(var(--header-h) + 1px + var(--space-6));
+      align-self: start;
     }
   }
 </style>

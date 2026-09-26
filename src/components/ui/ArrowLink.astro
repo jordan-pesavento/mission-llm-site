@@ -1,47 +1,64 @@
 ---
 /*
- * Text link with a trailing arrow, for secondary navigation inside a section
- * ("See every install option", "Read the security overview"). Not a button: use Button for CTAs.
- * Usage: <ArrowLink href="/download">See every install option</ArrowLink>
+ * ArrowLink: a text link with a trailing arrow, the reference's two "Learn more" styles.
+ * - variant "strong" (default): 16/24 600, no underline, ink on light and white in dark bands
+ *   ("Learn more ->" in the dark band).
+ * - variant "underline": 16/24 500, 1px ink underline under the words only, arrow after
+ *   ("Learn more about Document Knowledge ->" inside an open accordion item).
+ * - icon: "arrow-up-right" for links that leave the site. External links get rel="noopener".
+ * Usage: <ArrowLink href="/security">Learn more</ArrowLink>
+ *        <ArrowLink href="/security#controls" variant="underline">Learn more about roles</ArrowLink>
  */
 import Icon from "./Icon.astro";
 
 interface Props {
   href: string;
-  class?: string;
-  /** Use "arrow-up-right" for links that leave the site. */
+  variant?: "strong" | "underline";
   icon?: "arrow-right" | "arrow-up-right";
+  class?: string;
 }
-const { href, class: className, icon = "arrow-right" } = Astro.props;
+const { href, variant = "strong", icon = "arrow-right", class: className } = Astro.props;
 const external = /^https?:\/\//.test(href);
 ---
 
-<a
-  href={href}
-  class:list={["arrow-link", className]}
-  rel={external ? "noopener" : undefined}
-><span><slot /></span><Icon name={icon} size={18} /></a>
+<a href={href} class:list={["arrow-link", `arrow-link--${variant}`, className]} rel={external ? "noopener" : undefined}
+  ><span class="arrow-link__text"><slot /></span><Icon name={icon} size={16} class="arrow-link__icon" /></a
+>
 
 <style>
   .arrow-link {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    min-height: 44px;
-    font-size: var(--fs-ui);
-    line-height: var(--lh-ui);
-    font-weight: 600;
+    min-height: 30px;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
     color: var(--color-link);
     text-decoration: none;
   }
-  .arrow-link span {
+  .arrow-link:hover {
+    color: var(--color-link);
+  }
+  .arrow-link--strong {
+    font-weight: var(--fw-semibold);
+  }
+  .arrow-link--strong :global(.arrow-link__icon) {
+    transition: transform var(--dur-hover) var(--ease-standard);
+  }
+  .arrow-link--strong:hover :global(.arrow-link__icon) {
+    transform: translateX(2px);
+  }
+  .arrow-link--underline {
+    gap: var(--space-3);
+    font-weight: var(--fw-medium);
+  }
+  .arrow-link--underline .arrow-link__text {
     text-decoration-line: underline;
     text-decoration-thickness: 1px;
-    text-underline-offset: 0.25em;
-    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
-    transition: text-decoration-color var(--dur-hover) var(--ease-standard);
-  }
-  .arrow-link:hover span {
+    text-underline-offset: 6px;
     text-decoration-color: currentColor;
+  }
+  .arrow-link--underline:hover .arrow-link__text {
+    text-decoration-thickness: 2px;
   }
 </style>

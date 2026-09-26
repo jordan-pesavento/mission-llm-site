@@ -1,6 +1,7 @@
 /*
- * Accessible tabs (WAI-ARIA tabs pattern, automatic activation), shared by the product tour and
- * the Download install options. Import it from a component's <script>: import "../../scripts/tabs.ts";
+ * Accessible tabs (WAI-ARIA tabs pattern, automatic activation), used by the Download install options
+ * (method list and the Docker operating-system switch). Import it from a component's <script>:
+ * import "../../scripts/tabs.ts";
  *
  * Markup contract (server-rendered so the page is complete without JS):
  *   <div data-tabs [data-tabs-hash] [data-tabs-disclosure="(max-width: 959.98px)"]>
@@ -14,7 +15,8 @@
  * Without JS the tablist stays hidden and every panel shows in order (give each panel its own
  * heading). With JS: the arrow keys (Left and Up for the previous tab, Right and Down for the
  * next, whatever the layout), Home and End move between tabs; inactive panels get `hidden`; the
- * new panel crossfades in over 200ms (instant with reduced motion); no auto-advance.
+ * new panel crossfades in with the site's swap motion (240ms; instant with reduced motion); no
+ * auto-advance.
  * data-tabs-hash: selecting a tab updates location.hash to the panel id, and a matching hash on
  * load selects that tab (for links such as /download#p-helm).
  * data-tabs-disclosure: a media query. While it matches (an accordion layout), the same markup
@@ -24,6 +26,14 @@
  * Every change dispatches a "tabs:change" CustomEvent on the root with { index, tab, panel }.
  */
 const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/** The v2 "swap" motion (tokens.css --dur-swap and --ease-out), read once so the CSS stays the source. */
+const swapMotion = () => {
+  const cs = getComputedStyle(document.documentElement);
+  const ms = parseFloat(cs.getPropertyValue("--dur-swap")) || 240;
+  const easing = cs.getPropertyValue("--ease-out").trim() || "cubic-bezier(0.23, 1, 0.32, 1)";
+  return { duration: ms, easing };
+};
 
 function initTabs(root: HTMLElement) {
   if (root.dataset.tabsReady) return;
@@ -75,7 +85,7 @@ function initTabs(root: HTMLElement) {
       const wasHidden = panel!.hidden;
       panel!.hidden = !on;
       if (on && wasHidden && animate && !reduced()) {
-        panel!.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: "cubic-bezier(.23,1,.32,1)" });
+        panel!.animate([{ opacity: 0 }, { opacity: 1 }], swapMotion());
       }
     });
     applyState();

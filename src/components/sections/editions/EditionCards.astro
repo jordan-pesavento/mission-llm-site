@@ -1,22 +1,25 @@
 ---
 /*
- * Editions > Community and Enterprise cards (copy.md). Work package B.
- * Two equal-height cards (1 column below 960px, 2 from 960px). Each card: name, price line
- * (no prices: pricing is not decided), summary, what it includes, then its one action at the
- * bottom so both buttons share a baseline. Community's Support group is pinned just above its
- * action, so spare height sits in the middle of the card rather than above the button.
- * From 960px the cards share row tracks (CSS subgrid), so heads, rules and buttons line up.
- * From 1680px the six-item lists run in two columns, so no line runs past a comfortable measure.
+ * Editions > Community and Enterprise cards (copy.md, verbatim). Package C.
+ * Two equal-height cards (stacked below 1024, side by side from 1024 with the 32px card gap). Each
+ * card is a white surface with the site's radius 16 and hairline ring: name (Clash 36/40), price line
+ * (no prices: pricing is not decided), summary (18/28), what it includes, then its one action at the
+ * bottom so both 44px buttons share a baseline. From 1024 the cards share row tracks (CSS subgrid),
+ * so heads, rules and buttons line up. From 1280 the six-item lists run in two columns.
  * Enterprise lists its planned features only under the <Badge /> "In development" label, in the
  * dashed, muted style used for every roadmap list on the site, followed by its fine print.
- * Contact us is the example.com placeholder (TODO: real address).
+ * Its service offerings (deployment assistance, support by agreement) are not confirmed yet
+ * (copy.md: TODO confirm offering), so they sit under a "Planned" label in the same muted style
+ * instead of carrying a check. There is no contact address yet (PLACEHOLDER.contactEmail is "#"), so
+ * the action is a same-size non-link "Contact details coming soon" and the price line says pricing
+ * is not published; both become the copy.md versions ("Contact us") once the address exists.
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 import Button from "../../ui/Button.astro";
 import Badge from "../../ui/Badge.astro";
 import Icon from "../../ui/Icon.astro";
-import { COUNTS, DOWNLOAD_HREF, PLACEHOLDER } from "../../../data/site";
+import { COUNTS, DOWNLOAD_HREF, PLACEHOLDER, isPlaceholder } from "../../../data/site";
 
 const communityIncludes = [
   "Workspaces, threads and document retrieval with sources.",
@@ -27,8 +30,10 @@ const communityIncludes = [
   "Docker, Compose, Kubernetes, Helm and OpenShift deployment.",
 ];
 
-const enterpriseIncludes = [
-  "Everything in Community.",
+const enterpriseIncludes = ["Everything in Community."];
+
+// TODO: confirm offering (copy.md). Shown as planned until the owner confirms both.
+const enterpriseServices = [
   "Deployment assistance, including disconnected and restricted networks.",
   "Support on terms set in your agreement.",
 ];
@@ -43,12 +48,12 @@ const enterprisePlanned = [
 ];
 ---
 
-<Section id="plans" tone="light" pad="flush-top" labelledby="plans-title">
+<Section id="plans" pad="none" labelledby="plans-title" class="plans">
   <SectionIntro srOnly title="Community and Enterprise" id="plans-title" />
-  <div class="split-grid editions">
+  <div class="editions">
     <article class="edition" aria-labelledby="edition-community" data-reveal>
       <header class="edition__head">
-        <h3 id="edition-community" class="edition__name">Community</h3>
+        <h3 id="edition-community" class="h2 edition__name">Community</h3>
         <p class="edition__price">Free to self-host</p>
         <p class="edition__summary">Everything Mission LLM does today, on your infrastructure.</p>
       </header>
@@ -61,7 +66,7 @@ const enterprisePlanned = [
               communityIncludes.map((text) => (
                 <li>
                   <span class="includes__mark" aria-hidden="true">
-                    <Icon name="check" size={16} />
+                    <Icon name="check" size={14} />
                   </span>
                   <span>{text}</span>
                 </li>
@@ -84,24 +89,41 @@ const enterprisePlanned = [
 
     <article class="edition" aria-labelledby="edition-enterprise" data-reveal="2">
       <header class="edition__head">
-        <h3 id="edition-enterprise" class="edition__name">Enterprise</h3>
-        <p class="edition__price">Contact us</p>
+        <h3 id="edition-enterprise" class="h2 edition__name">Enterprise</h3>
+        <p class="edition__price">Pricing not published yet</p>
         <p class="edition__summary">
-          Community, plus support, deployment help, and our roadmap’s governance features as they ship.
+          Community, plus planned support and deployment help, and our roadmap’s governance features as they ship.
         </p>
       </header>
 
       <div class="edition__body">
         <div class="edition__group">
           <h4 class="edition__group-title">Includes</h4>
-          <!-- TODO: confirm offering for "Deployment assistance" and "Support on terms set in your agreement". -->
           <ul class="includes" role="list">
             {
               enterpriseIncludes.map((text) => (
                 <li>
                   <span class="includes__mark" aria-hidden="true">
-                    <Icon name="check" size={16} />
+                    <Icon name="check" size={14} />
                   </span>
+                  <span>{text}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="edition__group edition__group--planned">
+          <!-- TODO: confirm offering for "Deployment assistance" and "Support on terms set in your agreement". -->
+          <h4 class="edition__group-title edition__group-title--planned">
+            <span>Services</span>
+            <Badge>Planned</Badge>
+          </h4>
+          <ul class="planned" role="list">
+            {
+              enterpriseServices.map((text) => (
+                <li>
+                  <span class="planned__mark" aria-hidden="true" />
                   <span>{text}</span>
                 </li>
               ))
@@ -131,49 +153,62 @@ const enterprisePlanned = [
       </div>
 
       <div class="edition__foot">
-        <!-- TODO: real contact address (PLACEHOLDER.contactEmail is mailto:contact@example.com). -->
-        <Button href={PLACEHOLDER.contactEmail} variant="secondary">Contact us</Button>
+        {
+          isPlaceholder(PLACEHOLDER.contactEmail) ? (
+            /* TODO: real contact address (PLACEHOLDER.contactEmail). Becomes the "Contact us" button. */
+            <span class="edition__pending">Contact details coming soon</span>
+          ) : (
+            <Button href={PLACEHOLDER.contactEmail} variant="secondary">
+              Contact us
+            </Button>
+          )
+        }
       </div>
     </article>
   </div>
 </Section>
 
 <style>
+  :global(.section.plans) {
+    padding-bottom: var(--pad-section);
+  }
+  .editions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--card-gap);
+  }
+  @media (min-width: 1024px) {
+    .editions {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
   .edition {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    padding: var(--card-pad);
+    padding: clamp(1.5rem, 1.2rem + 1.2vw, 2.5rem);
     border-radius: var(--radius-lg);
     background: var(--color-surface);
-    box-shadow:
-      0 0 0 1px var(--color-hairline),
-      var(--shadow-card);
+    box-shadow: var(--shadow-card);
   }
 
   /* Head: name, price line, summary. */
   .edition__head {
-    padding-bottom: var(--space-6);
-  }
-  .edition__name {
-    font-size: var(--fs-h2);
-    line-height: var(--lh-h2);
-    letter-spacing: var(--ls-h2);
-    font-weight: var(--fw-h2);
+    padding-bottom: var(--space-8);
   }
   .edition__price {
     margin-top: var(--space-3);
     font-size: var(--fs-h4);
     line-height: var(--lh-h4);
-    font-weight: 500;
-    color: var(--color-text-2);
+    font-weight: var(--fw-medium);
+    color: var(--mist-700);
   }
   .edition__summary {
     margin-top: var(--space-5);
-    max-width: 44ch;
+    max-width: 30rem;
     font-size: var(--fs-lead);
     line-height: var(--lh-lead);
-    color: var(--color-text-2);
+    color: var(--color-text-muted);
   }
 
   /* Body: the groups. It grows to fill the card, so the action always sits at the bottom. */
@@ -185,23 +220,30 @@ const enterprisePlanned = [
   }
   .edition__group {
     padding-top: var(--space-5);
-    border-top: 1px solid var(--color-hairline);
+    border-top: 1px solid var(--color-line);
   }
   .edition__group--end {
     margin-top: auto;
   }
   .edition__group-title {
-    font-size: var(--fs-ui);
-    line-height: var(--lh-ui);
-    font-weight: 600;
-    color: var(--color-text);
     margin-bottom: var(--space-3);
+    font-family: var(--font-sans);
+    font-size: var(--fs-small);
+    line-height: var(--lh-small);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
   }
   .edition__group-title--planned {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-2) var(--space-3);
+  }
+  .edition__group-title--planned :global(.badge) {
+    letter-spacing: 0;
+    text-transform: none;
   }
 
   .includes li,
@@ -213,58 +255,75 @@ const enterprisePlanned = [
     break-inside: avoid;
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    color: var(--color-text-2);
+    color: var(--mist-700);
   }
   .includes__mark {
     flex: none;
     display: inline-grid;
     place-items: center;
-    width: 24px;
-    height: 24px;
-    margin-top: 3px;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
     border-radius: var(--radius-full);
-    color: var(--color-accent);
-    background: color-mix(in srgb, var(--color-accent) 9%, transparent);
+    color: #ffffff;
+    background: var(--navy-950);
+  }
+  .planned li {
+    color: var(--color-text-muted);
   }
   .planned__mark {
     flex: none;
     width: 14px;
     height: 14px;
-    margin: 8px 5px 0;
+    margin: 5px 3px 0;
     border-radius: var(--radius-full);
-    border: 1.5px dashed var(--color-text-3);
+    border: 1.5px dashed var(--mist-500);
   }
   .edition__group--planned {
     border-top-style: dashed;
-    border-top-color: var(--color-hairline-dashed);
+    border-top-color: var(--mist-400);
   }
   .edition__fine {
     margin-top: var(--space-4);
-    font-size: var(--fs-ui);
-    line-height: var(--lh-ui);
-    color: var(--color-text-3);
     max-width: 60ch;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-quiet);
   }
   .edition__text {
     padding-block: var(--space-2);
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    color: var(--color-text-2);
+    color: var(--mist-700);
   }
 
   .edition__foot {
     display: flex;
     align-items: flex-start;
-    padding-top: var(--space-7);
+    padding-top: var(--space-8);
+  }
+  /* The same size as the Download button beside it, clearly not a control: dashed and muted. */
+  .edition__pending {
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    padding-inline: var(--space-5);
+    border: 1px dashed #9aa7c2;
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-medium);
+    white-space: nowrap;
+    color: var(--color-text-muted);
   }
 
   /*
-   * Side by side (960px and up): each card is a subgrid of the three shared rows (head, body,
-   * foot), so the rules under the heads and the two buttons line up across the cards whatever
-   * the text lengths. Without subgrid support the flex column above still works.
+   * Side by side (1024 and up): each card is a subgrid of the three shared rows (head, body, foot),
+   * so the rules under the heads and the two buttons line up across the cards whatever the text
+   * lengths. Without subgrid support the flex column above still works.
    */
   @supports (grid-template-rows: subgrid) {
-    @media (min-width: 960px) {
+    @media (min-width: 1024px) {
       .edition {
         display: grid;
         grid-row: span 3;
@@ -274,12 +333,12 @@ const enterprisePlanned = [
     }
   }
 
-  /* Wide cards (1680px and up): the six-item lists run in two columns. */
-  @media (min-width: 1680px) {
+  /* Wide cards (1280 and up): the six-item lists run in two columns. */
+  @media (min-width: 1280px) {
     .includes--cols,
     .planned {
       columns: 2;
-      column-gap: var(--space-7);
+      column-gap: var(--space-8);
     }
   }
 </style>

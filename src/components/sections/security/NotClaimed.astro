@@ -1,19 +1,22 @@
 ---
 /*
- * Security > What we do not claim (design brief, Security item 5; not in copy.md).
+ * Security > What we do not claim (design brief, Security item 5; not in copy.md). Package C.
  * Restates only the facts of the hero callout (copy.md: Security > Hero > Callout): no government
  * certification or authorization today, and the buyer assesses it as part of their own system.
  * No dates, no named programs, nothing implying an assessment exists or is planned.
- * Same term-beside-definition rhythm as Controls available today.
+ * Rows on mist-300 hairlines; from 1024 the term sits in the left column of the page rail
+ * (5fr | 12fr, 94px gap) beside its 18/28 statement.
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 ---
 
-<Section id="not-claimed" tone="light" labelledby="not-claimed-title">
-  <SectionIntro title="What we do not claim" id="not-claimed-title" />
+<Section id="not-claimed" divider labelledby="not-claimed-title">
+  <div data-reveal>
+    <SectionIntro title="What we do not claim" id="not-claimed-title" />
+  </div>
 
-  <dl class="nc">
+  <dl class="nc" data-reveal="2">
     <div class="nc__row">
       <dt class="h4">Government certification or authorization</dt>
       <dd>None held today.</dd>
@@ -27,28 +30,25 @@ import SectionIntro from "../../ui/SectionIntro.astro";
 
 <style>
   .nc {
-    margin-top: var(--gap-visual);
-    border-bottom: 1px solid var(--color-hairline-strong);
+    margin-top: var(--gap-h2-content);
+    border-bottom: 1px solid var(--color-line);
   }
   .nc__row {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-2) var(--grid-gap);
-    padding-block: var(--space-5);
-    border-top: 1px solid var(--color-hairline-strong);
-  }
-  .nc__row dt {
-    color: var(--color-text);
+    gap: var(--space-2) var(--split-gap);
+    padding-block: var(--space-6);
+    border-top: 1px solid var(--color-line);
   }
   .nc__row dd {
     max-width: var(--measure);
     font-size: var(--fs-lead);
     line-height: var(--lh-lead);
-    color: var(--color-text-2);
+    color: var(--color-text-muted);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 1024px) {
     .nc__row {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      grid-template-columns: minmax(0, 5fr) minmax(0, 12fr);
       align-items: baseline;
     }
   }

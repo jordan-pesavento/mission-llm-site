@@ -1,363 +1,401 @@
 {
-  "chat-sources": {
-    "width": 1920,
-    "height": 1080,
-    "scale": 2,
+  "hero": {
+    "width": 867,
+    "height": 506,
     "variants": [
       {
+        "width": 480,
+        "avif": "/images/product/generated/hero-480.avif",
+        "webp": "/images/product/generated/hero-480.webp"
+      },
+      {
+        "width": 720,
+        "avif": "/images/product/generated/hero-720.avif",
+        "webp": "/images/product/generated/hero-720.webp"
+      },
+      {
+        "width": 867,
+        "avif": "/images/product/generated/hero-867.avif",
+        "webp": "/images/product/generated/hero-867.webp"
+      },
+      {
         "width": 960,
-        "avif": "/images/product/generated/chat-sources-960.avif",
-        "webp": "/images/product/generated/chat-sources-960.webp"
+        "avif": "/images/product/generated/hero-960.avif",
+        "webp": "/images/product/generated/hero-960.webp"
       },
       {
         "width": 1440,
-        "avif": "/images/product/generated/chat-sources-1440.avif",
-        "webp": "/images/product/generated/chat-sources-1440.webp"
+        "avif": "/images/product/generated/hero-1440.avif",
+        "webp": "/images/product/generated/hero-1440.webp"
+      },
+      {
+        "width": 1734,
+        "avif": "/images/product/generated/hero-1734.avif",
+        "webp": "/images/product/generated/hero-1734.webp"
       },
       {
         "width": 1920,
-        "avif": "/images/product/generated/chat-sources-1920.avif",
-        "webp": "/images/product/generated/chat-sources-1920.webp"
+        "avif": "/images/product/generated/hero-1920.avif",
+        "webp": "/images/product/generated/hero-1920.webp"
       },
       {
         "width": 2880,
-        "avif": "/images/product/generated/chat-sources-2880.avif",
-        "webp": "/images/product/generated/chat-sources-2880.webp"
-      },
-      {
-        "width": 3840,
-        "avif": "/images/product/generated/chat-sources-3840.avif",
-        "webp": "/images/product/generated/chat-sources-3840.webp"
+        "avif": "/images/product/generated/hero-2880.avif",
+        "webp": "/images/product/generated/hero-2880.webp"
       }
-    ],
-    "crops": {
-      "sources": {
-        "width": 306,
-        "height": 262,
-        "variants": [
-          {
-            "width": 306,
-            "avif": "/images/product/generated/chat-sources--sources-306.avif",
-            "webp": "/images/product/generated/chat-sources--sources-306.webp"
-          },
-          {
-            "width": 612,
-            "avif": "/images/product/generated/chat-sources--sources-612.avif",
-            "webp": "/images/product/generated/chat-sources--sources-612.webp"
-          }
-        ]
-      },
-      "documents": {
-        "width": 870,
-        "height": 544,
-        "variants": [
-          {
-            "width": 870,
-            "avif": "/images/product/generated/chat-sources--documents-870.avif",
-            "webp": "/images/product/generated/chat-sources--documents-870.webp"
-          },
-          {
-            "width": 1740,
-            "avif": "/images/product/generated/chat-sources--documents-1740.avif",
-            "webp": "/images/product/generated/chat-sources--documents-1740.webp"
-          }
-        ]
-      }
-    }
+    ]
   },
-  "chat-cite": {
-    "width": 1920,
-    "height": 1080,
-    "scale": 2,
-    "variants": [],
-    "crops": {
-      "answer": {
-        "width": 752,
-        "height": 612,
-        "variants": [
-          {
-            "width": 752,
-            "avif": "/images/product/generated/chat-cite--answer-752.avif",
-            "webp": "/images/product/generated/chat-cite--answer-752.webp"
-          },
-          {
-            "width": 1504,
-            "avif": "/images/product/generated/chat-cite--answer-1504.avif",
-            "webp": "/images/product/generated/chat-cite--answer-1504.webp"
-          }
-        ]
-      },
-      "popover": {
-        "width": 398,
-        "height": 216,
-        "variants": [
-          {
-            "width": 398,
-            "avif": "/images/product/generated/chat-cite--popover-398.avif",
-            "webp": "/images/product/generated/chat-cite--popover-398.webp"
-          },
-          {
-            "width": 796,
-            "avif": "/images/product/generated/chat-cite--popover-796.avif",
-            "webp": "/images/product/generated/chat-cite--popover-796.webp"
-          }
-        ]
-      }
-    }
-  },
-  "chat-empty": {
-    "width": 1920,
-    "height": 1080,
-    "scale": 2,
-    "variants": [],
-    "crops": {
-      "start": {
-        "width": 728,
-        "height": 400,
-        "variants": [
-          {
-            "width": 728,
-            "avif": "/images/product/generated/chat-empty--start-728.avif",
-            "webp": "/images/product/generated/chat-empty--start-728.webp"
-          },
-          {
-            "width": 1456,
-            "avif": "/images/product/generated/chat-empty--start-1456.avif",
-            "webp": "/images/product/generated/chat-empty--start-1456.webp"
-          }
-        ]
-      }
-    }
-  },
-  "chat-frame": {
-    "width": 1920,
-    "height": 1080,
-    "scale": 2,
-    "variants": [],
-    "crops": {
-      "workspaces": {
-        "width": 1200,
-        "height": 750,
-        "variants": [
-          {
-            "width": 1200,
-            "avif": "/images/product/generated/chat-frame--workspaces-1200.avif",
-            "webp": "/images/product/generated/chat-frame--workspaces-1200.webp"
-          },
-          {
-            "width": 2400,
-            "avif": "/images/product/generated/chat-frame--workspaces-2400.avif",
-            "webp": "/images/product/generated/chat-frame--workspaces-2400.webp"
-          }
-        ]
-      },
-      "rail": {
-        "width": 287,
-        "height": 488,
-        "variants": [
-          {
-            "width": 287,
-            "avif": "/images/product/generated/chat-frame--rail-287.avif",
-            "webp": "/images/product/generated/chat-frame--rail-287.webp"
-          },
-          {
-            "width": 574,
-            "avif": "/images/product/generated/chat-frame--rail-574.avif",
-            "webp": "/images/product/generated/chat-frame--rail-574.webp"
-          }
-        ]
-      }
-    }
-  },
-  "chat-sources-phone": {
-    "width": 420,
-    "height": 426,
-    "scale": 3,
+  "feature-documents": {
+    "width": 714,
+    "height": 417,
     "variants": [
       {
-        "width": 420,
-        "avif": "/images/product/generated/chat-sources-phone-420.avif",
-        "webp": "/images/product/generated/chat-sources-phone-420.webp"
+        "width": 480,
+        "avif": "/images/product/generated/feature-documents-480.avif",
+        "webp": "/images/product/generated/feature-documents-480.webp"
       },
       {
-        "width": 840,
-        "avif": "/images/product/generated/chat-sources-phone-840.avif",
-        "webp": "/images/product/generated/chat-sources-phone-840.webp"
+        "width": 714,
+        "avif": "/images/product/generated/feature-documents-714.avif",
+        "webp": "/images/product/generated/feature-documents-714.webp"
       },
       {
-        "width": 1260,
-        "avif": "/images/product/generated/chat-sources-phone-1260.avif",
-        "webp": "/images/product/generated/chat-sources-phone-1260.webp"
-      }
-    ],
-    "crops": {}
-  },
-  "agent-run": {
-    "width": 1200,
-    "height": 750,
-    "scale": 2,
-    "variants": [
+        "width": 720,
+        "avif": "/images/product/generated/feature-documents-720.avif",
+        "webp": "/images/product/generated/feature-documents-720.webp"
+      },
       {
         "width": 960,
-        "avif": "/images/product/generated/agent-run-960.avif",
-        "webp": "/images/product/generated/agent-run-960.webp"
+        "avif": "/images/product/generated/feature-documents-960.avif",
+        "webp": "/images/product/generated/feature-documents-960.webp"
       },
       {
-        "width": 1200,
-        "avif": "/images/product/generated/agent-run-1200.avif",
-        "webp": "/images/product/generated/agent-run-1200.webp"
+        "width": 1428,
+        "avif": "/images/product/generated/feature-documents-1428.avif",
+        "webp": "/images/product/generated/feature-documents-1428.webp"
       },
       {
         "width": 1440,
-        "avif": "/images/product/generated/agent-run-1440.avif",
-        "webp": "/images/product/generated/agent-run-1440.webp"
+        "avif": "/images/product/generated/feature-documents-1440.avif",
+        "webp": "/images/product/generated/feature-documents-1440.webp"
       },
       {
         "width": 1920,
-        "avif": "/images/product/generated/agent-run-1920.avif",
-        "webp": "/images/product/generated/agent-run-1920.webp"
+        "avif": "/images/product/generated/feature-documents-1920.avif",
+        "webp": "/images/product/generated/feature-documents-1920.webp"
       },
       {
-        "width": 2400,
-        "avif": "/images/product/generated/agent-run-2400.avif",
-        "webp": "/images/product/generated/agent-run-2400.webp"
+        "width": 2880,
+        "avif": "/images/product/generated/feature-documents-2880.avif",
+        "webp": "/images/product/generated/feature-documents-2880.webp"
       }
-    ],
-    "crops": {}
+    ]
   },
-  "agent-run-phone": {
-    "width": 420,
-    "height": 289,
-    "scale": 3,
+  "feature-agents": {
+    "width": 714,
+    "height": 417,
     "variants": [
       {
-        "width": 420,
-        "avif": "/images/product/generated/agent-run-phone-420.avif",
-        "webp": "/images/product/generated/agent-run-phone-420.webp"
+        "width": 480,
+        "avif": "/images/product/generated/feature-agents-480.avif",
+        "webp": "/images/product/generated/feature-agents-480.webp"
       },
       {
-        "width": 840,
-        "avif": "/images/product/generated/agent-run-phone-840.avif",
-        "webp": "/images/product/generated/agent-run-phone-840.webp"
+        "width": 714,
+        "avif": "/images/product/generated/feature-agents-714.avif",
+        "webp": "/images/product/generated/feature-agents-714.webp"
       },
       {
-        "width": 1260,
-        "avif": "/images/product/generated/agent-run-phone-1260.avif",
-        "webp": "/images/product/generated/agent-run-phone-1260.webp"
-      }
-    ],
-    "crops": {}
-  },
-  "admin-users": {
-    "width": 1200,
-    "height": 750,
-    "scale": 2,
-    "variants": [
+        "width": 720,
+        "avif": "/images/product/generated/feature-agents-720.avif",
+        "webp": "/images/product/generated/feature-agents-720.webp"
+      },
       {
         "width": 960,
-        "avif": "/images/product/generated/admin-users-960.avif",
-        "webp": "/images/product/generated/admin-users-960.webp"
+        "avif": "/images/product/generated/feature-agents-960.avif",
+        "webp": "/images/product/generated/feature-agents-960.webp"
       },
       {
-        "width": 1200,
-        "avif": "/images/product/generated/admin-users-1200.avif",
-        "webp": "/images/product/generated/admin-users-1200.webp"
+        "width": 1428,
+        "avif": "/images/product/generated/feature-agents-1428.avif",
+        "webp": "/images/product/generated/feature-agents-1428.webp"
       },
       {
         "width": 1440,
-        "avif": "/images/product/generated/admin-users-1440.avif",
-        "webp": "/images/product/generated/admin-users-1440.webp"
+        "avif": "/images/product/generated/feature-agents-1440.avif",
+        "webp": "/images/product/generated/feature-agents-1440.webp"
       },
       {
         "width": 1920,
-        "avif": "/images/product/generated/admin-users-1920.avif",
-        "webp": "/images/product/generated/admin-users-1920.webp"
+        "avif": "/images/product/generated/feature-agents-1920.avif",
+        "webp": "/images/product/generated/feature-agents-1920.webp"
       },
       {
-        "width": 2400,
-        "avif": "/images/product/generated/admin-users-2400.avif",
-        "webp": "/images/product/generated/admin-users-2400.webp"
+        "width": 2880,
+        "avif": "/images/product/generated/feature-agents-2880.avif",
+        "webp": "/images/product/generated/feature-agents-2880.webp"
       }
-    ],
-    "crops": {}
+    ]
   },
-  "admin-users-phone": {
-    "width": 420,
-    "height": 332,
-    "scale": 3,
+  "feature-models": {
+    "width": 714,
+    "height": 417,
     "variants": [
       {
-        "width": 420,
-        "avif": "/images/product/generated/admin-users-phone-420.avif",
-        "webp": "/images/product/generated/admin-users-phone-420.webp"
+        "width": 480,
+        "avif": "/images/product/generated/feature-models-480.avif",
+        "webp": "/images/product/generated/feature-models-480.webp"
       },
       {
-        "width": 840,
-        "avif": "/images/product/generated/admin-users-phone-840.avif",
-        "webp": "/images/product/generated/admin-users-phone-840.webp"
+        "width": 714,
+        "avif": "/images/product/generated/feature-models-714.avif",
+        "webp": "/images/product/generated/feature-models-714.webp"
       },
       {
-        "width": 1260,
-        "avif": "/images/product/generated/admin-users-phone-1260.avif",
-        "webp": "/images/product/generated/admin-users-phone-1260.webp"
-      }
-    ],
-    "crops": {}
-  },
-  "workspace-model": {
-    "width": 1200,
-    "height": 750,
-    "scale": 2,
-    "variants": [
+        "width": 720,
+        "avif": "/images/product/generated/feature-models-720.avif",
+        "webp": "/images/product/generated/feature-models-720.webp"
+      },
       {
         "width": 960,
-        "avif": "/images/product/generated/workspace-model-960.avif",
-        "webp": "/images/product/generated/workspace-model-960.webp"
+        "avif": "/images/product/generated/feature-models-960.avif",
+        "webp": "/images/product/generated/feature-models-960.webp"
       },
       {
-        "width": 1200,
-        "avif": "/images/product/generated/workspace-model-1200.avif",
-        "webp": "/images/product/generated/workspace-model-1200.webp"
+        "width": 1428,
+        "avif": "/images/product/generated/feature-models-1428.avif",
+        "webp": "/images/product/generated/feature-models-1428.webp"
       },
       {
         "width": 1440,
-        "avif": "/images/product/generated/workspace-model-1440.avif",
-        "webp": "/images/product/generated/workspace-model-1440.webp"
+        "avif": "/images/product/generated/feature-models-1440.avif",
+        "webp": "/images/product/generated/feature-models-1440.webp"
       },
       {
         "width": 1920,
-        "avif": "/images/product/generated/workspace-model-1920.avif",
-        "webp": "/images/product/generated/workspace-model-1920.webp"
+        "avif": "/images/product/generated/feature-models-1920.avif",
+        "webp": "/images/product/generated/feature-models-1920.webp"
       },
       {
-        "width": 2400,
-        "avif": "/images/product/generated/workspace-model-2400.avif",
-        "webp": "/images/product/generated/workspace-model-2400.webp"
+        "width": 2880,
+        "avif": "/images/product/generated/feature-models-2880.avif",
+        "webp": "/images/product/generated/feature-models-2880.webp"
       }
-    ],
-    "crops": {}
+    ]
   },
-  "workspace-model-phone": {
-    "width": 420,
-    "height": 549,
-    "scale": 3,
+  "feature-workspaces": {
+    "width": 714,
+    "height": 417,
     "variants": [
       {
-        "width": 420,
-        "avif": "/images/product/generated/workspace-model-phone-420.avif",
-        "webp": "/images/product/generated/workspace-model-phone-420.webp"
+        "width": 480,
+        "avif": "/images/product/generated/feature-workspaces-480.avif",
+        "webp": "/images/product/generated/feature-workspaces-480.webp"
       },
       {
-        "width": 840,
-        "avif": "/images/product/generated/workspace-model-phone-840.avif",
-        "webp": "/images/product/generated/workspace-model-phone-840.webp"
+        "width": 714,
+        "avif": "/images/product/generated/feature-workspaces-714.avif",
+        "webp": "/images/product/generated/feature-workspaces-714.webp"
       },
       {
-        "width": 1260,
-        "avif": "/images/product/generated/workspace-model-phone-1260.avif",
-        "webp": "/images/product/generated/workspace-model-phone-1260.webp"
+        "width": 720,
+        "avif": "/images/product/generated/feature-workspaces-720.avif",
+        "webp": "/images/product/generated/feature-workspaces-720.webp"
+      },
+      {
+        "width": 960,
+        "avif": "/images/product/generated/feature-workspaces-960.avif",
+        "webp": "/images/product/generated/feature-workspaces-960.webp"
+      },
+      {
+        "width": 1428,
+        "avif": "/images/product/generated/feature-workspaces-1428.avif",
+        "webp": "/images/product/generated/feature-workspaces-1428.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/feature-workspaces-1440.avif",
+        "webp": "/images/product/generated/feature-workspaces-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/feature-workspaces-1920.avif",
+        "webp": "/images/product/generated/feature-workspaces-1920.webp"
+      },
+      {
+        "width": 2880,
+        "avif": "/images/product/generated/feature-workspaces-2880.avif",
+        "webp": "/images/product/generated/feature-workspaces-2880.webp"
       }
-    ],
-    "crops": {}
+    ]
+  },
+  "feature-users": {
+    "width": 714,
+    "height": 417,
+    "variants": [
+      {
+        "width": 480,
+        "avif": "/images/product/generated/feature-users-480.avif",
+        "webp": "/images/product/generated/feature-users-480.webp"
+      },
+      {
+        "width": 714,
+        "avif": "/images/product/generated/feature-users-714.avif",
+        "webp": "/images/product/generated/feature-users-714.webp"
+      },
+      {
+        "width": 720,
+        "avif": "/images/product/generated/feature-users-720.avif",
+        "webp": "/images/product/generated/feature-users-720.webp"
+      },
+      {
+        "width": 960,
+        "avif": "/images/product/generated/feature-users-960.avif",
+        "webp": "/images/product/generated/feature-users-960.webp"
+      },
+      {
+        "width": 1428,
+        "avif": "/images/product/generated/feature-users-1428.avif",
+        "webp": "/images/product/generated/feature-users-1428.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/feature-users-1440.avif",
+        "webp": "/images/product/generated/feature-users-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/feature-users-1920.avif",
+        "webp": "/images/product/generated/feature-users-1920.webp"
+      },
+      {
+        "width": 2880,
+        "avif": "/images/product/generated/feature-users-2880.avif",
+        "webp": "/images/product/generated/feature-users-2880.webp"
+      }
+    ]
+  },
+  "grounded": {
+    "width": 714,
+    "height": 417,
+    "variants": [
+      {
+        "width": 480,
+        "avif": "/images/product/generated/grounded-480.avif",
+        "webp": "/images/product/generated/grounded-480.webp"
+      },
+      {
+        "width": 714,
+        "avif": "/images/product/generated/grounded-714.avif",
+        "webp": "/images/product/generated/grounded-714.webp"
+      },
+      {
+        "width": 720,
+        "avif": "/images/product/generated/grounded-720.avif",
+        "webp": "/images/product/generated/grounded-720.webp"
+      },
+      {
+        "width": 960,
+        "avif": "/images/product/generated/grounded-960.avif",
+        "webp": "/images/product/generated/grounded-960.webp"
+      },
+      {
+        "width": 1428,
+        "avif": "/images/product/generated/grounded-1428.avif",
+        "webp": "/images/product/generated/grounded-1428.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/grounded-1440.avif",
+        "webp": "/images/product/generated/grounded-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/grounded-1920.avif",
+        "webp": "/images/product/generated/grounded-1920.webp"
+      },
+      {
+        "width": 2880,
+        "avif": "/images/product/generated/grounded-2880.avif",
+        "webp": "/images/product/generated/grounded-2880.webp"
+      }
+    ]
+  },
+  "security": {
+    "width": 714,
+    "height": 417,
+    "variants": [
+      {
+        "width": 480,
+        "avif": "/images/product/generated/security-480.avif",
+        "webp": "/images/product/generated/security-480.webp"
+      },
+      {
+        "width": 714,
+        "avif": "/images/product/generated/security-714.avif",
+        "webp": "/images/product/generated/security-714.webp"
+      },
+      {
+        "width": 720,
+        "avif": "/images/product/generated/security-720.avif",
+        "webp": "/images/product/generated/security-720.webp"
+      },
+      {
+        "width": 960,
+        "avif": "/images/product/generated/security-960.avif",
+        "webp": "/images/product/generated/security-960.webp"
+      },
+      {
+        "width": 1428,
+        "avif": "/images/product/generated/security-1428.avif",
+        "webp": "/images/product/generated/security-1428.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/security-1440.avif",
+        "webp": "/images/product/generated/security-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/security-1920.avif",
+        "webp": "/images/product/generated/security-1920.webp"
+      },
+      {
+        "width": 2880,
+        "avif": "/images/product/generated/security-2880.avif",
+        "webp": "/images/product/generated/security-2880.webp"
+      }
+    ]
+  },
+  "deploy": {
+    "width": 714,
+    "height": 416,
+    "variants": [
+      {
+        "width": 480,
+        "avif": "/images/product/generated/deploy-480.avif",
+        "webp": "/images/product/generated/deploy-480.webp"
+      },
+      {
+        "width": 714,
+        "avif": "/images/product/generated/deploy-714.avif",
+        "webp": "/images/product/generated/deploy-714.webp"
+      },
+      {
+        "width": 720,
+        "avif": "/images/product/generated/deploy-720.avif",
+        "webp": "/images/product/generated/deploy-720.webp"
+      },
+      {
+        "width": 960,
+        "avif": "/images/product/generated/deploy-960.avif",
+        "webp": "/images/product/generated/deploy-960.webp"
+      },
+      {
+        "width": 1428,
+        "avif": "/images/product/generated/deploy-1428.avif",
+        "webp": "/images/product/generated/deploy-1428.webp"
+      }
+    ]
   }
 }

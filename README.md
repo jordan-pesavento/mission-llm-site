@@ -10,30 +10,37 @@ Set `npm_config_cache=D:/DevCache/npm` for every npm command.
 
 | Command | What it does |
 | --- | --- |
-| `npm run build` | Generates image variants, builds `dist/`, then removes the raw PNGs and `/kit` from `dist/` (`scripts/prune-dist.mjs`) |
-| `npm run images` | Regenerates AVIF/WebP variants, phone crops and icons only |
+| `npm run build` | Generates image variants, builds `dist/`, then removes the raw PNGs from `dist/` (`scripts/prune-dist.mjs`) |
+| `npm run images` | Regenerates the AVIF/WebP product image variants and the touch icons only |
 | `npm run check:copy` | Scans `dist/` for em dashes, emojis, certification or affiliation claims, wrong Download links, and lists TODO placeholder links and "Soon" entries |
 
-A local static server already serves `dist/` at http://127.0.0.1:8766/. Verify with the render tool (`scratchpad/tools/render.cjs <url> <out-dir> 390x844,768x1024,1280x800,1440x900,1920x1080,2560x1440 --full`) and read the PNGs.
+A local static server serves `dist/` at http://127.0.0.1:8791/. Verify with the render tool (`scratchpad/tools/render.cjs <url> <out-dir> 390x844,768x1024,1280x800,1440x900,1920x1080,2560x1440 --full`) and read the PNGs.
+
+## Site v2 design
+
+The site is a one-to-one layout match of anythingllm.com (reference captures and computed styles in `D:/DevCache/claude-work/site-ref/`, brief in `REPLICATE-BRIEF.md` there), with Mission LLM branding, product and honest content.
+
+- Fonts, self-hosted: Clash Display 400/500/600 (headings; ITF Free Font License, unmodified official woff2 files in `public/fonts/clash-display/` with `FFL.txt`), Plus Jakarta Sans 400/500/600/700 (body) and JetBrains Mono 400 (code), both SIL OFL via `@fontsource`.
+- Palette: the reference's Tailwind slate relationships tinted to the Mission navy (hue 265). Page `#F8FAFC`, headings `#0B1430`, buttons, header Download block, dark bands and footer `#070F26`, one accent `#2B63E0`.
 
 ## Layout
 
-- `src/styles/tokens.css`: every color, type, space, grid, radius, shadow and motion token, plus the tone remaps (`data-tone="light" | "silver" | "dark"`).
-- `src/styles/global.css`: reset, type utilities (`.display .h2 .h3 .h4 .lead .body .caption .legal .eyebrow`), grids (`.layout-grid`, `.card-grid`, `.split-grid`), `.data-table` (+ `--stack`), `.dl-grid`, `.note`, `.sr-only`, reveal motion.
+- `src/styles/tokens.css`: palette, type scale, spacing rhythm, section padding, layout widths, radii, shadows and motion, plus the dark tone remap (`data-tone="dark"`). Its last block holds v1 token aliases used only by the v1 /download, /security and /editions sections until they are restyled.
+- `src/styles/global.css`: reset, type utilities (`.h1 .h2 .h2-lg .h2-cta .h3 .h4 .eyebrow .label .lead .body .body-relaxed .small`), `.container`, `.split` (`--hero`, `--feature`, `--band`), `.dot-list`, `.divider-dotted`, `.data-table`, `.dl-grid`, `.note`, reveal motion. `src/styles/fonts.css`: Clash Display faces.
 - `src/layouts/Base.astro`: head, fonts, icons, skip link, header, footer, reveal script.
-- `src/components/ui/`: `Section`, `Container`, `SectionIntro`, `Button`, `ArrowLink`, `Badge`, `Icon`, `Screenshot`, `CodeBlock`. Each file's header comment is its API.
-- `src/scripts/tabs.ts` (accessible tabs) and `src/scripts/copy.ts` (copy button).
-- `src/data/site.ts`: nav, footer, verified counts, placeholders, page meta. `src/data/images.generated.json` is written by `npm run images`.
-- `src/content/copy.md`: the approved copy and its evidence table. Text on the site comes from here.
-- `src/components/sections/<page>/`: one component per section. `src/pages/*.astro` compose them.
-- `public/images/product/*.png`: placeholder concept renders at 2x (phone details at 3x), with a neutral placeholder account. Keep the filenames. Frame sizes, crops (tour views and phone details) and output widths live in `scripts/image-sources.mjs`. The PNGs never ship; only the AVIF and WebP variants in `generated/` do. Re-render with `scratchpad/site/render-concepts.cjs` (the agent run, Users and workspace model screens are website concepts in `scratchpad/site/concepts/`).
-- `public/og/mission-llm.png`: 1200x630 share image, emitted as og:image once `SITE.origin` is set. `public/robots.txt` allows everything; add the sitemap line with the domain.
-- `src/pages/kit.astro`: primitives reference at `/kit` (noindex), available in `astro dev` only; the build removes it from `dist/`.
+- `src/components/Header.astro` and `Footer.astro`: the reference's header (full-height dark Download block, mobile menu panel) and footer (four columns, fine print, full-width wordmark).
+- `src/components/ui/`: `Container`, `Section` (pads: hero, stats, feature, band, band-sm, section, cta), `DarkBand`, `SectionIntro`, `Eyebrow`, `Button` (primary, secondary, quiet), `ArrowLink` (strong, underline), `Screenshot` (radius 16, always shown whole), `FeatureAccordion` (accordion that swaps the screenshot), `Badge`, `CodeBlock` (scrolls from 640, wraps with a hanging indent on phones, copies the exact source), `Icon` (regular, bold or fill). Each file's header comment is its API.
+- `src/components/sections/home/`: one component per home section, in the reference order (see `src/pages/index.astro`). `Works` stands in for the reference's partner-logo strip: plain-type names of the local runtimes and deployment targets it works with, never logos. From 1024 the two feature sections and the grounded band are 800px tall (`.section--h800`), as the reference's.
+- `src/data/site.ts`: nav, footer, verified counts, placeholders, page meta. `src/content/copy.md`: v1 copy and the evidence table (facts only; v2 headings are rewritten in the reference's voice).
+- `public/images/product/*.png`: neutral placeholder frames at 2x the reference sizes (`hero` 867x506, the others 714x416), to be replaced by real captures of the redesigned app under the same names. `scripts/image-sources.mjs` lists them; `npm run images` makes the AVIF and WebP variants. The PNGs never ship.
 
 ## Rules that are easy to break
 
-- Only capabilities in the Mission LLM code today. Roadmap items only under an "In development" label (`<Badge />`).
+- Only capabilities in the Mission LLM code today. Roadmap items only under an "In development" label (`<Badge />`); unconfirmed Enterprise services under "Planned".
+- The evidence in `src/content/copy.md` points at the `JP/local-stack` branch of `D:/OB Vault/mission-llm` (the rename, the upgrade shims `7efcf6b9`, the Helm chart paths). Merge it to `master` before publishing. The `SERVER_HOST` / `COLLECTOR_HOST` loopback option (`c590dee0`) is listed under "In development" on /security until it is on `master`; the home page's loopback item is the Docker port binding, which works with every release.
 - No customers, logos, testimonials, counts, awards or certifications. No DoD or Space Force marks.
-- Every product screenshot carries the concept caption (the `Screenshot` default).
-- Every Download button points to `/download`. Placeholders (`REGISTRY`, `example.com`, `#`) stay marked TODO. Nav and footer entries whose href is `#` render as "Soon" text, not links (`isPlaceholder` in `src/data/site.ts`).
-- No em dashes or emojis. Body text 18px minimum, nothing under 14px.
+- Product images show only features the product has (no passage viewer popping up on the right).
+- Every Download button points to `/download`. Placeholders (`REGISTRY`, `REPOSITORY_URL`, `#`) stay marked TODO; no `example.com` address is shown. Nav and footer list only destinations that exist (Docs, Documentation, Security policy, Source code, Licenses and notices and Contact us are TODO comments in `src/data/site.ts` until they do); an entry whose href is `#` would render as "Soon" text (`isPlaceholder`).
+- No standalone "AI" or "I" in Clash Display headings: its capital I and lowercase l are one glyph, so "AI" reads "Al".
+- No em dashes or emojis. Reading text 16px minimum; 14px only for labels that are not sentences (stat labels, dates, footer titles, legal lines).
+- No generic AI kit: no glows, glass, gradient text, sparkles or starfields. The emblem is the only gradient.

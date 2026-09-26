@@ -1,19 +1,23 @@
 ---
 /*
- * Editions > Comparison (copy.md). Work package B.
- * A real table with text labels (Included, Not included, In development, Self-supported,
- * By agreement); a check only reinforces "Included", and "Not included" is muted text. "In development" uses <Badge />, the site's one
- * roadmap marker. Rows are grouped (shipping today, service, planned) with a stronger rule.
- * - From 640px: a table; the header row sticks under the 72px site header while you scroll.
- * - From 1280px: title in columns 1 to 3 (sticky beside the table), table in columns 4 to 12.
- * - Below 640px: .data-table--stack blocks; each capability shows its two values side by side.
+ * Editions > Comparison (copy.md, verbatim). Package C.
+ * A real table with text labels (Included, Not included, In development, Planned, Self-supported); a
+ * check only reinforces "Included", and "Not included" is muted text. "In development" uses <Badge />,
+ * the site's one roadmap marker; "Planned" uses the same badge with its own word, for the Enterprise
+ * services the owner has not confirmed yet (copy.md: TODO confirm offering; copy.md has "By
+ * agreement" and "Included" there). Rows are grouped (shipping today, service, planned).
+ * - Heading rail (../download/_Rail.astro): from 1024 the title sticks in the left column
+ *   (5fr | 12fr, 94px gap) beside the table.
+ * - From 640: a table; the header row (the reference's 14/20 uppercase label) sticks under the site
+ *   header while you scroll.
+ * - Below 640: .data-table--stack blocks; each capability shows its two values side by side.
  */
 import Section from "../../ui/Section.astro";
-import SectionIntro from "../../ui/SectionIntro.astro";
 import Badge from "../../ui/Badge.astro";
 import Icon from "../../ui/Icon.astro";
+import Rail from "../download/_Rail.astro";
 
-type Value = "Included" | "Not included" | "In development" | "Self-supported" | "By agreement";
+type Value = "Included" | "Not included" | "In development" | "Planned" | "Self-supported";
 type Row = { capability: string; community: Value; enterprise: Value };
 
 const groups: Row[][] = [
@@ -26,8 +30,9 @@ const groups: Row[][] = [
     { capability: "Developer API and API keys", community: "Included", enterprise: "Included" },
   ],
   [
-    { capability: "Support", community: "Self-supported", enterprise: "By agreement" },
-    { capability: "Deployment assistance", community: "Not included", enterprise: "Included" },
+    // TODO: confirm offering. copy.md: Enterprise "By agreement" and "Included".
+    { capability: "Support", community: "Self-supported", enterprise: "Planned" },
+    { capability: "Deployment assistance", community: "Not included", enterprise: "Planned" },
   ],
   [
     { capability: "SSO, SCIM and smart card sign-in", community: "Not included", enterprise: "In development" },
@@ -39,81 +44,61 @@ const groups: Row[][] = [
 ];
 
 // Only "Included" carries a mark. "Not included" is muted text with no glyph (a minus reads as a dash).
-const ICON: Partial<Record<Value, string>> = { Included: "check" };
 const KIND: Record<Value, string> = {
   Included: "yes",
   "Not included": "no",
   "In development": "dev",
+  Planned: "dev",
   "Self-supported": "text",
-  "By agreement": "text",
 };
 ---
 
-<Section id="compare" tone="light" hairline labelledby="compare-title">
-  <div class="layout-grid compare">
-    <div class="compare__intro" data-reveal>
-      <SectionIntro title="Comparison" id="compare-title" />
-    </div>
-
-    <div class="compare__table" data-reveal="2">
-      <table class="data-table data-table--stack cmp">
-        <caption class="sr-only">Community and Enterprise capabilities</caption>
-        <thead>
-          <tr>
-            <th scope="col">Capability</th>
-            <th scope="col">Community</th>
-            <th scope="col">Enterprise</th>
-          </tr>
-        </thead>
-        {
-          groups.map((rows) => (
-            <tbody>
-              {rows.map((row) => (
-                <tr>
-                  <th scope="row">{row.capability}</th>
-                  {(["community", "enterprise"] as const).map((col) => {
-                    const value = row[col];
-                    return (
-                      <td data-label={col === "community" ? "Community" : "Enterprise"}>
-                        {value === "In development" ? (
-                          <Badge />
-                        ) : (
-                          <span class:list={["status", `status--${KIND[value]}`]}>
-                            <span class="status__icon" aria-hidden="true">
-                              {ICON[value] && <Icon name={ICON[value]!} size={16} />}
-                            </span>
-                            <span>{value}</span>
+<Section id="compare" divider labelledby="compare-title">
+  <Rail title="Comparison" id="compare-title" sticky>
+    <table class="data-table data-table--stack cmp">
+      <caption class="sr-only">Community and Enterprise capabilities</caption>
+      <thead>
+        <tr>
+          <th scope="col">Capability</th>
+          <th scope="col">Community</th>
+          <th scope="col">Enterprise</th>
+        </tr>
+      </thead>
+      {
+        groups.map((rows) => (
+          <tbody>
+            {rows.map((row) => (
+              <tr>
+                <th scope="row">{row.capability}</th>
+                {(["community", "enterprise"] as const).map((col) => {
+                  const value = row[col];
+                  return (
+                    <td data-label={col === "community" ? "Community" : "Enterprise"}>
+                      {value === "In development" ? (
+                        <Badge />
+                      ) : value === "Planned" ? (
+                        <Badge>Planned</Badge>
+                      ) : (
+                        <span class:list={["status", `status--${KIND[value]}`]}>
+                          <span class="status__icon" aria-hidden="true">
+                            {value === "Included" && <Icon name="check" size={14} />}
                           </span>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          ))
-        }
-      </table>
-    </div>
-  </div>
+                          <span>{value}</span>
+                        </span>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        ))
+      }
+    </table>
+  </Rail>
 </Section>
 
 <style>
-  .compare {
-    row-gap: var(--gap-visual);
-  }
-  @media (min-width: 1280px) {
-    .compare__intro {
-      grid-column: 1 / span 3;
-      position: sticky;
-      top: calc(var(--header-h) + var(--space-4));
-      align-self: start;
-    }
-    .compare__table {
-      grid-column: 4 / -1;
-    }
-  }
-
   /* Separate borders: with collapsed borders Chrome let row text paint over the stuck header row. */
   .cmp {
     table-layout: fixed;
@@ -125,69 +110,63 @@ const KIND: Record<Value, string> = {
     vertical-align: middle;
   }
   .cmp thead th:first-child {
-    width: 40%;
-  }
-  @media (min-width: 960px) {
-    .cmp thead th:first-child {
-      width: 46%;
-    }
+    width: 44%;
   }
   .cmp tbody th {
-    font-weight: 500;
+    font-weight: var(--fw-medium);
   }
-  /* Stronger rule between groups (shipping today, service, planned), drawn as the last row's
-     bottom edge. */
+  /* A stronger rule between groups (shipping today, service, planned). */
   .cmp tbody:not(:last-child) tr:last-child > * {
-    border-bottom-color: var(--color-hairline-strong);
+    border-bottom-color: var(--mist-400);
   }
 
   .status {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    min-height: 30px;
+    min-height: 28px;
     white-space: nowrap;
-    font-weight: 500;
+    font-weight: var(--fw-medium);
   }
   .status__icon {
     flex: none;
     display: inline-grid;
     place-items: center;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     border-radius: var(--radius-full);
   }
   .status--yes {
-    color: var(--color-text);
+    color: var(--color-heading);
   }
   .status--yes .status__icon {
-    color: var(--color-accent);
-    background: color-mix(in srgb, var(--color-accent) 9%, transparent);
+    color: #ffffff;
+    background: var(--navy-950);
   }
   .status--no {
-    color: var(--color-text-3);
-  }
-  .status--no .status__icon {
-    color: var(--color-text-3);
+    color: var(--color-text-quiet);
   }
   .status--text {
-    color: var(--color-text);
+    color: var(--color-heading);
   }
-  /* Text-only values keep the empty icon column so their words line up with the rows above. */
 
-  /* Table form (640px and up): sticky header row under the 72px site header. */
+  /* Table form (640 and up): the header row sticks under the site header. */
   @media (min-width: 640px) {
     .cmp thead th {
       position: sticky;
-      top: var(--header-h);
+      top: calc(var(--header-h) + 1px);
       z-index: 2;
       padding-top: var(--space-4);
-      background: var(--color-page);
+      padding-bottom: var(--space-3);
+      background: var(--color-bg);
       border-bottom: 0;
-      /* The upward page-colored shadow covers row text passing under the site header's hairline. */
-      box-shadow:
-        inset 0 -1px 0 var(--color-hairline-strong),
-        0 -6px 0 var(--color-page);
+      box-shadow: inset 0 -1px 0 var(--mist-400);
+      font-size: var(--fs-small);
+      line-height: var(--lh-small);
+      font-weight: var(--fw-medium);
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      color: var(--color-text-muted);
     }
     .cmp th,
     .cmp td {
@@ -204,19 +183,21 @@ const KIND: Record<Value, string> = {
     }
     .cmp tbody th {
       grid-column: 1 / -1;
-      font-weight: 600;
+      font-weight: var(--fw-semibold);
     }
     .cmp tbody td {
       margin-top: var(--space-2);
     }
     .cmp tbody td[data-label]::before {
-      font-size: var(--fs-ui);
-      font-weight: 500;
       margin-bottom: var(--space-1);
     }
-    /* Each group's first row already carries the strong top rule (global stack style). */
     .cmp tbody:not(:last-child) tr:last-child {
-      border-bottom: 0;
+      border-bottom-color: var(--mist-400);
+    }
+    /* Values without a mark start at the label's edge, like the rest. */
+    .status--no .status__icon,
+    .status--text .status__icon {
+      display: none;
     }
   }
 </style>

@@ -1,22 +1,25 @@
 ---
 /*
- * Editions > Questions (copy.md). Work package B. Silver band before the dark footer.
- * Every answer is visible (no accordion, nothing depends on JS). From 1280px the title sits in
- * columns 1 to 3 and the questions in columns 4 to 12, matching the Comparison section above.
- * From 960px each hairline row puts the question (5 parts) beside its answer (7 parts).
+ * Editions > Questions (copy.md, verbatim except two questions reworded without a standalone "I":
+ * Clash Display draws capital I and lowercase l as one glyph, so "Do I" reads "Do l"). Package C.
+ * The last section before the dark footer.
+ * Every answer is visible (no accordion, nothing depends on JS), but the rows read like the
+ * reference's accordion: Clash Display 400 18/24 questions on mist-300 hairlines, 16/24 answers.
+ * Heading rail (../download/_Rail.astro): from 1024 the title sits in the left column
+ * (5fr | 12fr, 94px gap); from 1280 each row puts the question beside its answer.
  */
 import Section from "../../ui/Section.astro";
-import SectionIntro from "../../ui/SectionIntro.astro";
+import Rail from "../download/_Rail.astro";
 
 const faqs: { q: string; a?: string; html?: string }[] = [
   { q: "Is Community free?", a: "Yes. You can self-host it at no cost." },
   {
-    q: "Do I need an internet connection?",
+    q: "Does it need an internet connection?",
     html: 'No. Use a local model runtime and stage the built-in models in advance. The <a href="/security">Security page</a> lists every outbound connection.',
   },
   { q: "Where is my data stored?", a: "In the storage volume you mount on your own server." },
   {
-    q: "Can I move from AnythingLLM?",
+    q: "Can we move from AnythingLLM?",
     a: "Yes. Mission LLM upgrades an existing AnythingLLM install in place, including its database and settings.",
   },
   {
@@ -26,68 +29,48 @@ const faqs: { q: string; a?: string; html?: string }[] = [
 ];
 ---
 
-<Section id="questions" tone="silver" labelledby="questions-title">
-  <div class="layout-grid faq">
-    <div class="faq__intro" data-reveal>
-      <SectionIntro title="Questions" id="questions-title" />
-    </div>
-    <div class="faq__list" data-reveal="2">
+<Section id="questions" labelledby="questions-title">
+  <Rail title="Questions" id="questions-title">
+    <div class="faq">
       {
         faqs.map((item) => (
           <div class="faq__item">
-            <h3 class="h4 faq__q">{item.q}</h3>
+            <h3 class="faq__q">{item.q}</h3>
             {item.html ? <p class="faq__a" set:html={item.html} /> : <p class="faq__a">{item.a}</p>}
           </div>
         ))
       }
     </div>
-  </div>
+  </Rail>
 </Section>
 
 <style>
-  .faq {
-    row-gap: var(--gap-visual);
-  }
-  @media (min-width: 1280px) {
-    .faq__intro {
-      grid-column: 1 / span 3;
-    }
-    .faq__list {
-      grid-column: 4 / -1;
-    }
-  }
-
-  .faq__list {
-    border-bottom: 1px solid var(--color-hairline);
-  }
   .faq__item {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-2) var(--grid-gap);
+    gap: var(--space-2) var(--card-gap);
     padding-block: var(--space-5);
-    border-top: 1px solid var(--color-hairline);
+    border-bottom: 1px solid var(--color-line);
   }
   .faq__item:first-child {
-    border-top-color: var(--color-hairline-strong);
+    padding-top: 0;
   }
-  @media (min-width: 960px) {
+  @media (min-width: 1280px) {
     .faq__item {
       grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-      padding-block: var(--space-6);
     }
   }
   .faq__q {
-    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: var(--fs-acc);
+    line-height: var(--lh-acc);
+    font-weight: var(--fw-acc);
+    color: var(--color-heading);
   }
   .faq__a {
+    max-width: var(--measure);
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    color: var(--color-text-2);
-    max-width: var(--measure);
-  }
-  @media (min-width: 960px) {
-    .faq__a {
-      padding-top: 1px;
-    }
+    color: var(--color-text-muted);
   }
 </style>

@@ -1,42 +1,59 @@
 ---
 /*
- * Button: 48px tall, 8px radius, 16px/500 label on one line.
- * - primary: solid accent (#1C4ED8). Use once or twice per page, for Download and the main action.
- * - secondary: 1px ring at the same size, for the second action beside a primary.
- * Renders <a> when `href` is set, otherwise <button>. Adapts to the section tone automatically.
- * Every Download button points to /download (use DOWNLOAD_HREF from @/data/site).
- * Usage: <Button href="/download">Download</Button>
- *        <Button href="/security" variant="secondary">Security overview</Button>
+ * Button: the reference's controls. 44px tall, 8px radius, Plus Jakarta Sans 16/24 600, one line.
+ * Buttons that sit next to each other always share this height and radius.
+ * - primary: solid navy #070F26, white label ("Download Free"). In dark bands it inverts (white, navy label).
+ * - secondary: 1px mist-300 outline, ink label ("Self-host" in the reference).
+ * - quiet: no box, 16/24 500 muted label with an optional leading icon (the hero's second action).
+ * - size "lg": 32px side padding (the final CTA's button). Default 20px.
+ * - iconStart / iconEnd: Phosphor icon names. iconSize (px, default 18, 22 for quiet) and iconWeight
+ *   ("regular", "bold", "fill") override the glyph. block: full width.
+ * Renders <a> when `href` is set, otherwise <button>. Every Download button points to /download.
+ * Usage: <Button href="/download">Download Free</Button>
+ *        <Button href="/security" variant="quiet" iconStart="shield-check">Security overview</Button>
  */
 import type { HTMLAttributes } from "astro/types";
 import Icon from "./Icon.astro";
 
 type Props = {
   href?: string;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "quiet";
+  size?: "md" | "lg";
   type?: "button" | "submit";
-  /** Phosphor icon name after the label (for example "arrow-right"). */
   iconEnd?: string;
-  /** Phosphor icon name before the label. */
   iconStart?: string;
-  /** Stretch to the container width (used in stacked mobile layouts). */
+  iconSize?: number;
+  iconWeight?: "regular" | "bold" | "fill";
   block?: boolean;
   class?: string;
 } & Omit<HTMLAttributes<"a">, "href" | "class" | "type">;
 
-const { href, variant = "primary", type = "button", iconEnd, iconStart, block = false, class: className, ...rest } = Astro.props;
+const {
+  href,
+  variant = "primary",
+  size = "md",
+  type = "button",
+  iconEnd,
+  iconStart,
+  iconSize: iconSizeProp,
+  iconWeight = "regular",
+  block = false,
+  class: className,
+  ...rest
+} = Astro.props;
 const Tag = href ? "a" : "button";
+const iconSize = iconSizeProp ?? (variant === "quiet" ? 22 : 18);
 ---
 
 <Tag
   href={href}
   type={href ? undefined : type}
-  class:list={["btn", `btn--${variant}`, { "btn--block": block }, className]}
+  class:list={["btn", `btn--${variant}`, `btn--${size}`, { "btn--block": block }, className]}
   {...rest}
 >
-  {iconStart && <Icon name={iconStart} size={20} />}
+  {iconStart && <Icon name={iconStart} size={iconSize} weight={iconWeight} class="btn__icon" />}
   <span class="btn__label"><slot /></span>
-  {iconEnd && <Icon name={iconEnd} size={20} />}
+  {iconEnd && <Icon name={iconEnd} size={iconSize} weight={iconWeight} class="btn__icon" />}
 </Tag>
 
 <style>
@@ -45,13 +62,13 @@ const Tag = href ? "a" : "button";
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
-    height: 48px;
+    height: 44px;
     padding-inline: var(--space-5);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     font-family: var(--font-sans);
-    font-size: var(--fs-ui);
-    line-height: 1;
-    font-weight: var(--fw-ui);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-semibold);
     white-space: nowrap;
     text-decoration: none;
     cursor: pointer;
@@ -60,35 +77,78 @@ const Tag = href ? "a" : "button";
       box-shadow var(--dur-hover) var(--ease-standard),
       color var(--dur-hover) var(--ease-standard);
   }
+  .btn--lg {
+    padding-inline: var(--space-8);
+  }
   .btn__label {
     white-space: nowrap;
   }
+
   .btn--primary {
-    background: var(--btn-primary-bg);
-    color: var(--btn-primary-text);
-    box-shadow: var(--shadow-sm);
+    background: var(--navy-950);
+    color: #ffffff;
   }
   .btn--primary:hover {
-    background: var(--btn-primary-bg-hover);
-    color: var(--btn-primary-text);
+    background: var(--navy-800);
+    color: #ffffff;
   }
   .btn--primary:active {
-    background: var(--btn-primary-bg-active);
+    background: #000000;
   }
+  :global([data-tone="dark"]) .btn--primary {
+    background: #ffffff;
+    color: var(--navy-950);
+  }
+  :global([data-tone="dark"]) .btn--primary:hover {
+    background: var(--mist-200);
+    color: var(--navy-950);
+  }
+
   .btn--secondary {
     background: transparent;
-    color: var(--btn-secondary-text);
-    box-shadow: inset 0 0 0 1px var(--btn-secondary-ring);
+    color: var(--color-heading);
+    box-shadow: inset 0 0 0 1px var(--color-line);
   }
   .btn--secondary:hover {
-    color: var(--btn-secondary-text);
-    background: var(--btn-secondary-bg-hover);
-    box-shadow: inset 0 0 0 1px var(--btn-secondary-ring-hover);
+    color: var(--color-heading);
+    background: rgb(11 20 48 / 0.04);
+    box-shadow: inset 0 0 0 1px #b3bed6;
   }
+  :global([data-tone="dark"]) .btn--secondary {
+    box-shadow: inset 0 0 0 1px rgb(204 212 229 / 0.36);
+  }
+  :global([data-tone="dark"]) .btn--secondary:hover {
+    background: rgb(204 212 229 / 0.08);
+    box-shadow: inset 0 0 0 1px rgb(204 212 229 / 0.6);
+  }
+
+  .btn--quiet {
+    padding-inline: 0;
+    background: none;
+    font-weight: var(--fw-medium);
+    color: var(--mist-550);
+    gap: var(--space-2); /* reference: 8px from the mark to "66k+ Stars" */
+  }
+  .btn--quiet:hover {
+    color: var(--color-heading);
+  }
+  .btn--quiet :global(.btn__icon) {
+    color: var(--mist-600);
+  }
+  :global([data-tone="dark"]) .btn--quiet {
+    color: var(--band-text);
+  }
+  :global([data-tone="dark"]) .btn--quiet:hover {
+    color: #ffffff;
+  }
+  :global([data-tone="dark"]) .btn--quiet :global(.btn__icon) {
+    color: var(--band-text);
+  }
+
   .btn:focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
   }
   .btn--block {
     display: flex;

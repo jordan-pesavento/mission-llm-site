@@ -1,14 +1,11 @@
 ---
 /*
- * Security. Owned by work package D. One dark band only: the data-flow diagram.
- * Tone order: light hero, DARK data flow, light, light (hairline), light (hairline), silver,
- * light, light (hairline).
- *
- * Table-of-contents rail (1280 and wider): .sec-page is the positioning context for the nav in
- * SecurityHero, which spans the whole page body on the right (3 of 12 columns) and holds a sticky
- * list. Every light and silver section's content is offset by the rail width so nothing runs
- * under it; the dark band keeps the full container and sits above the rail (z-index), so the
- * rail slides under it while it passes.
+ * Security. Owned by package C.
+ * Site v2 system (reference: anythingllm.com): a washed hero with the contents list, one dark band
+ * (the data-flow diagram, a DarkBand), then light sections separated by the reference's dotted rule.
+ * Section ids (the contents list and other pages link to them): #data-flow, #outbound, #controls
+ * (#controls-access, -oversight, -transport, -integrations), #hardening, #in-development,
+ * #not-claimed, #report.
  */
 import Base from "../layouts/Base.astro";
 import { PAGES } from "../data/site";
@@ -23,27 +20,12 @@ import ReportVulnerability from "../components/sections/security/ReportVulnerabi
 ---
 
 <Base title={PAGES.security.title} description={PAGES.security.description}>
-  <div class="sec-page">
-    <SecurityHero />
-    <DataFlow />
-    <OutboundConnections />
-    <ControlsToday />
-    <Hardening />
-    <InDevelopment />
-    <NotClaimed />
-    <ReportVulnerability />
-  </div>
+  <SecurityHero />
+  <DataFlow />
+  <OutboundConnections />
+  <ControlsToday />
+  <Hardening />
+  <InDevelopment />
+  <NotClaimed />
+  <ReportVulnerability />
 </Base>
-
-<style>
-  @media (min-width: 1280px) {
-    .sec-page {
-      position: relative;
-      /* 3 of 12 columns plus the 2 gaps between them. 100% resolves where the variable is used. */
-      --sec-rail: calc((var(--container) - 11 * var(--grid-gap)) / 4 + 2 * var(--grid-gap));
-    }
-    .sec-page > :global(.section:not(.sec-dark) > .container) {
-      padding-right: calc(var(--sec-rail) + var(--grid-gap));
-    }
-  }
-</style>

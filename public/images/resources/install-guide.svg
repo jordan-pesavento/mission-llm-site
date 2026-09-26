@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 443 215" width="443" height="215" fill="none" font-family="'Plus Jakarta Sans', system-ui, sans-serif">
+  <!-- Resource card: Install guide. The /download install options in miniature: the method tabs
+       and the Build from source commands from copy.md (the build command split with a line
+       continuation so it fits). REPOSITORY_URL is the placeholder the page marks the same way.
+       Labels are 12 units or larger (9px at 390); the comment line (class art-sm) hides below 640. -->
+  <rect width="443" height="215" fill="#070F26"/>
+  <rect x="24.5" y="22.5" width="394" height="170" rx="10" fill="#0B1430" stroke="#CCD4E5" stroke-opacity="0.14"/>
+  <path d="M25 64.5H418" stroke="#CCD4E5" stroke-opacity="0.12"/>
+
+  <g font-size="12" font-weight="500" fill="#A3AFC8">
+    <text x="40" y="49" fill="#FFFFFF" font-weight="600">Source</text>
+    <text x="97" y="49">Docker</text>
+    <text x="155" y="49">Compose</text>
+    <text x="222" y="49">Kubernetes</text>
+    <text x="303" y="49">Helm</text>
+    <text x="345" y="49">OpenShift</text>
+  </g>
+  <path d="M40 63.5H83" stroke="#5B95FF" stroke-width="1.5"/>
+
+  <g font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="12" fill="#E6ECF8">
+    <text x="40" y="94">git clone <tspan fill="#C4D8FF">REPOSITORY_URL</tspan> mission-llm</text>
+    <text x="40" y="114">cd mission-llm</text>
+    <text x="40" y="134">docker build -f docker/Dockerfile \</text>
+    <text x="40" y="154">  -t mission-llm:latest .</text>
+    <text class="art-sm" x="40" y="178" fill="#A3AFC8"># Then open http://localhost:3001</text>
+  </g>
+  <path d="M112 97.5H213" stroke="#C4D8FF" stroke-dasharray="2 2"/>
+</svg>

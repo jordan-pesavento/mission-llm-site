@@ -2,7 +2,8 @@
 /*
  * Download > System requirements. Work package C.
  * Copy: src/content/copy.md > Download > System requirements (7 rows, verbatim).
- * A .data-table--stack: on phones each row becomes a block. The row header already names the
+ * Heading rail (./_Rail.astro): heading left, table right from 1024. A .data-table--stack: on phones
+ * each row becomes a block. The row header already names the
  * value, so the repeated "Requirement" label is hidden visually (data-label stays on every td).
  */
 import Section from "../../ui/Section.astro";
@@ -22,8 +23,8 @@ const ROWS = [
 ];
 ---
 
-<Section id="requirements" tone="light" hairline labelledby="requirements-title">
-  <Rail title="System requirements" id="requirements-title">
+<Section id="requirements" divider labelledby="requirements-title">
+  <Rail title="System requirements" id="requirements-title" eyebrow="What the server needs.">
     <table class="data-table data-table--stack req">
       <thead>
         <tr>

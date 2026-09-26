@@ -348,7 +348,7 @@ Note: Any setting from `docker/.env.example` can go in the `environment` list.
 #### Build from source
 Summary: Build the image yourself from the repository. This is the supported path today.
 ```shell
-git clone REPOSITORY_URL mission-llm   # TODO: repository access not decided
+git clone https://github.com/jordan-pesavento/mission-llm.git mission-llm
 cd mission-llm
 docker build -f docker/Dockerfile -t mission-llm:latest .
 ```

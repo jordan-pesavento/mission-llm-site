@@ -1,12 +1,12 @@
 ---
 /*
- * Badge: a status label. The honesty rules depend on it: anything on the roadmap must sit under
- * an "In development" label, never mixed into current features.
+ * Badge: a status label. Honesty rule: anything on the roadmap sits under an "In development"
+ * label, never mixed into current features.
  * - kind "dev": "In development" (dashed hairline, muted). Default.
- * - kind "soon": "Coming soon" (dashed hairline, muted), for desktop installers.
+ * - kind "soon": "Coming soon" (dashed hairline, muted).
  * - kind "today": "Available today" (solid hairline, accent dot).
- * - kind "pending": "Published with first release" (dashed), for checksum and signature slots.
- * The slot overrides the default text. Labels never wrap. 15px/500, so it passes the 14px floor.
+ * - kind "pending": "Published with first release" (dashed).
+ * The slot overrides the default text. 14px/500 label on one line, 28px tall, 8px radius.
  * Usage: <Badge /> , <Badge kind="today" /> , <Badge kind="soon" />
  */
 interface Props {
@@ -33,30 +33,40 @@ const hasSlot = Astro.slots.has("default");
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    height: 30px;
+    height: 28px;
     padding-inline: 10px;
     border-radius: var(--radius-sm);
-    font-size: var(--fs-eyebrow);
+    font-family: var(--font-sans);
+    font-size: var(--fs-small);
     line-height: 1;
-    font-weight: 500;
+    font-weight: var(--fw-medium);
+    letter-spacing: 0;
     white-space: nowrap;
     vertical-align: middle;
-    color: var(--color-text-2);
+    color: var(--color-text-muted);
   }
   .badge--dev,
   .badge--soon,
   .badge--pending {
-    border: 1px dashed var(--color-hairline-dashed);
-    color: var(--color-text-3);
+    border: 1px dashed #9aa7c2;
+    color: var(--color-text-muted);
+  }
+  :global([data-tone="dark"]) .badge--dev,
+  :global([data-tone="dark"]) .badge--soon,
+  :global([data-tone="dark"]) .badge--pending {
+    border-color: rgb(204 212 229 / 0.4);
   }
   .badge--today {
-    border: 1px solid var(--color-hairline-strong);
-    color: var(--color-text);
+    border: 1px solid var(--color-line);
+    color: var(--color-heading);
   }
   .badge__dot {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: var(--radius-full);
-    background: var(--color-accent);
+    background: var(--accent);
+  }
+  :global([data-tone="dark"]) .badge__dot {
+    background: var(--accent-on-dark);
   }
 </style>

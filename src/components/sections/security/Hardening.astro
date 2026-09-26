@@ -1,8 +1,12 @@
 ---
 /*
- * Security > Hardening an install today (copy.md): seven numbered steps, verbatim.
- * One column below 960; from 960 two columns that read down (1 to 4, then 5 to 7) with rows
- * aligned across the columns. Numbers are plain figures in a hairline ring, not counters.
+ * Security > Hardening an install today (copy.md): seven numbered steps, verbatim, plus step 8,
+ * loopback-only access in Docker (standard Docker port binding, so it works with every release; the
+ * home page's "Loopback-only binding" item links here). Package C.
+ * Visual system: the reference's "Up and running in a few clicks." row. H2 48/48 (SectionIntro
+ * size="lg"), 56 to 96px, then one column per step with a 1px mist-300 left rule and a 25px inset:
+ * the number (Jakarta 32/40, mist-500) and 16/24 text 20px below it. Four columns from 1280 (4 + 4),
+ * two from 640 (4 rows of 2), stacked on phones.
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
@@ -18,13 +22,16 @@ const STEPS = [
   "Set password complexity rules.",
   "Keep provider keys and secrets out of shared configuration. In Kubernetes, use Secrets.",
   "Mount storage on a volume that your backup and encryption controls already cover.",
+  `To accept connections from the host machine only, bind the published port to loopback in Docker: ${code("-p 127.0.0.1:3001:3001")}.`,
 ];
 ---
 
-<Section id="hardening" tone="light" hairline labelledby="hardening-title">
-  <SectionIntro title="Hardening an install today" id="hardening-title" />
+<Section id="hardening" divider labelledby="hardening-title">
+  <div data-reveal>
+    <SectionIntro title="Hardening an install today" size="lg" id="hardening-title" />
+  </div>
 
-  <ol class="hd" role="list" style={`--hd-rows: ${Math.ceil(STEPS.length / 2)}`}>
+  <ol class="hd" role="list" data-reveal="2">
     {
       STEPS.map((step, i) => (
         <li class="hd__step">
@@ -42,48 +49,37 @@ const STEPS = [
   .hd {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    column-gap: calc(var(--grid-gap) * 2);
-    margin-top: var(--gap-visual);
+    gap: var(--space-10) 0;
+    margin-top: var(--gap-h2-grid);
   }
-  .hd__step {
-    display: grid;
-    grid-template-columns: 2.25rem minmax(0, 1fr);
-    column-gap: var(--space-4);
-    align-items: start;
-    padding-block: var(--space-5);
-    border-top: 1px solid var(--color-hairline);
-  }
-  .hd__step:last-child {
-    border-bottom: 1px solid var(--color-hairline);
-  }
-  .hd__num {
-    display: grid;
-    place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    margin-top: -0.25rem;
-    border-radius: var(--radius-full);
-    box-shadow: inset 0 0 0 1px var(--color-hairline-strong);
-    font-size: var(--fs-ui);
-    line-height: 1;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    color: var(--color-text);
-  }
-  .hd__text {
-    max-width: var(--measure);
-    color: var(--color-text-2);
-  }
-
-  @media (min-width: 960px) {
+  @media (min-width: 640px) {
     .hd {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-template-rows: repeat(var(--hd-rows), auto);
-      grid-auto-flow: column;
+      row-gap: var(--space-12);
     }
-    /* Close the first column too (its last step is step 4). */
-    .hd__step:nth-child(4) {
-      border-bottom: 1px solid var(--color-hairline);
+  }
+  /* Four columns from 1280; at 1024 a quarter column is narrower than DISABLE_TELEMETRY="true". */
+  @media (min-width: 1280px) {
+    .hd {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
+  }
+  .hd__step {
+    min-width: 0;
+    padding: var(--space-3) var(--space-6) 0 25px;
+    border-left: 1px solid var(--color-line);
+  }
+  .hd__num {
+    display: block;
+    font-size: var(--fs-step-num);
+    line-height: var(--lh-step-num);
+    color: var(--mist-500);
+  }
+  .hd__text {
+    max-width: 18rem;
+    margin-top: var(--space-5);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--mist-600);
   }
 </style>

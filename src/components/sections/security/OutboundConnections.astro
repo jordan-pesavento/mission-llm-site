@@ -1,12 +1,14 @@
 ---
 /*
  * Security > Data flow > Other outbound connections (copy.md): an 8-row, 4-column table and its
- * footnote. Text is verbatim. Host names stay in the text face and may only wrap where marked
- * with "|" below (never mid-label); settings and paths are set in code type and never break.
+ * footnote. Text is verbatim. Package C.
+ * Host names stay in the text face and may only wrap where marked with "|" below (never mid-label);
+ * settings and paths are set in code type and never break.
  * - below 640: .data-table--stack (each row a block, column names from data-label).
- * - 640 to 959: each row is a block: the connection on top, When and What is sent side by side,
+ * - 640 to 1023: each row is a block: the connection on top, When and What is sent side by side,
  *   then How to avoid it at full width.
- * - 960 and wider: a real 4-column table with fixed column widths.
+ * - 1024 and wider: a real 4-column table with fixed column widths; the header row uses the
+ *   reference's small uppercase label (14/20 500, tracked).
  * The footnote names a roadmap item, so it carries the In development badge.
  */
 import Section from "../../ui/Section.astro";
@@ -20,7 +22,6 @@ const host = (s: string) => esc(s).replace("|", "<wbr>");
 /** A setting or path in code type (kept on one line by the table styles). */
 const c = (s: string) => `<code>${esc(s)}</code>`;
 
-// [connection name, connection detail (optional), when, what is sent, how to avoid it] as HTML.
 const ROWS: { name: string; detail?: string; when: string; sent: string; avoid: string }[] = [
   {
     name: "Telemetry",
@@ -76,10 +77,12 @@ const ROWS: { name: string; detail?: string; when: string; sent: string; avoid: 
 ];
 ---
 
-<Section id="outbound" tone="light" labelledby="outbound-title">
-  <SectionIntro title="Other outbound connections" id="outbound-title" />
+<Section id="outbound" divider labelledby="outbound-title">
+  <div data-reveal>
+    <SectionIntro title="Other outbound connections" id="outbound-title" />
+  </div>
 
-  <div class="ob">
+  <div class="ob" data-reveal="2">
     <table class="data-table data-table--stack ob-table" aria-labelledby="outbound-title">
       <colgroup>
         <col class="ob-col ob-col--name" />
@@ -126,16 +129,16 @@ const ROWS: { name: string; detail?: string; when: string; sent: string; avoid: 
 
 <style>
   .ob {
-    margin-top: var(--gap-visual);
+    margin-top: var(--gap-h2-content);
   }
   .ob-name {
-    color: var(--color-text);
+    color: var(--color-heading);
   }
   .ob-detail {
     display: block;
     margin-top: 2px;
-    font-weight: 400;
-    color: var(--color-text-3);
+    font-weight: var(--fw-regular);
+    color: var(--color-text-quiet);
   }
   /* Settings and paths never split across lines; the widest (24 characters) fits every column. */
   .ob-table :global(code) {
@@ -147,8 +150,8 @@ const ROWS: { name: string; detail?: string; when: string; sent: string; avoid: 
     color: var(--color-text);
   }
 
-  /* 640 to 959: a block per row; the remedy gets the full width. */
-  @media (min-width: 640px) and (max-width: 959.98px) {
+  /* 640 to 1023: a block per row; the remedy gets the full width. */
+  @media (min-width: 640px) and (max-width: 1023.98px) {
     .ob-table thead {
       position: absolute;
       width: 1px;
@@ -168,12 +171,12 @@ const ROWS: { name: string; detail?: string; when: string; sent: string; avoid: 
     .ob-table tr {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-4) var(--grid-gap);
+      gap: var(--space-4) var(--card-gap);
       padding-block: var(--space-5);
-      border-bottom: 1px solid var(--color-hairline);
+      border-bottom: 1px solid var(--color-line);
     }
     .ob-table tr:first-child {
-      border-top: 1px solid var(--color-hairline-strong);
+      border-top: 1px solid var(--color-line);
     }
     .ob-table th,
     .ob-table td {
@@ -183,8 +186,6 @@ const ROWS: { name: string; detail?: string; when: string; sent: string; avoid: 
     }
     .ob-table tbody th {
       grid-column: 1 / -1;
-      font-size: var(--fs-body);
-      line-height: 1.4;
     }
     .ob-table td[data-label="How to avoid it"] {
       grid-column: 1 / -1;
@@ -193,28 +194,29 @@ const ROWS: { name: string; detail?: string; when: string; sent: string; avoid: 
       content: attr(data-label);
       display: block;
       margin-bottom: var(--space-1);
-      font-weight: 600;
-      color: var(--color-text-3);
+      font-size: var(--fs-small);
+      line-height: var(--lh-small);
+      font-weight: var(--fw-semibold);
+      color: var(--color-text-quiet);
     }
   }
 
-  /* 960 and wider: a real table; the header row reads as a strong rule. */
-  @media (min-width: 960px) {
+  /* 1024 and wider: a real table. */
+  @media (min-width: 1024px) {
     .ob-table {
       table-layout: fixed;
     }
-    /* The remedy column holds the longest unbreakable settings (24 characters of code at 18px). */
     .ob-col--name {
       width: 24%;
     }
     .ob-col--when {
-      width: 23%;
+      width: 24%;
     }
     .ob-col--sent {
-      width: 23%;
+      width: 24%;
     }
     .ob-col--avoid {
-      width: 30%;
+      width: 28%;
     }
     .ob-table th,
     .ob-table td {
@@ -223,12 +225,13 @@ const ROWS: { name: string; detail?: string; when: string; sent: string; avoid: 
     }
     .ob-table thead th {
       padding-top: 0;
-      padding-bottom: var(--space-4);
-      font-size: var(--fs-eyebrow);
-      line-height: var(--lh-eyebrow);
-      letter-spacing: var(--ls-eyebrow);
+      padding-bottom: var(--space-3);
+      font-size: var(--fs-small);
+      line-height: var(--lh-small);
+      font-weight: var(--fw-medium);
+      letter-spacing: var(--ls-label);
       text-transform: uppercase;
-      color: var(--color-eyebrow);
+      color: var(--color-text-muted);
     }
   }
 
@@ -238,8 +241,8 @@ const ROWS: { name: string; detail?: string; when: string; sent: string; avoid: 
     align-items: center;
     gap: var(--space-3) var(--space-4);
     margin-top: var(--space-6);
-    font-size: var(--fs-ui);
-    line-height: var(--lh-ui);
-    color: var(--color-text-2);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-muted);
   }
 </style>

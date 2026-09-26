@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 443 215" width="443" height="215" fill="none" font-family="'Plus Jakarta Sans', system-ui, sans-serif">
+  <!-- Resource card: Editions. The two edition names over a short comparison, as on /editions:
+       the self-hosted application is in both; single sign-on is planned for Enterprise under the
+       site's "In development" tag. Labels are 12 units or larger (9px at 390). -->
+  <rect width="443" height="215" fill="#FFFFFF"/>
+
+  <g font-family="'Clash Display', 'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="600" fill="#0B1430" text-anchor="middle">
+    <text x="237.5" y="66">Community</text>
+    <text x="353" y="66">Enterprise</text>
+  </g>
+  <path d="M32 84.5H411" stroke="#92A0BC"/>
+
+  <g font-size="12.5" font-weight="500" fill="#33405B">
+    <text x="32" y="112.5">Self-hosted app</text>
+    <text x="32" y="160.5">Single sign-on</text>
+  </g>
+  <path d="M32 132.5H411" stroke="#E3E8F2"/>
+  <path d="M32 180.5H411" stroke="#E3E8F2"/>
+
+  <circle cx="237.5" cy="108" r="8" fill="#070F26"/>
+  <path d="M233.8 108.2l2.6 2.6 4.9-4.9" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="353" cy="108" r="8" fill="#070F26"/>
+  <path d="M349.3 108.2l2.6 2.6 4.9-4.9" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="237.5" cy="156" r="7.5" stroke="#CCD4E5"/>
+  <rect x="302.5" y="145.5" width="101" height="21" rx="5" stroke="#92A0BC" stroke-dasharray="2.5 2"/>
+  <text x="353" y="160.5" font-size="12" font-weight="500" fill="#47546F" text-anchor="middle">In development</text>
+</svg>

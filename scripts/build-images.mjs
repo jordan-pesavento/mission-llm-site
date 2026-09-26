@@ -1,11 +1,11 @@
-// Generates responsive AVIF and WebP variants of the product screenshots and their named crops,
-// the touch icons from the emblem, and src/data/images.generated.json (read by Screenshot.astro).
+// Generates responsive AVIF and WebP variants of the product images, the touch icons from the
+// emblem, and src/data/images.generated.json (read by src/components/ui/Screenshot.astro).
 // Runs before every `astro dev` and `astro build`. Outputs are skipped when already newer than
 // their source and this script's configuration, so repeat runs are fast.
 //
-// Sizes: every image is described in CSS pixels (its size at 1x) plus pixel variants. Sources are
-// 2x or 3x renders, so each crop is emitted at 1x, 2x and (when the source has the pixels) 3x,
-// and whole frames at the WIDTHS in image-sources.mjs. Nothing is ever upscaled.
+// Sizes: each image is described in CSS pixels (`frame` in image-sources.mjs, the display width at
+// 1440) with its height taken from the file's own aspect ratio. Variants are emitted at 1x, 2x and
+// the extra WIDTHS, never above the source width (nothing is upscaled).
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -52,41 +52,20 @@ async function emit(src, pipelineFactory, base, width) {
   return files;
 }
 
-/** Pixel widths for an image that is `css` CSS pixels wide and `px` image pixels wide. */
-const widthsFor = (css, px, extra = []) =>
-  [...new Set([css, css * 2, css * 3, ...extra, px].map(Math.round).filter((w) => w <= px))].sort((a, b) => a - b);
-
 const manifest = {};
 for (const [name, cfg] of Object.entries(SOURCES)) {
   const src = path.join(SRC_DIR, `${name}.png`);
-  if (!fs.existsSync(src)) throw new Error(`Missing screenshot: ${src}`);
+  if (!fs.existsSync(src)) throw new Error(`Missing product image: ${src}`);
   const meta = await sharp(src).metadata();
-  const scale = meta.width / cfg.frame[0];
-  if (Math.abs(scale - Math.round(scale)) > 0.01) throw new Error(`${name}: ${meta.width}px is not a whole multiple of the ${cfg.frame[0]}px frame`);
-  const cssW = cfg.frame[0];
-  const cssH = cfg.frame[1] ?? Math.round(meta.height / scale);
-  const entry = { width: cssW, height: cssH, scale: Math.round(scale), variants: [], crops: {} };
-
-  const frameWidths = cfg.full === false ? [] : widthsFor(cssW, meta.width, cssW >= 1000 ? WIDTHS : []);
-  for (const w of frameWidths) {
+  const cssW = cfg.frame;
+  if (meta.width < cssW) console.warn(`images: ${name}.png is ${meta.width}px wide, below its ${cssW}px frame (it will look soft)`);
+  if (meta.width < cssW * 2) console.warn(`images: ${name}.png is under 2x its ${cssW}px frame; high-density screens will scale it up`);
+  const cssH = Math.round((meta.height / meta.width) * cssW);
+  const entry = { width: cssW, height: cssH, variants: [] };
+  const widths = [...new Set([...WIDTHS, cssW, cssW * 2, meta.width].map(Math.round).filter((w) => w <= meta.width))].sort((a, b) => a - b);
+  for (const w of widths) {
     const files = await emit(src, () => sharp(src), name, w);
     entry.variants.push({ width: w, ...files });
-  }
-
-  for (const [crop, box] of Object.entries(cfg.crops || {})) {
-    if (box.x + box.w > cssW || box.y + box.h > cssH) throw new Error(`Crop ${name}/${crop} is outside the ${cssW}x${cssH} frame`);
-    const extract = {
-      left: Math.round(box.x * scale),
-      top: Math.round(box.y * scale),
-      width: Math.round(box.w * scale),
-      height: Math.round(box.h * scale),
-    };
-    const c = { width: box.w, height: box.h, variants: [] };
-    for (const w of widthsFor(box.w, extract.width)) {
-      const files = await emit(src, () => sharp(src).extract(extract), `${name}--${crop}`, w);
-      c.variants.push({ width: w, ...files });
-    }
-    entry.crops[crop] = c;
   }
   manifest[name] = entry;
 }

@@ -1,0 +1,69 @@
+---
+/*
+ * Stats strip (package A). The reference's four numerals, with verified product facts in place of
+ * usage numbers (COUNTS in src/data/site.ts; never type the numbers inline, never add usage stats).
+ * Measured from the reference captures:
+ * - 1440: a 1027px row centered in the container, 4 columns with a 16 gap. Clash Display 600
+ *   48px on a 60px line (cap top 78px below the section top), the 14/20 label 10px under it,
+ *   64px padding, section 218px tall with the dotted hairline on its bottom edge.
+ * - 390: 2 x 2, 40px numerals on a 50px line, 40px between rows, 16 between columns.
+ * Labels are the dt, numerals the dd (read as "Model providers: 38"); the numeral shows first.
+ * Labels stay short enough to hold one line in a 163px column at 390, so the row never staggers.
+ */
+import Section from "../../ui/Section.astro";
+import { COUNTS, INSTALL_METHODS } from "../../../data/site";
+
+const stats = [
+  { value: COUNTS.llmProviders, label: "Model providers" },
+  { value: COUNTS.vectorDatabases, label: "Vector databases" },
+  { value: COUNTS.embeddingEngines, label: "Embedding engines" },
+  // Docker, Docker Compose, Kubernetes, Helm, OpenShift.
+  { value: INSTALL_METHODS.length, label: "Deployment methods" },
+];
+if (INSTALL_METHODS.length !== COUNTS.installMethods) throw new Error("Stats: INSTALL_METHODS and COUNTS.installMethods disagree");
+---
+
+<Section pad="stats" divider label="Mission LLM at a glance">
+  <dl class="stats" data-reveal>
+    {
+      stats.map((s) => (
+        <div class="stats__item">
+          <dt class="small stats__label">{s.label}</dt>
+          <dd class="stats__value tnum">{s.value}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</Section>
+
+<style>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-10) var(--space-4);
+    max-width: 64.1875rem; /* 1027 */
+    margin-inline: auto;
+    text-align: center;
+  }
+  .stats__item {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 0.625rem; /* 10: numeral line to label */
+  }
+  .stats__value {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    line-height: 1.25;
+    font-weight: var(--fw-semibold);
+    color: var(--mist-700);
+  }
+  @media (min-width: 768px) {
+    .stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .stats__value {
+      font-size: var(--fs-stat);
+    }
+  }
+</style>

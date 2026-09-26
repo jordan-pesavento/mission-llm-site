@@ -1,10 +1,9 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 
-// Static output only. The site is served locally from dist/ and will go to Vercel later,
-// once the owner picks the domain. TODO: set `site` to the production origin at that point
-// so canonical URLs and the sitemap can be absolute.
+// Static output, hosted on Vercel at https://mission-llm.com (DNS on Cloudflare).
 export default defineConfig({
+  site: "https://mission-llm.com",
   output: "static",
   trailingSlash: "ignore",
   build: {

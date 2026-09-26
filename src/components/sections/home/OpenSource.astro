@@ -1,0 +1,287 @@
+---
+/*
+ * Open source (#open-source). Package C.
+ * Reference (anythingllm.com, 1440): pad "section" (128, 96 on phones), a dotted rule at the top
+ * (the bottom edge of Resources) and at the bottom. Two equal columns from 1024 (64px gap,
+ * vertically centered): on the left a text column (max 576): eyebrow 20/28, an H2 36/40 on two
+ * lines, 24px, a 16/26 paragraph, 24px, a three-up stat row (48px Clash numerals in mist-600, 14px
+ * labels, 1px mist-300 rules between the stats, 84px tall), 24px, then a primary and a secondary
+ * button, 42px tall in this section; on the right a 664 x 430 chart. Phones stack the chart 64px
+ * under the buttons, about 342 x 221.
+ * Ours: the paragraph credits the upstream project (MIT License). The stats are verified facts from
+ * COUNTS in src/data/site.ts that the stats strip does not show (no stars, contributors or pulls).
+ * The chart becomes an honest layered diagram in the same line language: the three things Mission
+ * LLM adds (copy.md: Home > Open source foundation), joined by a thin connector to the AnythingLLM
+ * core they sit on (document ingestion, retrieval, agents and the provider integrations), whose
+ * band has the ink baseline of the reference's axis. No ticks and no axis titles. Phones show the
+ * three titles only, so the figure keeps the reference's proportions.
+ * Evidence for the in-place upgrade: master keeps AnythingLLM's internal identifiers, storage keys
+ * and API paths unchanged "for data compatibility" (mission-llm f568622c), and the rename branch
+ * adds server/utils/boot/legacyUpgrade.js (7efcf6b9) to keep that true after the rename.
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import Button from "../../ui/Button.astro";
+import { COUNTS, DOWNLOAD_HREF } from "../../../data/site";
+
+const FACTS = [
+  { value: "MIT", label: "License" },
+  { value: String(COUNTS.userRoles), label: "User roles" },
+  { value: String(COUNTS.cloudTemplates), label: "Cloud templates" },
+];
+
+const ADDS = [
+  { title: "In-place upgrade from AnythingLLM", text: "The database, settings and vector collections carry over." },
+  { title: "Documented outbound connections", text: "Every connection the server can make, and how to avoid it." },
+  { title: "Templates that pull only your image", text: "Deployment templates run the image you build and host." },
+];
+const CORE = ["Ingestion", "Retrieval", "Agents", "Providers"];
+---
+
+<Section id="open-source" divider labelledby="open-source-title">
+  <div class="os">
+    <div class="os__text" data-reveal>
+      <SectionIntro
+        eyebrow="MIT licensed foundation."
+        title="Open at the core. Yours to run."
+        id="open-source-title"
+        lead="Mission LLM is built on the open-source AnythingLLM project (MIT License) and adds what an organization needs to run it with confidence."
+      />
+      <dl class="facts">
+        {
+          FACTS.map((f) => (
+            <div class="facts__item">
+              <dt class="facts__label">{f.label}</dt>
+              <dd class="facts__value">{f.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <div class="os__actions" data-row="os-actions">
+        <Button href={DOWNLOAD_HREF}>Download</Button>
+        <Button href="/security" variant="secondary">Security overview</Button>
+      </div>
+    </div>
+
+    <figure class="stack" aria-labelledby="stack-caption" data-reveal="2">
+      <figcaption id="stack-caption" class="sr-only">What Mission LLM adds, on top of the AnythingLLM core</figcaption>
+      <p class="stack__label" aria-hidden="true">Mission LLM adds</p>
+      <ol class="stack__adds" role="list">
+        {
+          ADDS.map((a) => (
+            <li class="stack__add">
+              <p class="stack__title">{a.title}</p>
+              <p class="stack__text">{a.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <span class="stack__joint" aria-hidden="true"></span>
+      <div class="stack__core">
+        <p class="stack__core-label">AnythingLLM core <span class="stack__core-note">(MIT License)</span></p>
+        <ul class="stack__chips" role="list">
+          {CORE.map((c) => <li>{c}</li>)}
+        </ul>
+      </div>
+    </figure>
+  </div>
+</Section>
+
+<style>
+  .os {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-16);
+    align-items: center;
+  }
+  @media (min-width: 1024px) {
+    .os {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-16);
+    }
+  }
+  .os__text {
+    min-width: 0;
+    max-width: var(--measure);
+  }
+  /* Reference rhythm here: 24px from the eyebrow to the H2 and from the H2 to the paragraph. The
+     H2 is held to two lines, one sentence each. */
+  .os__text :global(.intro__eyebrow) {
+    margin-bottom: var(--space-6);
+  }
+  .os__text :global(.intro__title) {
+    max-width: 12em;
+  }
+  .os__text :global(.intro__lead) {
+    margin-top: var(--space-6);
+    color: var(--color-text-quiet);
+  }
+
+  /* ---------- Three-up facts, the reference's 66k+ / 200+ / 5M+ row ---------- */
+  .facts {
+    display: flex;
+    margin-top: var(--space-6);
+  }
+  .facts__item {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 84px;
+    padding-inline: var(--space-3); /* 12 on phones (reference 390), 32 from 640 */
+    border-left: 1px solid var(--mist-300);
+  }
+  .facts__item:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .facts__value {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 2.5rem; /* 40 on phones */
+    line-height: 1;
+    font-weight: var(--fw-medium);
+    letter-spacing: -0.01em;
+    color: var(--mist-600);
+  }
+  .facts__label {
+    font-size: var(--fs-small);
+    line-height: var(--lh-small);
+    color: var(--mist-600);
+    white-space: nowrap;
+  }
+  @media (min-width: 640px) {
+    .facts__item {
+      padding-inline: var(--space-8);
+    }
+    .facts__value {
+      font-size: var(--fs-stat); /* 48 */
+    }
+  }
+
+  .os__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+  /* Reference: GitHub and Self-host are 42px tall. */
+  .os__actions :global(.btn) {
+    height: 42px;
+  }
+
+  /* ---------- The figure: what Mission LLM adds, on the AnythingLLM core ---------- */
+  .stack {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    margin: 0;
+  }
+  @media (min-width: 1024px) {
+    /* The reference chart's 664:430 proportion, from the column width (half the content box minus
+       half the 64px gap). A minimum, so narrow columns never clip the rows. */
+    .stack {
+      min-height: calc((min(100vw, var(--container-max)) - 2 * var(--gutter) - var(--space-16)) / 2 * 430 / 664);
+    }
+  }
+  .stack__label {
+    font-size: var(--fs-small);
+    line-height: var(--lh-small);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--mist-700);
+  }
+  .stack__adds {
+    display: grid;
+    flex: 1 0 auto;
+    grid-auto-rows: 1fr;
+    margin-top: var(--space-3);
+    border-top: 1px solid var(--mist-300);
+  }
+  .stack__add {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    padding-block: var(--space-2);
+    border-bottom: 1px solid var(--mist-300);
+  }
+  .stack__title {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-semibold);
+    color: var(--color-heading);
+  }
+  .stack__text {
+    display: none;
+    margin-top: 2px;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-muted);
+  }
+  /* The joint: a thin ink connector from the stack down to the core's baseline. */
+  .stack__joint {
+    align-self: center;
+    width: 1px;
+    height: var(--space-3);
+    background: var(--color-heading);
+  }
+  .stack__core {
+    border-top: 1.5px solid var(--color-heading);
+    padding-top: 10px;
+  }
+  .stack__core-label {
+    font-size: var(--fs-small);
+    line-height: var(--lh-small);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-heading);
+  }
+  .stack__core-note {
+    color: var(--mist-600);
+  }
+  .stack__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: var(--space-2);
+  }
+  .stack__chips li {
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    padding-inline: 10px;
+    border: 1px solid var(--mist-300);
+    border-radius: var(--radius-full);
+    background: var(--color-surface);
+    font-size: var(--fs-small);
+    line-height: 1;
+    font-weight: var(--fw-medium);
+    white-space: nowrap;
+    color: var(--mist-700);
+  }
+  @media (min-width: 768px) {
+    .stack__add {
+      padding-block: var(--space-5);
+    }
+    .stack__text {
+      display: block;
+    }
+    .stack__joint {
+      height: var(--space-6);
+    }
+    .stack__core {
+      padding-top: var(--space-4);
+    }
+    .stack__chips {
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+    }
+    .stack__chips li {
+      height: 32px;
+      padding-inline: 14px;
+    }
+  }
+</style>

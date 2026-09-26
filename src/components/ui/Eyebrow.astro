@@ -1,0 +1,24 @@
+---
+/*
+ * Eyebrow: the short sentence-case line above an H2 ("No complex setup." in the reference).
+ * Plus Jakarta Sans 500, 20/28, mist-600 on light, mist-300 in dark bands; 16px above the H2.
+ * - quiet: white at 62% in dark bands (the reference's "Also on Android" line).
+ * Usage: <Eyebrow>Ready on day one.</Eyebrow>
+ */
+interface Props {
+  quiet?: boolean;
+  class?: string;
+}
+const { quiet = false, class: className } = Astro.props;
+---
+
+<p class:list={["eyebrow", { "eyebrow--quiet": quiet }, className]}><slot /></p>
+
+<style>
+  .eyebrow--quiet {
+    color: var(--color-text-quiet);
+  }
+  :global([data-tone="dark"]) .eyebrow--quiet {
+    color: var(--band-eyebrow);
+  }
+</style>

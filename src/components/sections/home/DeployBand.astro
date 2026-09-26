@@ -1,0 +1,105 @@
+---
+/*
+ * Dark band: deployment, in place of the reference's "Also on Android" band (section-1440x900-05).
+ * DarkBand size "sm" (80 to 96 padding). From 1024: the text column is 55% of the row (765 of 1392
+ * at 1440, as the reference), the visual column the rest after a 94 gap. The row is 563px tall,
+ * which gives the reference's 755px band at 1440. The visual is a tall terminal, 480 wide and the
+ * full row height, centered in its column (the reference's phone is 258 x 561, about 144px in from
+ * the right edge): the command at the top, the placeholder caption at the bottom.
+ * Text: quiet eyebrow (white at 62%), H2 36/45 white, paragraph 16/26 (max 576), then 32px to a
+ * 16/24 700 white link with an arrow. Phones: text first, the code block 48px below it; its lines
+ * wrap (CodeBlock) and its label is the one-line "Docker on Linux or macOS".
+ * The visual is a real CodeBlock. Its command and caption are read from src/content/copy.md
+ * ("### Deploy anywhere") at build time, so they stay verbatim; REGISTRY stays a marked placeholder
+ * (the CodeBlock underlines it) and the caption says why. The build fails if the copy moves.
+ * Anchor #deploy is linked from the footer.
+ */
+import fs from "node:fs";
+import path from "node:path";
+import DarkBand from "../../ui/DarkBand.astro";
+import Eyebrow from "../../ui/Eyebrow.astro";
+import ArrowLink from "../../ui/ArrowLink.astro";
+import CodeBlock from "../../ui/CodeBlock.astro";
+import { DOWNLOAD_HREF } from "../../../data/site";
+
+const md = fs.readFileSync(path.join(process.cwd(), "src/content/copy.md"), "utf8").replace(/\r\n/g, "\n");
+const start = md.indexOf("### Deploy anywhere");
+if (start < 0) throw new Error('DeployBand: copy.md heading "### Deploy anywhere" not found.');
+const block = md.slice(start, md.indexOf("\n### ", start + 1));
+const fence = block.match(/- Code block, label "([^"]+)":\n```shell\n([\s\S]*?)\n```/);
+const caption = block.match(/- Caption: "([^"]+)"/);
+if (!fence || !caption) throw new Error("DeployBand: the Docker code block or its caption moved in copy.md.");
+const [, codeLabel, code] = fence;
+---
+
+<DarkBand id="deploy" size="sm" labelledby="deploy-title">
+  <div class="split deploy">
+    <div class="deploy__text" data-reveal>
+      <Eyebrow quiet>Self-hosted</Eyebrow>
+      <h2 id="deploy-title" class="h2 deploy__title">Deploy it where your data already lives.</h2>
+      <p class="body-relaxed deploy__lead">
+        Mission LLM ships as one container that serves the app and API on port 3001. Run it with Docker, Compose, Kubernetes, Helm or
+        OpenShift, on a workstation, a server in your rack or a cloud account you control.
+      </p>
+      <p class="deploy__more"><ArrowLink href={DOWNLOAD_HREF}>See every install option</ArrowLink></p>
+    </div>
+    <div class="deploy__visual" data-reveal="2">
+      {/* The copy.md label is "Run with Docker (Linux or macOS)"; the short form holds one line at 390. */}
+      <CodeBlock label={codeLabel.startsWith("Run with Docker") ? "Docker on Linux or macOS" : codeLabel} lang="shell" code={code} caption={caption[1]} fill />
+    </div>
+  </div>
+</DarkBand>
+
+<style>
+  .deploy {
+    --split-stack-gap: var(--space-12); /* 48: text to visual on phones (reference 390) */
+  }
+  @media (min-width: 1024px) {
+    .deploy {
+      grid-template-columns: minmax(0, 765fr) minmax(0, 533fr); /* 765 | 533 at 1440 */
+      column-gap: var(--split-gap);
+      align-items: stretch;
+      min-height: 35.1875rem; /* 563: the reference band's visual row, 755px band at 1440 */
+    }
+    .deploy__text {
+      align-self: center;
+    }
+    .deploy__visual {
+      display: flex;
+      justify-content: center;
+    }
+    .deploy__visual :global(.code) {
+      width: 100%;
+      max-width: 30rem; /* 480 */
+      min-height: 32.5rem; /* 520 */
+    }
+  }
+  /* 1024 to 1279: the visual column would be narrower than the longest command line (46 characters
+     of 15px mono plus padding, 462px), so it takes a fixed 480px column instead. */
+  @media (min-width: 1024px) and (max-width: 1279.98px) {
+    .deploy {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+      column-gap: var(--space-12);
+    }
+  }
+  .deploy__text,
+  .deploy__visual {
+    min-width: 0;
+  }
+  .deploy__title {
+    margin-top: var(--gap-eyebrow);
+    line-height: 2.8125rem; /* 36/45 in this band (reference) */
+  }
+  .deploy__lead {
+    max-width: var(--measure);
+    margin-top: var(--gap-h2-text);
+  }
+  .deploy__more {
+    display: flex;
+    margin-top: var(--gap-text-action);
+  }
+  .deploy__more :global(.arrow-link) {
+    min-height: 24px;
+    font-weight: var(--fw-bold); /* reference: 16/24 700 */
+  }
+</style>

@@ -1,165 +1,271 @@
 ---
 /*
- * Site footer: the darkest navy band. Emblem, wordmark and a one-line product descriptor, three
- * link columns (Product, Resources, Legal) and the fine print: upstream MIT credit, the
- * non-affiliation line and the copyright placeholder. On Home the closing CTA (a dark band) sits
- * directly above it and the two read as one block, separated by a hairline.
- * Entries whose destination is still a TODO ("#" in src/data/site.ts) render as muted text with a
- * "Soon" tag, not as links; they become links when the destination exists.
+ * Site footer, after the reference: a full-bleed navy band (#070F26).
+ * - Top: four link columns (uppercase 14px titles, 16px 500 links in a tinted zinc-200, 15px on a
+ *   32px rhythm on phones) inset like the header (20 / 40 / 80px), the 48px emblem at the top right
+ *   on the titles' cap line (top left on phones, above the columns).
+ * - Fine print: the upstream MIT credit and the non-affiliation line (both required on every page).
+ * - A giant "Mission LLM" wordmark in Clash Display 600 spanning the window width less 24px a side.
+ * - Bottom row: copyright left, Privacy and Terms right. On phones (reference order): emblem,
+ *   columns 2 x 2, fine print, Privacy and Terms stacked, wordmark, copyright.
+ * Entries whose destination is still a TODO ("#" in src/data/site.ts) render as muted text marked
+ * "Soon", not as links; they become links when the destination exists.
  */
-import { FOOTER, FOOTER_DESCRIPTOR, UPSTREAM, NON_AFFILIATION, COPYRIGHT, SITE, isPlaceholder } from "../data/site";
+import { FOOTER, FOOTER_LEGAL, UPSTREAM, NON_AFFILIATION, COPYRIGHT, SITE, isPlaceholder } from "../data/site";
 ---
 
 <footer class="site-footer" data-tone="dark">
-  <div class="container">
-    <div class="site-footer__top">
-      <div class="site-footer__id">
-        <a class="site-footer__brand" href="/">
-          <img src="/mission-llm-emblem.svg" width="40" height="40" alt="" loading="lazy" />
-          <span>{SITE.name}</span>
-        </a>
-        <p class="site-footer__desc">{FOOTER_DESCRIPTOR}</p>
-      </div>
-      <nav class="site-footer__cols" aria-label="Footer">
-        {
-          FOOTER.map((col) => (
-            <div class="site-footer__col">
-              <h2 class="site-footer__title">{col.title}</h2>
-              <ul role="list">
-                {col.links.map((link) => (
-                  <li>
-                    {isPlaceholder(link.href) ? (
-                      <span class="site-footer__soon" aria-disabled="true" data-todo={link.todo}>
-                        {link.label}
-                        <span class="site-footer__tag">Soon</span>
-                      </span>
-                    ) : (
-                      <a
-                        href={link.href}
-                        data-todo={link.todo}
-                        rel={link.href.startsWith("http") ? "noopener" : undefined}
-                      >
-                        {link.label}
-                      </a>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))
-        }
-      </nav>
-    </div>
-    <div class="site-footer__fine legal">
-      <p>{UPSTREAM.credit}</p>
-      <p>{NON_AFFILIATION}</p>
-      <p class="tnum">{COPYRIGHT}</p>
-    </div>
+  <div class="site-footer__top">
+    <a class="site-footer__emblem" href="/" aria-label={`${SITE.name} home`}>
+      <img src="/mission-llm-emblem.svg" width="64" height="64" alt="" loading="lazy" />
+    </a>
+    <nav class="site-footer__cols" aria-label="Footer">
+      {
+        FOOTER.map((col) => (
+          <div class="site-footer__col">
+            <h2 class="site-footer__title">{col.title}</h2>
+            <ul role="list">
+              {col.links.map((link) => (
+                <li>
+                  {isPlaceholder(link.href) ? (
+                    <span class="site-footer__soon" aria-disabled="true" data-todo={link.todo}>
+                      {link.label}
+                      <span class="site-footer__tag">Soon</span>
+                    </span>
+                  ) : (
+                    <a href={link.href} data-todo={link.todo} rel={link.href.startsWith("http") ? "noopener" : undefined}>
+                      {link.label}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </nav>
+  </div>
+
+  <div class="site-footer__fine">
+    <p>{UPSTREAM.credit}</p>
+    <p>{NON_AFFILIATION}</p>
+  </div>
+
+  <p class="site-footer__wordmark" aria-hidden="true">{SITE.name}</p>
+
+  <div class="site-footer__bottom">
+    <p class="tnum site-footer__copy">{COPYRIGHT}</p>
+    <ul role="list" class="site-footer__legal">
+      {
+        FOOTER_LEGAL.map((link) => (
+          <li>
+            {isPlaceholder(link.href) ? (
+              <span class="site-footer__soon" aria-disabled="true" data-todo={link.todo}>
+                {link.label}
+                <span class="sr-only">(coming soon)</span>
+              </span>
+            ) : (
+              <a href={link.href}>{link.label}</a>
+            )}
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </footer>
 
 <style>
   .site-footer {
+    --footer-x: var(--header-pad-x);
+    display: flex;
+    flex-direction: column;
     background: var(--navy-950);
-    border-top: 1px solid rgb(169 186 214 / 0.08);
-    padding-block: clamp(3.5rem, 2.5rem + 3vw, 6rem) clamp(2rem, 1.5rem + 1.5vw, 3rem);
+    color: #ffffff;
+    overflow: hidden;
   }
   .site-footer__top {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-7);
+    gap: var(--space-8);
+    padding: var(--space-8) var(--footer-x) 0;
   }
-  @media (min-width: 1280px) {
-    .site-footer__top {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    }
-  }
-  .site-footer__id {
-    align-self: start;
-    max-width: 30rem;
-  }
-  .site-footer__desc {
-    margin-top: var(--space-4);
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    color: var(--color-text-2);
-  }
-  .site-footer__brand {
+  .site-footer__emblem {
     display: inline-flex;
-    align-items: center;
-    gap: var(--space-3);
-    min-height: 48px;
-    font-size: var(--fs-h4);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--color-text);
-    text-decoration: none;
+    width: max-content;
   }
-  .site-footer__brand:hover {
-    color: var(--color-text);
+  .site-footer__emblem img {
+    width: 48px;
+    height: 48px;
   }
   .site-footer__cols {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-7) var(--grid-gap);
-  }
-  @media (min-width: 640px) {
-    .site-footer__cols {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+    gap: var(--space-10) var(--space-5);
   }
   .site-footer__title {
-    font-size: var(--fs-ui);
-    line-height: var(--lh-ui);
-    font-weight: 600;
-    color: var(--color-text);
-    margin-bottom: var(--space-3);
+    font-family: var(--font-sans);
+    font-size: var(--fs-small);
+    line-height: var(--lh-small);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+    color: var(--band-text-muted);
   }
+  /* Phones: 15px links on a 32px rhythm (reference 390). */
   .site-footer__col ul {
     display: grid;
-    gap: var(--space-1);
+    gap: 0;
+    margin-top: var(--space-2);
   }
-  .site-footer__col a {
+  .site-footer__col a,
+  .site-footer__col .site-footer__soon {
     display: inline-flex;
     align-items: center;
-    min-height: 40px;
-    font-size: var(--fs-ui);
-    line-height: var(--lh-ui);
-    color: var(--color-text-3);
+    min-height: 32px;
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+    font-weight: var(--fw-medium);
+  }
+  /* A placeholder entry keeps its label and tag on one line. */
+  .site-footer__col .site-footer__soon {
+    white-space: nowrap;
+  }
+  .site-footer a {
+    color: #e6e9f0; /* the reference's zinc-200 links, tinted to the brand */
     text-decoration: none;
   }
-  .site-footer__col a:hover {
-    color: var(--color-text);
+  .site-footer a:hover {
+    color: #ffffff;
     text-decoration: underline;
-    text-underline-offset: 0.25em;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
   }
-  /* Text that wraps like a link label, with the tag following its last word. */
   .site-footer__soon {
-    display: block;
-    padding-block: 8px;
-    font-size: var(--fs-ui);
-    line-height: var(--lh-ui);
-    color: var(--color-text-3);
+    color: var(--band-text-muted);
   }
   .site-footer__tag {
     display: inline-flex;
     align-items: center;
-    vertical-align: 1px;
+    height: 20px;
     margin-left: var(--space-2);
-    height: 22px;
-    padding-inline: 6px;
-    border: 1px dashed var(--color-hairline-dashed);
-    border-radius: var(--radius-xs);
-    font-size: var(--fs-legal);
+    padding-inline: 5px;
+    vertical-align: 1px;
+    border: 1px dashed rgb(204 212 229 / 0.4);
+    border-radius: 4px;
+    font-size: var(--fs-small);
     line-height: 1;
-    font-weight: 500;
+    font-weight: var(--fw-medium);
+    white-space: nowrap;
+    color: var(--band-text-muted);
+  }
+
+  /* Each line balanced within 52rem, so the non-affiliation sentence never leaves "Space Force."
+     alone on a second line. */
+  .site-footer__fine p {
+    max-width: 52rem;
+    text-wrap: balance;
   }
   .site-footer__fine {
     display: grid;
+    gap: var(--space-1);
+    margin-top: var(--space-12);
+    padding-inline: var(--footer-x);
+    font-size: var(--fs-small);
+    line-height: var(--lh-small);
+    color: var(--band-text-muted);
+  }
+
+  /* The wordmark spans the window less 24px a side. 0.171 is 1 / (width of "Mission LLM" per 1px of
+     font size) in Clash Display 600 with -0.02em tracking, measured in Chrome. */
+  .site-footer__wordmark {
+    --wordmark-k: 0.171;
+    order: 4;
+    margin-top: var(--space-12);
+    padding-inline: var(--gutter);
+    font-family: var(--font-display);
+    font-weight: var(--fw-semibold);
+    font-size: calc((100vw - 2 * var(--gutter)) * var(--wordmark-k));
+    line-height: 0.8;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    color: #ffffff;
+    user-select: none;
+  }
+
+  /* Phones and tablets: legal links sit above the wordmark, the copyright below it. */
+  .site-footer__bottom {
+    display: contents;
+  }
+  .site-footer__legal {
+    order: 3;
+    display: grid;
     gap: var(--space-2);
-    margin-top: clamp(3rem, 2rem + 3vw, 5rem);
-    padding-top: var(--space-6);
-    border-top: 1px solid var(--color-hairline);
-    color: var(--color-text-3);
+    margin-top: var(--space-8);
+    padding-inline: var(--footer-x);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-medium);
+  }
+  .site-footer__copy {
+    order: 5;
+    padding: var(--space-4) var(--footer-x) var(--space-5);
+    font-size: var(--fs-small);
+    line-height: var(--lh-small);
+    font-weight: var(--fw-medium);
+  }
+
+  @media (min-width: 1024px) {
+    .site-footer {
+      display: block;
+    }
+    /* Four columns: 112px apart at 1440 (reference), narrowing to 24px at 1024 so nothing overflows. */
+    .site-footer__cols {
+      grid-template-columns: repeat(4, minmax(0, max-content));
+      column-gap: clamp(1.5rem, -12.04rem + 21.15vw, 7rem);
+    }
+    .site-footer__top {
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding-top: 4rem; /* 64: column titles sit 69px under the band's top edge (reference) */
+    }
+    .site-footer__col ul {
+      gap: var(--space-2);
+      margin-top: 15px; /* title ink to first link ink: 36px (reference) */
+    }
+    .site-footer__col a,
+    .site-footer__col .site-footer__soon {
+      min-height: 27px;
+      font-size: var(--fs-body);
+      line-height: var(--lh-body);
+    }
+    /* The emblem's top sits on the titles' cap line. */
+    .site-footer__emblem {
+      order: 2;
+      align-self: start;
+      margin-top: 3px;
+    }
+    .site-footer__bottom {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--space-6);
+      padding: var(--space-5) var(--gutter);
+      font-size: var(--fs-body);
+      line-height: var(--lh-body);
+      font-weight: var(--fw-medium);
+    }
+    /* Copyright left, Privacy and Terms right: reset the phone order (legal 3, copy 5), which would
+       otherwise still apply inside this flex row. */
+    .site-footer__copy {
+      order: 0;
+      padding: 0;
+      font-size: inherit;
+      line-height: inherit;
+    }
+    .site-footer__legal {
+      order: 0;
+      display: flex;
+      gap: var(--space-10);
+      margin-top: 0;
+      padding-inline: 0;
+    }
   }
 </style>

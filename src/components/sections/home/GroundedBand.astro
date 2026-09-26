@@ -1,0 +1,93 @@
+---
+/*
+ * Dark band: grounded answers with sources. Replica of the reference's "Meeting Assistant" band
+ * (section-1440x900-03, middle): full-bleed navy, 800px tall from 1024 with the row centered in it,
+ * text 584 | screenshot 714 with a 94 gap (.split--band), both vertically centered.
+ * Text column: eyebrow 20/28, H2 36/40 white, paragraph 16/26 (max 584), a 32px gap to three
+ * bullets (16/24, 6px apart, muted, 6px round markers), a 32px gap to "Learn more ->" (16/24 600).
+ * Phones: text first, screenshot 48px below it (reference 390 capture), 64px band padding.
+ * Honesty: only what ships today. Answers list the documents they used, and the Sources panel shows
+ * the retrieved passages with their match scores (copy.md evidence: Citation/index.jsx,
+ * SourcesSidebar). Inline citations and a passage viewer are in development and are not shown here.
+ * Anchor #grounded is linked from the footer.
+ */
+import DarkBand from "../../ui/DarkBand.astro";
+import Eyebrow from "../../ui/Eyebrow.astro";
+import ArrowLink from "../../ui/ArrowLink.astro";
+import Screenshot from "../../ui/Screenshot.astro";
+
+const points = ["Sources listed under grounded answers", "Retrieved passages with match scores", "A similarity threshold per workspace"];
+---
+
+<DarkBand id="grounded" labelledby="grounded-title">
+  <div class="split split--band grounded">
+    <div class="grounded__text" data-reveal>
+      <Eyebrow>Grounded answers</Eyebrow>
+      <h2 id="grounded-title" class="h2 grounded__title">Answers you can trace.</h2>
+      <p class="body-relaxed grounded__lead">
+        When a workspace has documents, Mission LLM searches them before the model answers. Open Sources on an answer to see the
+        documents it used, the passages it retrieved and how closely each one matched.
+      </p>
+      <ul class="dot-list grounded__list" role="list">
+        {points.map((p) => <li>{p}</li>)}
+      </ul>
+      <p class="grounded__more"><ArrowLink href="/security#data-flow">Learn more</ArrowLink></p>
+    </div>
+    <div class="grounded__visual" data-reveal="2">
+      <Screenshot name="grounded" alt="A Mission LLM answer in light mode with the Sources panel open, listing each cited document with its match score." />
+    </div>
+  </div>
+</DarkBand>
+
+<style>
+  .grounded {
+    --split-stack-gap: var(--space-12); /* 48: text to screenshot on phones (reference 390) */
+  }
+  .grounded__text,
+  .grounded__visual {
+    min-width: 0;
+  }
+  .grounded__title {
+    margin-top: var(--gap-eyebrow);
+  }
+  .grounded__lead {
+    max-width: 36.5rem; /* 584: the reference's paragraph runs the full text column */
+    margin-top: var(--gap-h2-text);
+  }
+  /* Reference bullets: 16/24 lines 30px apart, in the band's muted tone, 6px round markers flush with
+     the text column and the words 18px in. */
+  .grounded__list {
+    gap: 6px;
+    margin-top: var(--gap-text-action);
+  }
+  .grounded__list > li {
+    padding-left: 1.125rem;
+    line-height: var(--lh-body);
+    color: var(--color-text-quiet);
+  }
+  .grounded__list > li::before {
+    left: 0;
+    top: calc(var(--lh-body) / 2 - 3px);
+    width: 6px;
+    height: 6px;
+    background: var(--mist-500);
+  }
+  /* From 1024 the band is 800px tall at every width (reference: 800 at 1440 and 1920), with the
+     row centered in it. */
+  @media (min-width: 1024px) {
+    :global(#grounded.section) {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 800px;
+      padding-block: var(--space-24);
+    }
+  }
+  .grounded__more {
+    display: flex;
+    margin-top: var(--gap-text-action);
+  }
+  .grounded__more :global(.arrow-link) {
+    min-height: 24px;
+  }
+</style>

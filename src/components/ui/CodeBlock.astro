@@ -1,15 +1,20 @@
 ---
 /*
- * CodeBlock: a navy code surface with a label bar and a Copy button (announced via aria-live).
- * Plex Mono 16px, no syntax colors. Long lines scroll inside the block, never the page. The <pre>
- * is a labelled region and a Tab stop (so keyboard users can scroll it); with JS it stays a Tab
- * stop only while its content is wider than the block (src/scripts/copy.ts re-checks on resize). Placeholders the reader must replace (REGISTRY, REPOSITORY_URL, ...) are
- * underlined so nobody pastes them blindly; the copied text is unchanged.
+ * CodeBlock: a navy code surface (#0B1430, radius 16) with a label bar and a Copy button (announced
+ * via aria-live). JetBrains Mono 15/24, no syntax colors. From 640 long lines scroll inside the
+ * block, never the page; below 640 lines wrap with a hanging indent (continuations start 2ch in), so
+ * nothing is ever cut off at the block's edge on a phone. Copy always copies the exact source
+ * (data-code), however the lines are laid out. The <pre> is a labelled region and a Tab stop (so
+ * keyboard users can scroll it); with JS it stays a Tab stop only while its content is wider than the
+ * block (src/scripts/copy.ts re-checks on resize). Placeholders the reader must replace (REGISTRY, REPOSITORY_URL, ...) are underlined so
+ * nobody pastes them blindly; the copied text is unchanged. Same look on light pages and in dark bands.
  * - code: the exact command text (keep it verbatim from copy.md).
  * - label: shown in the bar and used as the accessible name ("Run with Docker (Linux or macOS)").
  * - lang: "shell" | "powershell" | "yaml" | "text" (dims # comments for shell and yaml).
  * - caption: optional line under the block (for example the REGISTRY placeholder note).
  * - placeholders: extra tokens to mark, added to the defaults.
+ * - fill: stretch to the height of its container, the code at the top and the caption at the bottom
+ *   (the home deploy band's tall terminal).
  * Usage: <CodeBlock label="Linux or macOS" lang="shell" code={`docker compose up -d`} />
  */
 import Icon from "./Icon.astro";
@@ -20,10 +25,11 @@ interface Props {
   lang?: "shell" | "powershell" | "yaml" | "text";
   caption?: string;
   placeholders?: string[];
+  fill?: boolean;
   class?: string;
 }
 
-const { code, label, lang = "shell", caption, placeholders = [], class: className } = Astro.props;
+const { code, label, lang = "shell", caption, placeholders = [], fill = false, class: className } = Astro.props;
 const DEFAULT_PLACEHOLDERS = ["REGISTRY", "REPOSITORY_URL", "REPLACE_WITH_A_LONG_RANDOM_STRING", "/path/on/local/disk"];
 const marks = [...new Set([...DEFAULT_PLACEHOLDERS, ...placeholders])].sort((a, b) => b.length - a.length);
 
@@ -49,10 +55,24 @@ const highlight = (line: string) => {
   const b = escape(body).replace(markRe, '<mark class="ph">$1</mark>');
   return b + (comment ? `<span class="c">${escape(comment)}</span>` : "");
 };
-const html = code.replace(/\n+$/, "").split("\n").map(highlight).join("\n");
+// Break opportunities (<wbr>, which adds no character to a manual copy) after "/", "=" and ":" in the
+// text between tags, so a wrapped phone line breaks at a path or value boundary before it has to
+// break inside a token. They change nothing where lines do not wrap.
+const withBreaks = (html: string) =>
+  html
+    .split(/(<[^>]+>)/)
+    .map((part) => (part.startsWith("<") ? part : part.replace(/([/=:])(?=\S)/g, "$1<wbr>")))
+    .join("");
+// One span per line. The newline stays inside each span (except the last), so from 640 the <pre>
+// lays out exactly as plain text; below 640 each span becomes a wrapping block with a hanging indent.
+const source = code.replace(/\n+$/, "");
+const lines = source.split("\n");
+const html = lines
+  .map((line, i) => `<span class="ln">${withBreaks(highlight(line)) || " "}${i < lines.length - 1 ? "\n" : ""}</span>`)
+  .join("");
 ---
 
-<figure class:list={["code", className]} data-codeblock>
+<figure class:list={["code", { "code--fill": fill }, className]} data-codeblock data-code={source}>
   <div class="code__bar">
     <span class="code__label">{label}</span>
     <button type="button" class="code__copy" data-copy hidden aria-label={`Copy: ${label}`}>
@@ -73,11 +93,15 @@ const html = code.replace(/\n+$/, "").split("\n").map(highlight).join("\n");
 <style>
   .code {
     min-width: 0;
+    margin: 0;
     border-radius: var(--radius-lg);
-    background: var(--color-code-bg);
-    color: var(--color-code-text);
-    box-shadow: 0 0 0 1px var(--color-code-hairline), var(--shadow-card);
+    background: var(--navy-900);
+    color: #e6ecf8;
+    box-shadow: 0 0 0 1px rgb(204 212 229 / 0.12);
     overflow: hidden;
+  }
+  :global([data-tone="light"]) .code {
+    box-shadow: 0 0 0 1px rgb(11 20 48 / 0.08), var(--shadow-shot);
   }
   .code__bar {
     display: flex;
@@ -85,15 +109,15 @@ const html = code.replace(/\n+$/, "").split("\n").map(highlight).join("\n");
     justify-content: space-between;
     gap: var(--space-4);
     min-height: 52px;
-    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
-    border-bottom: 1px solid var(--color-code-hairline);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-6);
+    border-bottom: 1px solid rgb(204 212 229 / 0.12);
   }
   .code__label {
     min-width: 0;
-    font-size: var(--fs-ui);
-    line-height: var(--lh-ui);
-    font-weight: 500;
-    color: var(--color-code-muted);
+    font-size: var(--fs-small);
+    line-height: var(--lh-small);
+    font-weight: var(--fw-medium);
+    color: #a3afc8;
   }
   .code__copy {
     flex: none;
@@ -102,21 +126,19 @@ const html = code.replace(/\n+$/, "").split("\n").map(highlight).join("\n");
     gap: var(--space-2);
     height: 36px;
     padding-inline: var(--space-3);
-    border-radius: var(--radius-md);
-    font-size: var(--fs-ui);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-small);
     line-height: 1;
-    font-weight: 500;
+    font-weight: var(--fw-medium);
     white-space: nowrap;
-    color: var(--color-code-text);
-    transition:
-      background-color var(--dur-hover) var(--ease-standard),
-      color var(--dur-hover) var(--ease-standard);
+    color: #e6ecf8;
+    transition: background-color var(--dur-hover) var(--ease-standard);
   }
   .code__copy:hover {
-    background: rgb(169 186 214 / 0.1);
+    background: rgb(204 212 229 / 0.1);
   }
   .code__copy:focus-visible {
-    outline: 2px solid var(--blue-400);
+    outline: 2px solid var(--accent-on-dark);
     outline-offset: 0;
   }
   .code__copy :global(.code__icon--done),
@@ -128,17 +150,17 @@ const html = code.replace(/\n+$/, "").split("\n").map(highlight).join("\n");
   }
   .code__pre {
     margin: 0;
-    padding: var(--space-5);
+    padding: var(--space-6);
     overflow-x: auto;
     font-family: var(--font-mono);
     font-size: var(--fs-code);
     line-height: var(--lh-code);
     tab-size: 2;
     scrollbar-width: thin;
-    scrollbar-color: rgb(169 186 214 / 0.3) transparent;
+    scrollbar-color: rgb(204 212 229 / 0.3) transparent;
   }
   .code__pre:focus-visible {
-    outline: 2px solid var(--blue-400);
+    outline: 2px solid var(--accent-on-dark);
     outline-offset: -2px;
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   }
@@ -147,21 +169,53 @@ const html = code.replace(/\n+$/, "").split("\n").map(highlight).join("\n");
     font-family: inherit;
     white-space: pre;
   }
+  /* Phones: wrap instead of scrolling, continuation lines hang 2ch in. */
+  @media (max-width: 639.98px) {
+    .code__pre {
+      padding: var(--space-5) var(--space-4);
+      font-size: 0.875rem; /* 14: about 37 characters a line at 390 */
+    }
+    .code__pre code {
+      display: block;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .code__pre :global(.ln) {
+      display: block;
+      padding-left: 2ch;
+      text-indent: -2ch;
+    }
+    .code__bar {
+      padding-left: var(--space-4);
+    }
+    .code .code__caption {
+      padding-inline: var(--space-4);
+    }
+  }
+  /* fill: a tall terminal that spans its container, the caption at the bottom. */
+  .code--fill {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .code--fill .code__pre {
+    flex: 1 0 auto;
+  }
   .code__pre :global(.c) {
-    color: var(--color-code-muted);
+    color: #a3afc8;
   }
   .code__pre :global(mark.ph) {
     background: none;
-    color: var(--color-code-placeholder);
-    text-decoration: underline dashed var(--color-code-placeholder);
+    color: #c4d8ff;
+    text-decoration: underline dashed #c4d8ff;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.25em;
   }
   .code__caption {
-    padding: var(--space-4) var(--space-5);
-    border-top: 1px solid var(--color-code-hairline);
-    font-size: var(--fs-ui);
-    line-height: var(--lh-ui);
-    color: var(--color-code-muted);
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid rgb(204 212 229 / 0.12);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: #a3afc8;
   }
 </style>

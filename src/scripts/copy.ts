@@ -54,7 +54,9 @@ function init(root: HTMLElement) {
   button.hidden = false;
   let timer: number | undefined;
   button.addEventListener("click", async () => {
-    const ok = await writeClipboard(code.innerText.replace(/\n$/, ""));
+    // The exact source (CodeBlock data-code); innerText is only a fallback. Lines wrapped on a phone
+    // never add line breaks to what is copied.
+    const ok = await writeClipboard(root.dataset.code ?? code.innerText.replace(/\n$/, ""));
     const text = ok ? "Copied" : "Copy failed";
     if (label) label.textContent = text;
     if (status) status.textContent = ok ? "Copied to clipboard" : "Copy failed. Select the text to copy it.";

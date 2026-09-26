@@ -1,43 +1,35 @@
 ---
 /*
- * Editions > Hero (copy.md). Work package B. Level 1 intro across columns 1 to 9 from 960px.
- * The bottom padding is the text-to-visual gap, because the edition cards follow directly
- * (EditionCards uses pad="flush-top"). No actions here: the page's two CTAs live on the cards.
+ * Editions > Hero (copy.md, verbatim). Package C.
+ * Visual system (reference, anythingllm.com): the hero's mist wash under the header, an eyebrow, a
+ * 60/63 H1 and an 18/28 subhead. The edition cards follow inside the same wash-to-page flow
+ * (EditionCards starts with no top padding), so the hero keeps only the text-to-cards gap below.
  * No prices anywhere: pricing is not decided.
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 ---
 
-<Section tone="light" labelledby="editions-title" class="editions-hero">
-  <div class="layout-grid">
-    <div class="editions-hero__intro" data-reveal>
-      <SectionIntro
-        level={1}
-        eyebrow="Editions"
-        title="Start free. Add governance and support when you need them."
-        id="editions-title"
-        lead="Mission LLM Community is the full application you can run today. Mission LLM Enterprise is for organizations that need support, help deploying on their networks, and the governance features on our roadmap. Pricing is not published yet."
-      />
-    </div>
+<Section pad="hero" wash labelledby="editions-title" class="editions-hero">
+  <div class="editions-hero__intro" data-reveal>
+    <SectionIntro level={1} eyebrow="Editions" title="Start free. Add governance and support when you need them." id="editions-title" />
+    <p class="lead editions-hero__lead">
+      Mission LLM Community is the full application you can run today. Mission LLM Enterprise is for organizations that
+      need support, help deploying on their networks, and the governance features on our roadmap. Pricing is not
+      published yet.
+    </p>
   </div>
 </Section>
 
 <style>
   :global(.section.editions-hero) {
-    padding-bottom: var(--gap-visual);
+    padding-bottom: var(--gap-h2-grid);
   }
-  .editions-hero__intro :global(.intro__lead) {
-    max-width: 58ch;
+  .editions-hero__intro {
+    max-width: 56rem;
   }
-  @media (min-width: 960px) {
-    .editions-hero__intro {
-      grid-column: 1 / span 10;
-    }
-  }
-  @media (min-width: 1680px) {
-    .editions-hero__intro {
-      grid-column: 1 / span 9;
-    }
+  .editions-hero__lead {
+    max-width: 40rem;
+    margin-top: var(--gap-h2-text);
   }
 </style>

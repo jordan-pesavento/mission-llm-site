@@ -1,19 +1,20 @@
 ---
 /*
- * Security > Data flow in plain language (copy.md). The page's only dark band.
+ * Security > Data flow in plain language (copy.md). The page's only dark band: a DarkBand (navy,
+ * white headings, mist-300 text), size "sm" (80 to 96px padding) because the band carries a diagram
+ * and two lists. Package C.
  *
  * Diagram: HTML nodes on a CSS grid, with the boundary and connectors drawn as inline SVG that
  * fill their grid cells (no fixed viewBox, so lines stay 1.5px and labels stay real text at every
  * width). Two compositions from one markup:
- * - below 960: vertical. Browser, server, then storage and the local runtime side by side; the one
+ * - below 1024: vertical. Browser, server, then storage and the local runtime side by side; the one
  *   dashed arrow drops from the server between them, out through the boundary to the providers.
- * - 960 and wider: horizontal. Runtime above and storage below the server; the dashed arrow runs
+ * - 1024 and wider: horizontal. Runtime above and storage below the server; the dashed arrow runs
  *   right, across the boundary edge, to the providers. Nodes cap their width and the connectors
  *   take the extra space, so the figure fills the container without stretching the boxes.
  * Node labels come from the design brief (Security item 2). The lists and notes are copy.md verbatim.
- * The band sits above the table-of-contents rail (z-index) so the rail slides under it.
  */
-import Section from "../../ui/Section.astro";
+import DarkBand from "../../ui/DarkBand.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 import Icon from "../../ui/Icon.astro";
 
@@ -34,7 +35,7 @@ const leaves = [
 ];
 ---
 
-<Section id="data-flow" tone="dark" labelledby="data-flow-title" class="sec-dark">
+<DarkBand id="data-flow" size="sm" labelledby="data-flow-title">
   <SectionIntro title="Data flow in plain language" id="data-flow-title" />
 
   <figure class="df" aria-labelledby="data-flow-title" data-reveal>
@@ -147,26 +148,21 @@ const leaves = [
       <p class="df-list__note">The Privacy and Data page in Settings shows how each configured provider handles your data.</p>
     </div>
   </div>
-</Section>
+</DarkBand>
 
 <style>
-  /* The band covers the sticky table-of-contents rail while it scrolls past (see SecurityHero). */
-  :global(.sec-dark.section) {
-    z-index: 2;
-  }
-
   /* ---------- Diagram ---------- */
   .df {
     --df-pad: clamp(1rem, 0.6rem + 1.2vw, 2rem);
-    --df-link: var(--space-7);
-    --df-vlink: var(--space-7);
-    --df-mid: var(--space-7);
+    --df-link: var(--space-12);
+    --df-vlink: var(--space-12);
+    --df-mid: var(--space-12);
     --df-line: rgb(169 186 214 / 0.5);
-    --df-out: var(--blue-300);
+    --df-out: var(--accent-on-dark);
     position: relative;
     display: grid;
-    margin-top: var(--gap-visual);
-    /* Below 960: vertical composition. */
+    margin-top: var(--gap-h2-content);
+    /* Below 1024: vertical composition. */
     grid-template-columns:
       [b-start] var(--df-pad)
       [left-start] minmax(0, 1fr)
@@ -261,12 +257,12 @@ const leaves = [
     grid-row: label;
     align-self: start;
     margin-bottom: var(--space-4);
-    font-size: var(--fs-eyebrow);
-    line-height: var(--lh-eyebrow);
-    letter-spacing: var(--ls-eyebrow);
-    font-weight: var(--fw-eyebrow);
+    font-size: var(--fs-small);
+    line-height: var(--lh-small);
+    letter-spacing: var(--ls-label);
+    font-weight: var(--fw-medium);
     text-transform: uppercase;
-    color: var(--color-text-3);
+    color: var(--color-text-quiet);
   }
 
   .df__node {
@@ -327,7 +323,7 @@ const leaves = [
     height: 40px;
     border-radius: var(--radius-md);
     background: rgb(169 186 214 / 0.1);
-    color: var(--silver-100);
+    color: var(--mist-100);
   }
   .df__node--provider .df__icon {
     background: rgb(155 190 255 / 0.1);
@@ -345,19 +341,19 @@ const leaves = [
     display: block;
     font-size: var(--fs-body);
     line-height: 1.35;
-    font-weight: 600;
-    color: var(--color-text);
+    font-weight: var(--fw-semibold);
+    color: var(--color-heading);
   }
   .df__sub {
     display: block;
     margin-top: 2px;
-    font-size: var(--fs-ui);
-    line-height: var(--lh-ui);
-    color: var(--color-text-3);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-quiet);
   }
 
-  /* 960 and wider: horizontal composition. */
-  @media (min-width: 960px) {
+  /* 1024 and wider: horizontal composition. */
+  @media (min-width: 1024px) {
     .df {
       --df-vlink: var(--space-6);
       grid-template-columns:
@@ -438,10 +434,10 @@ const leaves = [
   .df-lists {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-8) calc(var(--grid-gap) * 2);
-    margin-top: var(--gap-visual);
+    gap: var(--space-12) var(--split-gap);
+    margin-top: var(--gap-h2-content);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 1024px) {
     .df-lists {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -461,21 +457,21 @@ const leaves = [
   /* "Stays" key: a solid link between two nodes, like the connectors inside the boundary; it
      mirrors the dashed "leaves" arrow. */
   .df-key--stays line {
-    stroke: var(--silver-400);
+    stroke: var(--mist-400);
     stroke-width: 1.5px;
   }
   .df-key--stays circle {
     fill: var(--navy-850);
-    stroke: var(--silver-400);
+    stroke: var(--mist-400);
     stroke-width: 1.5px;
   }
   .df-key--leaves line {
-    stroke: var(--blue-300);
+    stroke: var(--accent-on-dark);
     stroke-width: 1.5px;
     stroke-dasharray: 5 4;
   }
   .df-key--leaves path {
-    fill: var(--blue-300);
+    fill: var(--accent-on-dark);
   }
   .df-list__items {
     margin-top: var(--space-5);
@@ -483,18 +479,18 @@ const leaves = [
   }
   .df-list__items li {
     padding-block: var(--space-4);
-    border-top: 1px solid var(--color-hairline);
-    color: var(--color-text-2);
+    border-top: 1px solid var(--color-line);
+    color: var(--color-text-muted);
   }
   .df-list__items li:last-child {
-    border-bottom: 1px solid var(--color-hairline);
+    border-bottom: 1px solid var(--color-line);
   }
   .df-list__items strong {
-    color: var(--color-text);
+    color: var(--color-heading);
   }
   .df-list__note {
     margin-top: var(--space-5);
     max-width: var(--measure);
-    color: var(--color-text-3);
+    color: var(--color-text-quiet);
   }
 </style>

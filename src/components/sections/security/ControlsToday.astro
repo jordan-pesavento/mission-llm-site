@@ -1,11 +1,12 @@
 ---
 /*
  * Security > Controls available today (copy.md): four groups (Access, Oversight, Transport and
- * runtime, Integrations) as .dl-grid definition lists. Each term runs into its definition so the
- * copy reads exactly as written. From 960 the group title sits in a left column beside its list.
- * The telemetry row reuses the copy.md Home > Security and control item verbatim so this list
- * names DISABLE_TELEMETRY (design brief, Security item 3). Only shipped controls belong here;
- * roadmap items live in InDevelopment.astro.
+ * runtime, Integrations), verbatim. Package C.
+ * Each term runs into its definition so the copy reads exactly as written. From 1024 the group title
+ * (Clash 24/32) sits in the left column of the page rail (5fr | 12fr, 94px gap) beside its list, on
+ * mist-300 hairlines. The telemetry row reuses copy.md Home > Security and control verbatim so this
+ * list names DISABLE_TELEMETRY. Only shipped controls belong here; roadmap items live in
+ * InDevelopment.astro. Group ids: #controls-access, -oversight, -transport, -integrations.
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
@@ -78,17 +79,19 @@ const GROUPS: { id: string; title: string; items: { term: string; text: string }
 ];
 ---
 
-<Section id="controls" tone="light" hairline labelledby="controls-title">
-  <SectionIntro title="Controls available today" id="controls-title" />
+<Section id="controls" divider labelledby="controls-title">
+  <div data-reveal>
+    <SectionIntro title="Controls available today" id="controls-title" />
+  </div>
 
-  <div class="ct">
+  <div class="ct" data-reveal="2">
     {
       GROUPS.map((group) => (
         <div class="ct-group">
-          <h3 class="h4 ct-group__title" id={group.id}>
+          <h3 class="h3 ct-group__title" id={group.id}>
             {group.title}
           </h3>
-          <dl class="dl-grid ct-dl" aria-labelledby={group.id}>
+          <dl class="ct-dl" aria-labelledby={group.id}>
             {group.items.map((item) => (
               <div>
                 <dt>{item.term}</dt>{" "}<dd set:html={item.text} />
@@ -102,46 +105,48 @@ const GROUPS: { id: string; title: string; items: { term: string; text: string }
 </Section>
 
 <style>
+  /* No closing rule: the section's dotted divider is the only separator after the last group. */
   .ct {
-    margin-top: var(--gap-visual);
-    border-bottom: 1px solid var(--color-hairline-strong);
+    margin-top: var(--gap-h2-content);
   }
   .ct-group {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    border-top: 1px solid var(--color-hairline-strong);
-    padding-top: var(--space-5);
+    row-gap: var(--space-2);
+    padding-block: var(--space-6);
+    border-top: 1px solid var(--color-line);
   }
-  .ct-group__title {
-    padding-bottom: var(--space-2);
+  @media (min-width: 1024px) {
+    .ct-group {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 12fr);
+      column-gap: var(--split-gap);
+      padding-block: var(--space-4);
+    }
+    .ct-group__title {
+      padding-top: var(--space-4);
+    }
   }
   /* Run-in terms: the definition continues the sentence, as the copy is written. */
+  /* Row hairlines run the full column, as the group rules do; the text keeps a 44rem measure. */
   .ct-dl > div {
-    max-width: var(--measure);
     padding-block: var(--space-4);
+    padding-right: max(0px, 100% - 44rem);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body-relaxed);
   }
-  .ct-dl > div:first-child {
-    border-top: 0;
+  .ct-dl > div + div {
+    border-top: 1px solid var(--color-line);
   }
   .ct-dl dt,
   .ct-dl dd {
     display: inline;
   }
+  .ct-dl dt {
+    font-weight: var(--fw-semibold);
+    color: var(--color-heading);
+  }
   .ct-dl dd {
     margin: 0;
-  }
-
-  @media (min-width: 960px) {
-    .ct-group {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-      column-gap: var(--grid-gap);
-      padding-top: 0;
-    }
-    .ct-group__title {
-      padding-block: 20px;
-    }
-    .ct-dl > div {
-      padding-block: 20px;
-    }
+    color: var(--color-text-muted);
   }
 </style>

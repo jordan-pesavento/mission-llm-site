@@ -10,9 +10,8 @@ export const SITE = {
   // Default meta description (copy.md: Global > Site metadata).
   description:
     "Mission LLM is a self-hosted AI assistant for documents and agents. Run it on your own infrastructure with local or cloud models, including on disconnected networks.",
-  // TODO: production origin is not decided (Vercel project and .com domain pending). Leave null until then.
-  origin: null as string | null,
-  themeColor: "#fbfcfe",
+  origin: "https://mission-llm.com" as string | null,
+  themeColor: "#f8fafc",
   /** Share card (Open Graph, X/Twitter), emitted with absolute URLs once `origin` is set. */
   shareImage: "/og/mission-llm.png",
   shareImageAlt: "Mission LLM: private AI, grounded in your own documents.",
@@ -20,7 +19,7 @@ export const SITE = {
 
 /** Every product screenshot carries this caption (copy.md builder note 1). */
 export const CONCEPT_CAPTION =
-  "Concept of the next Mission LLM interface. Inline citations and page references are in development.";
+  "The Mission LLM app, shown with fictional sample documents.";
 
 /**
  * Verified counts (copy.md builder note 3). Use these constants; never type the numbers inline.
@@ -32,7 +31,17 @@ export const COUNTS = {
   llmProviders: 38,
   vectorDatabases: 10,
   embeddingEngines: 14,
+  // Admin, manager and default (server/utils/middleware/multiUserProtected.js:3-8).
+  userRoles: 3,
+  // Container install methods on /download: Docker, Docker Compose, Kubernetes, Helm, OpenShift
+  // (docker/HOW_TO_USE_DOCKER.md, cloud-deployments/k8, cloud-deployments/helm, cloud-deployments/openshift).
+  installMethods: 5,
+  // AWS CloudFormation, Google Cloud Deployment Manager, DigitalOcean Terraform (cloud-deployments/*).
+  cloudTemplates: 3,
 } as const;
+
+/** Container install methods, in the order /download lists them after Build from source. */
+export const INSTALL_METHODS = ["Docker", "Docker Compose", "Kubernetes", "Helm", "OpenShift"] as const;
 
 /** The server listens on 3001 (docker/HOW_TO_USE_DOCKER.md:139-144, server/index.js). */
 export const PORT = 3001;
@@ -48,15 +57,17 @@ export const TELEMETRY_ENV = 'DISABLE_TELEMETRY="true"';
 export const PLACEHOLDER = {
   registry: "REGISTRY", // image registry: public images are not published yet
   image: "REGISTRY/mission-llm:latest",
-  repositoryUrl: "REPOSITORY_URL", // TODO: repository access not decided
+  repositoryUrl: "https://github.com/jordan-pesavento/mission-llm",
   docsUrl: "#", // TODO: no Mission LLM docs site yet
-  contactEmail: "mailto:contact@example.com", // TODO: real address
-  securityEmail: "mailto:security@example.com", // TODO: real security contact
+  // TODO: real addresses. "#" until the owner supplies them, so nothing links to a dead example.com
+  // address; the pages that need them say the address will be published instead.
+  contactEmail: "#", // TODO: real contact address
+  securityEmail: "https://github.com/jordan-pesavento/mission-llm/security/advisories/new", // GitHub private vulnerability reporting
   privacyUrl: "#", // TODO
   termsUrl: "#", // TODO
-  licensesUrl: "#", // TODO: link LICENSE and NOTICE
-  securityPolicyUrl: "#", // TODO: link SECURITY.md
-  sourceCodeUrl: "#", // TODO: repository access not decided
+  licensesUrl: "https://github.com/jordan-pesavento/mission-llm/blob/main/LICENSE",
+  securityPolicyUrl: "https://github.com/jordan-pesavento/mission-llm/blob/main/SECURITY.md",
+  sourceCodeUrl: "https://github.com/jordan-pesavento/mission-llm",
 };
 
 export const UPSTREAM = {
@@ -79,13 +90,15 @@ export const COPYRIGHT = "© 2026 Mission LLM.";
 export type NavItem = { label: string; href: string; todo?: string };
 export const isPlaceholder = (href: string) => href === "#";
 
-/** Header navigation (copy.md: Global > Header). */
+/**
+ * Header navigation: the reference's three links plus the Download block. Docs is left out until a
+ * Mission LLM docs site exists.
+ * TODO: add { label: "Docs", href: PLACEHOLDER.docsUrl } once the docs site exists (no Mission LLM docs site yet).
+ */
 export const NAV: NavItem[] = [
   { label: "Product", href: "/#product" },
   { label: "Security", href: "/security" },
-  { label: "Deployment", href: "/#deploy" },
   { label: "Editions", href: "/editions" },
-  { label: "Docs", href: PLACEHOLDER.docsUrl, todo: "no Mission LLM docs site yet" },
 ];
 
 /** Every Download button on the site points here. */
@@ -94,7 +107,14 @@ export const DOWNLOAD_HREF = "/download";
 /** One line under the footer wordmark (copy.md: Global > Footer). */
 export const FOOTER_DESCRIPTOR = "Self-hosted AI for documents and agents, on infrastructure you control.";
 
-/** Footer columns (copy.md: Global > Footer). Contact lives under Resources. */
+/**
+ * Footer columns, in the reference's four-column structure (Product, Resources, Project, Contact).
+ * Only destinations that exist are listed. Placeholder entries come back once they are real:
+ * TODO: Resources > Documentation (PLACEHOLDER.docsUrl, docs site), Security policy
+ * (PLACEHOLDER.securityPolicyUrl, link SECURITY.md); Project > Source code (PLACEHOLDER.sourceCodeUrl,
+ * repository access not decided), Licenses and notices (PLACEHOLDER.licensesUrl, link LICENSE and
+ * NOTICE); Contact > Contact us (PLACEHOLDER.contactEmail, real address).
+ */
 export const FOOTER: { title: string; links: NavItem[] }[] = [
   {
     title: "Product",
@@ -102,29 +122,32 @@ export const FOOTER: { title: string; links: NavItem[] }[] = [
       { label: "Overview", href: "/#product" },
       { label: "Grounded answers", href: "/#grounded" },
       { label: "Deployment", href: "/#deploy" },
-      { label: "Security", href: "/security" },
-      { label: "Editions", href: "/editions" },
       { label: "Download", href: DOWNLOAD_HREF },
     ],
   },
   {
     title: "Resources",
     links: [
-      { label: "Documentation", href: PLACEHOLDER.docsUrl, todo: "docs site" },
-      { label: "Source code", href: PLACEHOLDER.sourceCodeUrl, todo: "repository access not decided" },
-      { label: "Security policy", href: PLACEHOLDER.securityPolicyUrl, todo: "link SECURITY.md" },
-      { label: "AnythingLLM project", href: UPSTREAM.url },
-      { label: "Contact", href: PLACEHOLDER.contactEmail, todo: "real address" },
+      { label: "Security overview", href: "/security" },
+      { label: "Install options", href: "/download#options" },
+      { label: "System requirements", href: "/download#requirements" },
+      { label: "Editions", href: "/editions" },
     ],
   },
   {
-    title: "Legal",
-    links: [
-      { label: "Privacy", href: PLACEHOLDER.privacyUrl, todo: "privacy page" },
-      { label: "Terms", href: PLACEHOLDER.termsUrl, todo: "terms page" },
-      { label: "Licenses and notices", href: PLACEHOLDER.licensesUrl, todo: "link LICENSE and NOTICE" },
-    ],
+    title: "Project",
+    links: [{ label: "AnythingLLM project", href: UPSTREAM.url }],
   },
+  {
+    title: "Contact",
+    links: [{ label: "Report a vulnerability", href: "/security#report" }],
+  },
+];
+
+/** Bottom-row legal links (the reference's Privacy and Terms, bottom right). */
+export const FOOTER_LEGAL: NavItem[] = [
+  { label: "Privacy", href: PLACEHOLDER.privacyUrl, todo: "privacy page" },
+  { label: "Terms", href: PLACEHOLDER.termsUrl, todo: "terms page" },
 ];
 
 /** Page metadata (copy.md: each page's Meta title and Meta description). */
@@ -149,7 +172,7 @@ export const PAGES = {
   editions: {
     title: "Editions | Mission LLM",
     description:
-      "Mission LLM Community is free to self-host. Mission LLM Enterprise adds support, deployment help and planned governance features.",
+      "Mission LLM Community is free to self-host. Mission LLM Enterprise adds planned support, deployment help and governance features.",
   },
   notFound: {
     title: "Page not found | Mission LLM",
