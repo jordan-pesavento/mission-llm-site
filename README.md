@@ -2,7 +2,13 @@
 
 Standalone public product site for Mission LLM (home, download, security, editions, 404). It is not part of the Mission LLM application and shares no code with it. Static Astro output, no UI framework, minimal vanilla JS.
 
-Not deployed. It goes to Vercel later, once the production domain is chosen (set `SITE.origin` in `src/data/site.ts` then).
+## Hosting and deploys
+
+- Live at https://mission-llm.com. `www` 308-redirects to the apex.
+- Vercel project `mission-llm-site` (team Kuler Labs). Every push to `master` deploys to production, so stage changes on a branch first; branch pushes get SSO-protected preview deployments.
+- DNS is on Cloudflare (zone `mission-llm.com`): `A @ 76.76.21.21` and `CNAME www cname.vercel-dns-0.com`, both DNS only (grey cloud) so Vercel issues and renews the certificates. Do not turn the Cloudflare proxy on.
+- Security headers and the CSP live in `vercel.json`. Inline scripts are allowed only by SHA-256 hash; `scripts/prune-dist.mjs` fails the build if an inline script in `dist/` is missing from the CSP, so update the hash in `vercel.json` whenever an inline script changes. Line endings are pinned to LF (`.gitattributes`) so the hash matches on every OS.
+- Future installers: publish them as GitHub Release assets on the app repository with SHA-256 checksums (and signatures once code signing is set up), and link to them from the Download page. Never host binaries from a mutable location.
 
 ## Commands
 
