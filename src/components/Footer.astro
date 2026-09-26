@@ -1,0 +1,165 @@
+---
+/*
+ * Site footer: the darkest navy band. Emblem, wordmark and a one-line product descriptor, three
+ * link columns (Product, Resources, Legal) and the fine print: upstream MIT credit, the
+ * non-affiliation line and the copyright placeholder. On Home the closing CTA (a dark band) sits
+ * directly above it and the two read as one block, separated by a hairline.
+ * Entries whose destination is still a TODO ("#" in src/data/site.ts) render as muted text with a
+ * "Soon" tag, not as links; they become links when the destination exists.
+ */
+import { FOOTER, FOOTER_DESCRIPTOR, UPSTREAM, NON_AFFILIATION, COPYRIGHT, SITE, isPlaceholder } from "../data/site";
+---
+
+<footer class="site-footer" data-tone="dark">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__id">
+        <a class="site-footer__brand" href="/">
+          <img src="/mission-llm-emblem.svg" width="40" height="40" alt="" loading="lazy" />
+          <span>{SITE.name}</span>
+        </a>
+        <p class="site-footer__desc">{FOOTER_DESCRIPTOR}</p>
+      </div>
+      <nav class="site-footer__cols" aria-label="Footer">
+        {
+          FOOTER.map((col) => (
+            <div class="site-footer__col">
+              <h2 class="site-footer__title">{col.title}</h2>
+              <ul role="list">
+                {col.links.map((link) => (
+                  <li>
+                    {isPlaceholder(link.href) ? (
+                      <span class="site-footer__soon" aria-disabled="true" data-todo={link.todo}>
+                        {link.label}
+                        <span class="site-footer__tag">Soon</span>
+                      </span>
+                    ) : (
+                      <a
+                        href={link.href}
+                        data-todo={link.todo}
+                        rel={link.href.startsWith("http") ? "noopener" : undefined}
+                      >
+                        {link.label}
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </nav>
+    </div>
+    <div class="site-footer__fine legal">
+      <p>{UPSTREAM.credit}</p>
+      <p>{NON_AFFILIATION}</p>
+      <p class="tnum">{COPYRIGHT}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--navy-950);
+    border-top: 1px solid rgb(169 186 214 / 0.08);
+    padding-block: clamp(3.5rem, 2.5rem + 3vw, 6rem) clamp(2rem, 1.5rem + 1.5vw, 3rem);
+  }
+  .site-footer__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-7);
+  }
+  @media (min-width: 1280px) {
+    .site-footer__top {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+  }
+  .site-footer__id {
+    align-self: start;
+    max-width: 30rem;
+  }
+  .site-footer__desc {
+    margin-top: var(--space-4);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+  .site-footer__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 48px;
+    font-size: var(--fs-h4);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  .site-footer__brand:hover {
+    color: var(--color-text);
+  }
+  .site-footer__cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-7) var(--grid-gap);
+  }
+  @media (min-width: 640px) {
+    .site-footer__cols {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .site-footer__title {
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+  .site-footer__col ul {
+    display: grid;
+    gap: var(--space-1);
+  }
+  .site-footer__col a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    color: var(--color-text-3);
+    text-decoration: none;
+  }
+  .site-footer__col a:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+  /* Text that wraps like a link label, with the tag following its last word. */
+  .site-footer__soon {
+    display: block;
+    padding-block: 8px;
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    color: var(--color-text-3);
+  }
+  .site-footer__tag {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: 1px;
+    margin-left: var(--space-2);
+    height: 22px;
+    padding-inline: 6px;
+    border: 1px dashed var(--color-hairline-dashed);
+    border-radius: var(--radius-xs);
+    font-size: var(--fs-legal);
+    line-height: 1;
+    font-weight: 500;
+  }
+  .site-footer__fine {
+    display: grid;
+    gap: var(--space-2);
+    margin-top: clamp(3rem, 2rem + 3vw, 5rem);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-hairline);
+    color: var(--color-text-3);
+  }
+</style>

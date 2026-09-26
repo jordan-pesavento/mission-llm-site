@@ -1,0 +1,61 @@
+---
+/*
+ * Section: one full-width band of a page.
+ * - tone: "light" (paper, default), "silver" (stage gradient) or "dark" (navy band). Every token
+ *   is remapped inside the tone, so Button, Badge, CodeBlock and Screenshot adapt on their own.
+ *   Never place two dark bands next to each other (the Home closing CTA merges into the footer).
+ * - pad: "section" (clamp 72 to 160px, default), "strip" (clamp 40 to 64px), "flush-top" or "none".
+ * - hairline: a 1px top rule, used between adjacent bands of the same tone instead of more space.
+ * - contain: wraps the slot in <Container> (default true). Set false for full-bleed layouts and
+ *   place your own <Container> inside.
+ * - labelledby: id of the section heading (SectionIntro sets it from `id`).
+ * Usage: <Section id="deploy" labelledby="deploy-title"> <SectionIntro id="deploy-title" .../> </Section>
+ */
+import Container from "./Container.astro";
+
+interface Props {
+  id?: string;
+  tone?: "light" | "silver" | "dark";
+  pad?: "section" | "strip" | "flush-top" | "none";
+  hairline?: boolean;
+  contain?: boolean;
+  labelledby?: string;
+  label?: string;
+  as?: "section" | "div" | "aside";
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  id,
+  tone = "light",
+  pad = "section",
+  hairline = false,
+  contain = true,
+  labelledby,
+  label,
+  as: Tag = "section",
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<Tag
+  id={id}
+  data-tone={tone}
+  aria-labelledby={labelledby}
+  aria-label={label}
+  class:list={[
+    "section",
+    {
+      "section--strip": pad === "strip",
+      "section--flush": pad === "none",
+      "section--flush-top": pad === "flush-top",
+      "section--hairline": hairline,
+    },
+    className,
+  ]}
+  {...rest}
+>
+  {contain ? <Container><slot /></Container> : <slot />}
+</Tag>

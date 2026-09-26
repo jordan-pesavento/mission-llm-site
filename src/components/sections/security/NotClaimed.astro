@@ -1,0 +1,55 @@
+---
+/*
+ * Security > What we do not claim (design brief, Security item 5; not in copy.md).
+ * Restates only the facts of the hero callout (copy.md: Security > Hero > Callout): no government
+ * certification or authorization today, and the buyer assesses it as part of their own system.
+ * No dates, no named programs, nothing implying an assessment exists or is planned.
+ * Same term-beside-definition rhythm as Controls available today.
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+---
+
+<Section id="not-claimed" tone="light" labelledby="not-claimed-title">
+  <SectionIntro title="What we do not claim" id="not-claimed-title" />
+
+  <dl class="nc">
+    <div class="nc__row">
+      <dt class="h4">Government certification or authorization</dt>
+      <dd>None held today.</dd>
+    </div>
+    <div class="nc__row">
+      <dt class="h4">Assessment</dt>
+      <dd>Mission LLM runs on your infrastructure, so you assess it as part of your own system.</dd>
+    </div>
+  </dl>
+</Section>
+
+<style>
+  .nc {
+    margin-top: var(--gap-visual);
+    border-bottom: 1px solid var(--color-hairline-strong);
+  }
+  .nc__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2) var(--grid-gap);
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--color-hairline-strong);
+  }
+  .nc__row dt {
+    color: var(--color-text);
+  }
+  .nc__row dd {
+    max-width: var(--measure);
+    font-size: var(--fs-lead);
+    line-height: var(--lh-lead);
+    color: var(--color-text-2);
+  }
+  @media (min-width: 960px) {
+    .nc__row {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      align-items: baseline;
+    }
+  }
+</style>

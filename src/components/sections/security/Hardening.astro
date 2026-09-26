@@ -1,0 +1,89 @@
+---
+/*
+ * Security > Hardening an install today (copy.md): seven numbered steps, verbatim.
+ * One column below 960; from 960 two columns that read down (1 to 4, then 5 to 7) with rows
+ * aligned across the columns. Numbers are plain figures in a hairline ring, not counters.
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import { TELEMETRY_ENV } from "../../../data/site";
+
+const code = (s: string) => `<code>${s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;")}</code>`;
+
+const STEPS = [
+  `Set ${code(TELEMETRY_ENV)} before the first start.`,
+  "Set a password or turn on multi-user mode before anyone else can reach the server. Without either, anyone who can reach the address can use the instance.",
+  `Publish port 3001 only on the interface you intend. Put TLS in front of it with ${code("ENABLE_HTTPS")} or your reverse proxy.`,
+  `For disconnected use, choose local providers for chat, embeddings and vector storage, and stage the built-in models under ${code("storage/models")}.`,
+  "Set password complexity rules.",
+  "Keep provider keys and secrets out of shared configuration. In Kubernetes, use Secrets.",
+  "Mount storage on a volume that your backup and encryption controls already cover.",
+];
+---
+
+<Section id="hardening" tone="light" hairline labelledby="hardening-title">
+  <SectionIntro title="Hardening an install today" id="hardening-title" />
+
+  <ol class="hd" role="list" style={`--hd-rows: ${Math.ceil(STEPS.length / 2)}`}>
+    {
+      STEPS.map((step, i) => (
+        <li class="hd__step">
+          <span class="hd__num" aria-hidden="true">
+            {i + 1}
+          </span>
+          <p class="hd__text" set:html={step} />
+        </li>
+      ))
+    }
+  </ol>
+</Section>
+
+<style>
+  .hd {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: calc(var(--grid-gap) * 2);
+    margin-top: var(--gap-visual);
+  }
+  .hd__step {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    column-gap: var(--space-4);
+    align-items: start;
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--color-hairline);
+  }
+  .hd__step:last-child {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .hd__num {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-top: -0.25rem;
+    border-radius: var(--radius-full);
+    box-shadow: inset 0 0 0 1px var(--color-hairline-strong);
+    font-size: var(--fs-ui);
+    line-height: 1;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
+  }
+  .hd__text {
+    max-width: var(--measure);
+    color: var(--color-text-2);
+  }
+
+  @media (min-width: 960px) {
+    .hd {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(var(--hd-rows), auto);
+      grid-auto-flow: column;
+    }
+    /* Close the first column too (its last step is step 4). */
+    .hd__step:nth-child(4) {
+      border-bottom: 1px solid var(--color-hairline);
+    }
+  }
+</style>

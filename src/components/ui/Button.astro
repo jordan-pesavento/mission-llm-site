@@ -1,0 +1,97 @@
+---
+/*
+ * Button: 48px tall, 8px radius, 16px/500 label on one line.
+ * - primary: solid accent (#1C4ED8). Use once or twice per page, for Download and the main action.
+ * - secondary: 1px ring at the same size, for the second action beside a primary.
+ * Renders <a> when `href` is set, otherwise <button>. Adapts to the section tone automatically.
+ * Every Download button points to /download (use DOWNLOAD_HREF from @/data/site).
+ * Usage: <Button href="/download">Download</Button>
+ *        <Button href="/security" variant="secondary">Security overview</Button>
+ */
+import type { HTMLAttributes } from "astro/types";
+import Icon from "./Icon.astro";
+
+type Props = {
+  href?: string;
+  variant?: "primary" | "secondary";
+  type?: "button" | "submit";
+  /** Phosphor icon name after the label (for example "arrow-right"). */
+  iconEnd?: string;
+  /** Phosphor icon name before the label. */
+  iconStart?: string;
+  /** Stretch to the container width (used in stacked mobile layouts). */
+  block?: boolean;
+  class?: string;
+} & Omit<HTMLAttributes<"a">, "href" | "class" | "type">;
+
+const { href, variant = "primary", type = "button", iconEnd, iconStart, block = false, class: className, ...rest } = Astro.props;
+const Tag = href ? "a" : "button";
+---
+
+<Tag
+  href={href}
+  type={href ? undefined : type}
+  class:list={["btn", `btn--${variant}`, { "btn--block": block }, className]}
+  {...rest}
+>
+  {iconStart && <Icon name={iconStart} size={20} />}
+  <span class="btn__label"><slot /></span>
+  {iconEnd && <Icon name={iconEnd} size={20} />}
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    height: 48px;
+    padding-inline: var(--space-5);
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
+    font-size: var(--fs-ui);
+    line-height: 1;
+    font-weight: var(--fw-ui);
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-hover) var(--ease-standard),
+      box-shadow var(--dur-hover) var(--ease-standard),
+      color var(--dur-hover) var(--ease-standard);
+  }
+  .btn__label {
+    white-space: nowrap;
+  }
+  .btn--primary {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn--primary:hover {
+    background: var(--btn-primary-bg-hover);
+    color: var(--btn-primary-text);
+  }
+  .btn--primary:active {
+    background: var(--btn-primary-bg-active);
+  }
+  .btn--secondary {
+    background: transparent;
+    color: var(--btn-secondary-text);
+    box-shadow: inset 0 0 0 1px var(--btn-secondary-ring);
+  }
+  .btn--secondary:hover {
+    color: var(--btn-secondary-text);
+    background: var(--btn-secondary-bg-hover);
+    box-shadow: inset 0 0 0 1px var(--btn-secondary-ring-hover);
+  }
+  .btn:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-md);
+  }
+  .btn--block {
+    display: flex;
+    width: 100%;
+  }
+</style>

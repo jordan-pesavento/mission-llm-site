@@ -1,0 +1,363 @@
+{
+  "chat-sources": {
+    "width": 1920,
+    "height": 1080,
+    "scale": 2,
+    "variants": [
+      {
+        "width": 960,
+        "avif": "/images/product/generated/chat-sources-960.avif",
+        "webp": "/images/product/generated/chat-sources-960.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/chat-sources-1440.avif",
+        "webp": "/images/product/generated/chat-sources-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/chat-sources-1920.avif",
+        "webp": "/images/product/generated/chat-sources-1920.webp"
+      },
+      {
+        "width": 2880,
+        "avif": "/images/product/generated/chat-sources-2880.avif",
+        "webp": "/images/product/generated/chat-sources-2880.webp"
+      },
+      {
+        "width": 3840,
+        "avif": "/images/product/generated/chat-sources-3840.avif",
+        "webp": "/images/product/generated/chat-sources-3840.webp"
+      }
+    ],
+    "crops": {
+      "sources": {
+        "width": 306,
+        "height": 262,
+        "variants": [
+          {
+            "width": 306,
+            "avif": "/images/product/generated/chat-sources--sources-306.avif",
+            "webp": "/images/product/generated/chat-sources--sources-306.webp"
+          },
+          {
+            "width": 612,
+            "avif": "/images/product/generated/chat-sources--sources-612.avif",
+            "webp": "/images/product/generated/chat-sources--sources-612.webp"
+          }
+        ]
+      },
+      "documents": {
+        "width": 870,
+        "height": 544,
+        "variants": [
+          {
+            "width": 870,
+            "avif": "/images/product/generated/chat-sources--documents-870.avif",
+            "webp": "/images/product/generated/chat-sources--documents-870.webp"
+          },
+          {
+            "width": 1740,
+            "avif": "/images/product/generated/chat-sources--documents-1740.avif",
+            "webp": "/images/product/generated/chat-sources--documents-1740.webp"
+          }
+        ]
+      }
+    }
+  },
+  "chat-cite": {
+    "width": 1920,
+    "height": 1080,
+    "scale": 2,
+    "variants": [],
+    "crops": {
+      "answer": {
+        "width": 752,
+        "height": 612,
+        "variants": [
+          {
+            "width": 752,
+            "avif": "/images/product/generated/chat-cite--answer-752.avif",
+            "webp": "/images/product/generated/chat-cite--answer-752.webp"
+          },
+          {
+            "width": 1504,
+            "avif": "/images/product/generated/chat-cite--answer-1504.avif",
+            "webp": "/images/product/generated/chat-cite--answer-1504.webp"
+          }
+        ]
+      },
+      "popover": {
+        "width": 398,
+        "height": 216,
+        "variants": [
+          {
+            "width": 398,
+            "avif": "/images/product/generated/chat-cite--popover-398.avif",
+            "webp": "/images/product/generated/chat-cite--popover-398.webp"
+          },
+          {
+            "width": 796,
+            "avif": "/images/product/generated/chat-cite--popover-796.avif",
+            "webp": "/images/product/generated/chat-cite--popover-796.webp"
+          }
+        ]
+      }
+    }
+  },
+  "chat-empty": {
+    "width": 1920,
+    "height": 1080,
+    "scale": 2,
+    "variants": [],
+    "crops": {
+      "start": {
+        "width": 728,
+        "height": 400,
+        "variants": [
+          {
+            "width": 728,
+            "avif": "/images/product/generated/chat-empty--start-728.avif",
+            "webp": "/images/product/generated/chat-empty--start-728.webp"
+          },
+          {
+            "width": 1456,
+            "avif": "/images/product/generated/chat-empty--start-1456.avif",
+            "webp": "/images/product/generated/chat-empty--start-1456.webp"
+          }
+        ]
+      }
+    }
+  },
+  "chat-frame": {
+    "width": 1920,
+    "height": 1080,
+    "scale": 2,
+    "variants": [],
+    "crops": {
+      "workspaces": {
+        "width": 1200,
+        "height": 750,
+        "variants": [
+          {
+            "width": 1200,
+            "avif": "/images/product/generated/chat-frame--workspaces-1200.avif",
+            "webp": "/images/product/generated/chat-frame--workspaces-1200.webp"
+          },
+          {
+            "width": 2400,
+            "avif": "/images/product/generated/chat-frame--workspaces-2400.avif",
+            "webp": "/images/product/generated/chat-frame--workspaces-2400.webp"
+          }
+        ]
+      },
+      "rail": {
+        "width": 287,
+        "height": 488,
+        "variants": [
+          {
+            "width": 287,
+            "avif": "/images/product/generated/chat-frame--rail-287.avif",
+            "webp": "/images/product/generated/chat-frame--rail-287.webp"
+          },
+          {
+            "width": 574,
+            "avif": "/images/product/generated/chat-frame--rail-574.avif",
+            "webp": "/images/product/generated/chat-frame--rail-574.webp"
+          }
+        ]
+      }
+    }
+  },
+  "chat-sources-phone": {
+    "width": 420,
+    "height": 426,
+    "scale": 3,
+    "variants": [
+      {
+        "width": 420,
+        "avif": "/images/product/generated/chat-sources-phone-420.avif",
+        "webp": "/images/product/generated/chat-sources-phone-420.webp"
+      },
+      {
+        "width": 840,
+        "avif": "/images/product/generated/chat-sources-phone-840.avif",
+        "webp": "/images/product/generated/chat-sources-phone-840.webp"
+      },
+      {
+        "width": 1260,
+        "avif": "/images/product/generated/chat-sources-phone-1260.avif",
+        "webp": "/images/product/generated/chat-sources-phone-1260.webp"
+      }
+    ],
+    "crops": {}
+  },
+  "agent-run": {
+    "width": 1200,
+    "height": 750,
+    "scale": 2,
+    "variants": [
+      {
+        "width": 960,
+        "avif": "/images/product/generated/agent-run-960.avif",
+        "webp": "/images/product/generated/agent-run-960.webp"
+      },
+      {
+        "width": 1200,
+        "avif": "/images/product/generated/agent-run-1200.avif",
+        "webp": "/images/product/generated/agent-run-1200.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/agent-run-1440.avif",
+        "webp": "/images/product/generated/agent-run-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/agent-run-1920.avif",
+        "webp": "/images/product/generated/agent-run-1920.webp"
+      },
+      {
+        "width": 2400,
+        "avif": "/images/product/generated/agent-run-2400.avif",
+        "webp": "/images/product/generated/agent-run-2400.webp"
+      }
+    ],
+    "crops": {}
+  },
+  "agent-run-phone": {
+    "width": 420,
+    "height": 289,
+    "scale": 3,
+    "variants": [
+      {
+        "width": 420,
+        "avif": "/images/product/generated/agent-run-phone-420.avif",
+        "webp": "/images/product/generated/agent-run-phone-420.webp"
+      },
+      {
+        "width": 840,
+        "avif": "/images/product/generated/agent-run-phone-840.avif",
+        "webp": "/images/product/generated/agent-run-phone-840.webp"
+      },
+      {
+        "width": 1260,
+        "avif": "/images/product/generated/agent-run-phone-1260.avif",
+        "webp": "/images/product/generated/agent-run-phone-1260.webp"
+      }
+    ],
+    "crops": {}
+  },
+  "admin-users": {
+    "width": 1200,
+    "height": 750,
+    "scale": 2,
+    "variants": [
+      {
+        "width": 960,
+        "avif": "/images/product/generated/admin-users-960.avif",
+        "webp": "/images/product/generated/admin-users-960.webp"
+      },
+      {
+        "width": 1200,
+        "avif": "/images/product/generated/admin-users-1200.avif",
+        "webp": "/images/product/generated/admin-users-1200.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/admin-users-1440.avif",
+        "webp": "/images/product/generated/admin-users-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/admin-users-1920.avif",
+        "webp": "/images/product/generated/admin-users-1920.webp"
+      },
+      {
+        "width": 2400,
+        "avif": "/images/product/generated/admin-users-2400.avif",
+        "webp": "/images/product/generated/admin-users-2400.webp"
+      }
+    ],
+    "crops": {}
+  },
+  "admin-users-phone": {
+    "width": 420,
+    "height": 332,
+    "scale": 3,
+    "variants": [
+      {
+        "width": 420,
+        "avif": "/images/product/generated/admin-users-phone-420.avif",
+        "webp": "/images/product/generated/admin-users-phone-420.webp"
+      },
+      {
+        "width": 840,
+        "avif": "/images/product/generated/admin-users-phone-840.avif",
+        "webp": "/images/product/generated/admin-users-phone-840.webp"
+      },
+      {
+        "width": 1260,
+        "avif": "/images/product/generated/admin-users-phone-1260.avif",
+        "webp": "/images/product/generated/admin-users-phone-1260.webp"
+      }
+    ],
+    "crops": {}
+  },
+  "workspace-model": {
+    "width": 1200,
+    "height": 750,
+    "scale": 2,
+    "variants": [
+      {
+        "width": 960,
+        "avif": "/images/product/generated/workspace-model-960.avif",
+        "webp": "/images/product/generated/workspace-model-960.webp"
+      },
+      {
+        "width": 1200,
+        "avif": "/images/product/generated/workspace-model-1200.avif",
+        "webp": "/images/product/generated/workspace-model-1200.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/workspace-model-1440.avif",
+        "webp": "/images/product/generated/workspace-model-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/workspace-model-1920.avif",
+        "webp": "/images/product/generated/workspace-model-1920.webp"
+      },
+      {
+        "width": 2400,
+        "avif": "/images/product/generated/workspace-model-2400.avif",
+        "webp": "/images/product/generated/workspace-model-2400.webp"
+      }
+    ],
+    "crops": {}
+  },
+  "workspace-model-phone": {
+    "width": 420,
+    "height": 549,
+    "scale": 3,
+    "variants": [
+      {
+        "width": 420,
+        "avif": "/images/product/generated/workspace-model-phone-420.avif",
+        "webp": "/images/product/generated/workspace-model-phone-420.webp"
+      },
+      {
+        "width": 840,
+        "avif": "/images/product/generated/workspace-model-phone-840.avif",
+        "webp": "/images/product/generated/workspace-model-phone-840.webp"
+      },
+      {
+        "width": 1260,
+        "avif": "/images/product/generated/workspace-model-phone-1260.avif",
+        "webp": "/images/product/generated/workspace-model-phone-1260.webp"
+      }
+    ],
+    "crops": {}
+  }
+}

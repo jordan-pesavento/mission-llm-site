@@ -1,0 +1,47 @@
+---
+/*
+ * Phosphor icon, regular weight, inlined as SVG at build time (no icon font, no client JS).
+ * Usage: <Icon name="arrow-right" /> or <Icon name="copy" size={16} label="Copy" />
+ * Browse names at https://phosphoricons.com (files: node_modules/@phosphor-icons/core/assets/regular).
+ * Icons inherit currentColor. Decorative by default (aria-hidden); pass `label` when the icon
+ * is the only content of a control and there is no other accessible name.
+ */
+import fs from "node:fs";
+import path from "node:path";
+
+interface Props {
+  name: string;
+  size?: number | string;
+  label?: string;
+  class?: string;
+}
+
+const { name, size = 20, label, class: className } = Astro.props;
+const file = path.join(process.cwd(), "node_modules/@phosphor-icons/core/assets/regular", `${name}.svg`);
+if (!fs.existsSync(file)) throw new Error(`Icon "${name}" not found in @phosphor-icons/core (regular)`);
+const raw = fs.readFileSync(file, "utf8");
+const inner = raw.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+const dim = typeof size === "number" ? `${size}` : size;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 256 256"
+  fill="currentColor"
+  width={dim}
+  height={dim}
+  class:list={["icon", className]}
+  aria-hidden={label ? undefined : "true"}
+  role={label ? "img" : undefined}
+  aria-label={label}
+  focusable="false"
+  set:html={inner}
+/>
+
+<style>
+  .icon {
+    flex: none;
+    display: inline-block;
+    vertical-align: middle;
+  }
+</style>

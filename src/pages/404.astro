@@ -1,0 +1,12 @@
+---
+/*
+ * 404. Owned by work package C. Astro emits dist/404.html; Vercel serves it for unknown paths.
+ */
+import Base from "../layouts/Base.astro";
+import { PAGES } from "../data/site";
+import NotFound from "../components/sections/not-found/NotFound.astro";
+---
+
+<Base title={PAGES.notFound.title} description={PAGES.notFound.description}>
+  <NotFound />
+</Base>

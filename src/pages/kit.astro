@@ -1,0 +1,194 @@
+---
+/*
+ * Foundation primitives reference (not linked anywhere, noindex). Renders every shared
+ * primitive on light, silver and dark tones so builders and the render audit can check them.
+ * TODO: delete before launch, or keep it out of the production deploy.
+ */
+import Base from "../layouts/Base.astro";
+import Section from "../components/ui/Section.astro";
+import SectionIntro from "../components/ui/SectionIntro.astro";
+import Button from "../components/ui/Button.astro";
+import ArrowLink from "../components/ui/ArrowLink.astro";
+import Badge from "../components/ui/Badge.astro";
+import CodeBlock from "../components/ui/CodeBlock.astro";
+import Screenshot from "../components/ui/Screenshot.astro";
+import Icon from "../components/ui/Icon.astro";
+import { COUNTS, DOWNLOAD_HREF, PLACEHOLDER } from "../data/site";
+
+const dockerRun = `export STORAGE_LOCATION=$HOME/missionllm && \\
+mkdir -p $STORAGE_LOCATION && \\
+touch "$STORAGE_LOCATION/.env" && \\
+docker run -d --rm -p 3001:3001 \\
+--cap-add SYS_ADMIN \\
+-v \${STORAGE_LOCATION}:/app/server/storage \\
+-v \${STORAGE_LOCATION}/.env:/app/server/.env \\
+-e STORAGE_DIR="/app/server/storage" \\
+${PLACEHOLDER.image}`;
+const clone = `git clone REPOSITORY_URL mission-llm   # TODO: repository access not decided
+cd mission-llm
+docker build -f docker/Dockerfile -t mission-llm:latest .`;
+---
+
+<Base title="Primitives | Mission LLM" description="Foundation primitives reference.">
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+
+  <Section labelledby="kit-title">
+    <div class="layout-grid">
+      <div class="kit-hero">
+        <SectionIntro
+          level={1}
+          eyebrow="Foundation"
+          title="Private AI, grounded in your own documents."
+          id="kit-title"
+          lead="Display, eyebrow and lead on the shared scale. Buttons are 48px, 8px radius, one line."
+        >
+          <div class="kit-actions" data-row="hero-actions">
+            <Button href={DOWNLOAD_HREF}>Download</Button>
+            <Button href="/security" variant="secondary">Security overview</Button>
+          </div>
+        </SectionIntro>
+      </div>
+    </div>
+    <div class="kit-shot">
+      <Screenshot
+        name="chat-sources"
+        phone="chat-sources/sources"
+        priority
+        bleed={0.36}
+        alt="Mission LLM chat answering a question about a change control process, with a sources panel listing three documents."
+        callouts={[
+          { x: 34, y: 24, label: "The answer, written from your documents" },
+          { x: 58, y: 8, label: "Sources for this answer" },
+          { x: 78, y: 34, label: "The passage the answer used" },
+        ]}
+      />
+    </div>
+  </Section>
+
+  <Section tone="light" pad="strip" hairline labelledby="kit-cards">
+    <h2 id="kit-cards" class="sr-only">Card grid</h2>
+    <ul class="card-grid kit-cards" role="list">
+      <li><p class="h3 tnum">{COUNTS.llmProviders} model providers</p><p class="caption">Local runtimes and cloud APIs, chosen per workspace.</p></li>
+      <li><p class="h3 tnum">{COUNTS.vectorDatabases} vector databases</p><p class="caption">LanceDB built in, plus PGVector, Qdrant, Milvus, Chroma, Weaviate and more.</p></li>
+      <li><p class="h3 tnum">{COUNTS.embeddingEngines} embedding engines</p><p class="caption">Including a built-in embedder that runs on the server's CPU.</p></li>
+      <li><p class="h3">Docker, Kubernetes, Helm, OpenShift</p><p class="caption">Plus AWS, Google Cloud and DigitalOcean templates.</p></li>
+    </ul>
+  </Section>
+
+  <Section tone="silver" labelledby="kit-badges">
+    <SectionIntro eyebrow="Badges" title="Status labels" id="kit-badges" />
+    <div class="kit-row" data-row="badges">
+      <Badge kind="today" />
+      <Badge />
+      <Badge kind="soon" />
+      <Badge kind="pending" />
+    </div>
+    <div class="split-grid kit-split">
+      <div class="note"><strong>Public release images are not published yet.</strong> Build the image from source today, push it to your own registry, and replace REGISTRY in the commands below.</div>
+      <table class="data-table data-table--stack">
+        <caption>System requirements</caption>
+        <thead><tr><th scope="col">Item</th><th scope="col">Requirement</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Memory</th><td data-label="Requirement">2 GB of RAM or more.</td></tr>
+          <tr><th scope="row">Disk</th><td data-label="Requirement">10 GB minimum recommended.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><ArrowLink href="/download">See every install option</ArrowLink></p>
+  </Section>
+
+  <Section tone="dark" labelledby="kit-dark">
+    <SectionIntro eyebrow="Dark band" title="See where each answer came from." id="kit-dark" lead="Tokens remap inside the band; primitives need no overrides." />
+    <div class="kit-row" data-row="dark-actions">
+      <Button href={DOWNLOAD_HREF}>Download</Button>
+      <Button href="/editions" variant="secondary">Compare editions</Button>
+    </div>
+    <Badge />
+    <div class="kit-shot">
+      <Screenshot name="chat-cite" view="answer" phone="chat-cite/popover" maxScale={1.2} alt="An answer about a change control process, with a popover showing the cited passage from a release checklist." />
+    </div>
+  </Section>
+
+  <Section tone="light" labelledby="kit-code">
+    <SectionIntro eyebrow="Code" title="Deploy it where your data already lives." id="kit-code" />
+    <div class="split-grid kit-split">
+      <CodeBlock label="Run with Docker (Linux or macOS)" code={dockerRun} caption="REGISTRY is a placeholder. Public images are not published yet. Today you build the image from source (see Download)." />
+      <CodeBlock label="Build from source" code={clone} />
+    </div>
+
+    <div class="kit-tabs" data-tabs>
+      <div role="tablist" aria-label="Install method" class="kit-tablist" hidden data-row="tabs">
+        <button role="tab" id="kt-docker" aria-controls="kp-docker" aria-selected="true"><Icon name="cube" /> Docker</button>
+        <button role="tab" id="kt-helm" aria-controls="kp-helm" aria-selected="false"><Icon name="boat" /> Helm</button>
+      </div>
+      <div role="tabpanel" id="kp-docker" aria-labelledby="kt-docker"><p class="body">Docker panel. One container and one storage folder.</p></div>
+      <div role="tabpanel" id="kp-helm" aria-labelledby="kt-helm"><p class="body">Helm panel. A chart with ConfigMap settings and Secret references.</p></div>
+    </div>
+  </Section>
+</Base>
+
+<script>
+  import "../scripts/tabs.ts";
+</script>
+
+<style>
+  .kit-hero {
+    grid-column: 1 / -1;
+  }
+  @media (min-width: 960px) {
+    .kit-hero {
+      grid-column: 1 / span 8;
+    }
+  }
+  .kit-actions,
+  .kit-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+  }
+  .kit-actions {
+    margin-top: var(--space-6);
+  }
+  .kit-row {
+    margin-block: var(--space-6);
+  }
+  .kit-shot {
+    margin-top: var(--gap-visual);
+  }
+  .kit-cards li {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    padding: var(--card-pad);
+    border-radius: var(--radius-lg);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+  }
+  .kit-split {
+    margin-block: var(--space-6);
+  }
+  .kit-tabs {
+    margin-top: var(--space-7);
+  }
+  .kit-tablist {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+  .kit-tablist [role="tab"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: 44px;
+    padding-inline: var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-ui);
+    font-weight: 500;
+    color: var(--color-text-2);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+  }
+  .kit-tablist [role="tab"][aria-selected="true"] {
+    color: var(--color-text);
+    box-shadow: inset 0 0 0 1px var(--color-accent);
+  }
+</style>

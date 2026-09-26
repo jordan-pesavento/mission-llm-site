@@ -1,0 +1,154 @@
+---
+/*
+ * Home > Open source foundation (copy.md). Work package B. Light tone (after the silver
+ * Security band, before the dark closing CTA).
+ * From 960px: intro and credit line in columns 1 to 6, "What Mission LLM adds today" and the
+ * dashed "What it is building" pointer in columns 8 to 12. The credit line and upstream link sit
+ * on a hairline under the body, so the MIT attribution is part of the section, not fine print.
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import ArrowLink from "../../ui/ArrowLink.astro";
+import Icon from "../../ui/Icon.astro";
+import { UPSTREAM } from "../../../data/site";
+
+const adds = [
+  "An in-place upgrade path for existing AnythingLLM installs, carrying over the database, settings and vector collections.",
+  "A documented list of the outbound connections the server can make.",
+  "Deployment templates that pull only the image you build and host.",
+];
+---
+
+<Section id="foundation" tone="light" labelledby="foundation-title">
+  <div class="layout-grid foundation">
+    <div class="foundation__intro" data-reveal>
+      <SectionIntro eyebrow="Foundation" title="Built on AnythingLLM, run for organizations." id="foundation-title">
+        <p class="body foundation__body">
+          Mission LLM is built on the open-source AnythingLLM project (MIT License) by Mintplex Labs. AnythingLLM
+          provides the core: document ingestion, retrieval, agents and the provider integrations. Mission LLM tracks
+          upstream releases and adds what an organization needs to operate it with confidence.
+        </p>
+      </SectionIntro>
+      <div class="credit">
+        <span class="credit__icon" aria-hidden="true"><Icon name="git-branch" size={22} /></span>
+        <div class="credit__body">
+          <p class="credit__text">{UPSTREAM.credit}</p>
+          <ArrowLink href={UPSTREAM.url} icon="arrow-up-right">AnythingLLM project</ArrowLink>
+        </div>
+      </div>
+    </div>
+
+    <div class="foundation__lists" data-reveal="2">
+      <h3 class="h4 adds__title">What Mission LLM adds today</h3>
+      <ol class="adds" role="list">
+        {
+          adds.map((text, i) => (
+            <li class="adds__item">
+              <span class="adds__num tnum" aria-hidden="true">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <p>{text}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="building">
+        <strong>What it is building:</strong> the governance work listed under{" "}
+        <a href="#security-control">“In development”</a> above.
+      </p>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .foundation {
+    row-gap: var(--gap-visual);
+  }
+  .foundation__body {
+    max-width: 58ch;
+  }
+  @media (min-width: 960px) {
+    .foundation__intro {
+      grid-column: 1 / span 6;
+    }
+    .foundation__lists {
+      grid-column: 8 / -1;
+      padding-top: calc(var(--fs-eyebrow) * var(--lh-eyebrow) + var(--gap-eyebrow));
+    }
+  }
+
+  /* Credit line: a hairline plate under the body. */
+  .credit {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-hairline);
+  }
+  .credit__icon {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    color: var(--color-text-2);
+    background: var(--color-stage);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+  }
+  .credit__body {
+    min-width: 0;
+  }
+  .credit__text {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  /* What Mission LLM adds today: numbered hairline list. */
+  .adds__title {
+    padding-bottom: var(--space-4);
+  }
+  .adds {
+    margin: 0;
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .adds__item {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: var(--space-3);
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--color-hairline);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+  .adds__item:first-child {
+    border-top-color: var(--color-hairline-strong);
+  }
+  .adds__num {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: var(--lh-body);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-accent);
+    padding-top: 2px;
+  }
+
+  /* What it is building: a dashed pointer back to the In development list. */
+  .building {
+    margin-top: var(--space-6);
+    padding: var(--space-4) var(--space-5);
+    border: 1px dashed var(--color-hairline-dashed);
+    border-radius: var(--radius-lg);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+  .building strong {
+    color: var(--color-text);
+  }
+</style>

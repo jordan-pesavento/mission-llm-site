@@ -1,0 +1,373 @@
+---
+/*
+ * Screenshot: a framed product render (12px radius, 1px inset ring, layered navy shadow),
+ * optionally on a silver stage, with responsive AVIF/WebP sources, an optional phone detail,
+ * numbered callouts and the mandatory concept caption. No tilt, fake browser chrome or glow.
+ *
+ * Sources are 2x (phone details 3x) concept renders listed in scripts/image-sources.mjs; each image
+ * is described in CSS pixels, so srcset picks a sharp variant on every screen density.
+ *
+ * - name: a source in scripts/image-sources.mjs (public/images/product/<name>.png).
+ * - alt: what the image shows (copy.md gives the alt text for each use).
+ * - view: a named crop of `name` shown from 640px instead of the whole frame (tour panels, the
+ *   grounded band), so UI text stays legible at desktop widths.
+ * - phone: the detail shown below 640px: "source" or "source/crop". It is never stretched past its
+ *   own CSS width (small details sit centered on the stage), so UI text stays 11px or larger.
+ *   phoneAlt describes it when it shows something different from `alt`.
+ * - caption: defaults to CONCEPT_CAPTION. Every product screenshot must carry it (copy.md note 1).
+ *   Pass caption={false} only when the same caption sits right next to a group of screenshots.
+ * - sizes: the main image's rendered width, for srcset selection.
+ * - ratio: fix the frame's aspect ratio (for example "16 / 10") so images of slightly different
+ *   shapes line up; the image covers the frame from its top left corner.
+ * - bleed: 0 to 0.4, the fraction of the main image hidden at the stage's bottom edge.
+ * - maxScale: cap the main image at this multiple of its CSS width (centered on the stage), so a
+ *   detail crop never turns into an oversized close-up in a wide column.
+ * - priority: the hero image only (eager, fetchpriority high). Everything else lazy-loads.
+ * - stage: silver panel behind the frame (default true; navy in dark bands).
+ * - callouts: up to 3 markers, x and y in percent of the whole frame, with labels listed under the
+ *   image. Markers show wherever the main image shows (not on the phone detail).
+ * Usage:
+ *   <Screenshot name="chat-sources" phone="chat-sources/sources" priority bleed={0.36}
+ *     alt="Mission LLM chat answering ..." callouts={[{ x: 30, y: 20, label: "The answer" }]} />
+ */
+import manifest from "../../data/images.generated.json";
+import { CONCEPT_CAPTION } from "../../data/site";
+import { SOURCES } from "../../../scripts/image-sources.mjs";
+
+type Name = keyof typeof manifest;
+type Callout = { x: number; y: number; label: string };
+type Variant = { width: number; avif: string; webp: string };
+type Img = { width: number; height: number; variants: Variant[] };
+type Box = { x: number; y: number; w: number; h: number };
+
+interface Props {
+  name: Name;
+  alt: string;
+  view?: string;
+  phone?: string;
+  phoneAlt?: string;
+  caption?: string | false;
+  sizes?: string;
+  ratio?: string;
+  priority?: boolean;
+  stage?: boolean;
+  bleed?: number;
+  maxScale?: number;
+  callouts?: Callout[];
+  class?: string;
+}
+
+const {
+  name,
+  alt,
+  view,
+  phone,
+  phoneAlt,
+  caption = CONCEPT_CAPTION,
+  sizes = "(min-width: 2200px) 1935px, (min-width: 1880px) 1720px, calc(100vw - 32px)",
+  ratio,
+  priority = false,
+  stage = true,
+  bleed = 0,
+  maxScale,
+  callouts = [],
+  class: className,
+} = Astro.props;
+
+type Entry = Img & { crops: Record<string, Img> };
+const all = manifest as unknown as Record<string, Entry>;
+const src = all[name];
+if (!src) throw new Error(`Screenshot "${String(name)}" is not in src/data/images.generated.json. Run npm run images.`);
+const pick = (source: string, crop?: string): Img => {
+  const e = all[source];
+  if (!e) throw new Error(`Screenshot: no source "${source}".`);
+  if (!crop) return e;
+  const c = e.crops[crop];
+  if (!c) throw new Error(`Screenshot "${source}" has no crop "${crop}". Available: ${Object.keys(e.crops).join(", ")}`);
+  return c;
+};
+const main = pick(name, view);
+if (!main.variants.length) throw new Error(`Screenshot "${String(name)}" has no whole-frame variants (full: false in scripts/image-sources.mjs). Pass a view.`);
+const [phoneSource, phoneCrop] = phone ? phone.split("/") : [];
+const small = phone ? pick(phoneSource, phoneCrop) : undefined;
+if (callouts.length > 3) throw new Error("Screenshot: at most 3 callouts.");
+if (bleed < 0 || bleed > 0.4) throw new Error("Screenshot: bleed must be between 0 and 0.4.");
+
+// The crop box of the view in whole-frame CSS pixels, to place callouts inside it.
+const viewBox: Box = view
+  ? (SOURCES as Record<string, { crops: Record<string, Box> }>)[name].crops[view]
+  : { x: 0, y: 0, w: src.width, h: src.height };
+const markers = callouts.map((c) => ({
+  ...c,
+  x: (((c.x / 100) * src.width - viewBox.x) / viewBox.w) * 100,
+  y: (((c.y / 100) * src.height - viewBox.y) / viewBox.h) * 100,
+}));
+
+const srcset = (fmt: "avif" | "webp", variants: Variant[]) => variants.map((v) => `${v[fmt]} ${v.width}w`).join(", ");
+const largest = (img: Img) => img.variants[img.variants.length - 1].webp;
+const phoneSizes = small ? `(min-width: ${small.width + 64}px) ${small.width}px, calc(100vw - 64px)` : "";
+
+/*
+ * Art direction without <source media>: the phone detail and the main image are two pictures and
+ * CSS shows one of them. Hidden lazy images are never fetched, and nothing re-selects a source
+ * when the viewport changes (headless full-page capture passes through a 1x1 viewport, which
+ * made <source media> abort requests). With a phone detail, both images are lazy; for the hero
+ * (priority) a media-scoped preload fetches only the one that will show, at high priority.
+ */
+const frameRatio = ratio ?? `${main.width} / ${Math.round(main.height * (1 - bleed))}`;
+const mainLoading = priority && !small ? "eager" : "lazy";
+---
+
+{
+  priority && (
+    <>
+      <link
+        rel="preload"
+        as="image"
+        type="image/avif"
+        imagesrcset={srcset("avif", main.variants)}
+        imagesizes={sizes}
+        fetchpriority="high"
+        media={small ? "(min-width: 640px)" : undefined}
+      />
+      {small && (
+        <link
+          rel="preload"
+          as="image"
+          type="image/avif"
+          imagesrcset={srcset("avif", small.variants)}
+          imagesizes={phoneSizes}
+          fetchpriority="high"
+          media="(max-width: 639.98px)"
+        />
+      )}
+    </>
+  )
+}
+<figure
+  class:list={[
+    "shot",
+    { "shot--staged": stage, "shot--bleed": stage && bleed > 0, "shot--has-phone": !!small },
+    className,
+  ]}
+>
+  <div class="shot__stage">
+    <div
+      class="shot__frame"
+      style={`--frame-ratio: ${frameRatio};${maxScale ? ` --frame-max: ${Math.round(main.width * maxScale)}px;` : ""}${small ? ` --phone-w: ${small.width}px; --phone-ratio: ${small.width} / ${small.height};` : ""}`}
+    >
+      {
+        small && (
+          <picture class="shot__pic shot__pic--phone">
+            <source type="image/avif" srcset={srcset("avif", small.variants)} sizes={phoneSizes} />
+            <source type="image/webp" srcset={srcset("webp", small.variants)} sizes={phoneSizes} />
+            <img
+              src={largest(small)}
+              width={small.width}
+              height={small.height}
+              alt={phoneAlt ?? alt}
+              loading="lazy"
+              decoding={priority ? "sync" : undefined}
+              fetchpriority={priority ? "high" : undefined}
+            />
+          </picture>
+        )
+      }
+      <picture class="shot__pic shot__pic--main">
+        <source type="image/avif" srcset={srcset("avif", main.variants)} sizes={sizes} />
+        <source type="image/webp" srcset={srcset("webp", main.variants)} sizes={sizes} />
+        <img
+          src={largest(main)}
+          width={main.width}
+          height={main.height}
+          alt={alt}
+          loading={mainLoading}
+          decoding={priority ? "sync" : undefined}
+          fetchpriority={priority ? "high" : undefined}
+        />
+      </picture>
+      {
+        markers.length > 0 && (
+          <ol class="shot__markers" aria-hidden="true" role="list" style={`--view-ratio: ${main.width} / ${main.height}`}>
+            {markers.map((c, i) => (
+              <li style={`--x: ${c.x.toFixed(2)}%; --y: ${c.y.toFixed(2)}%`}>{i + 1}</li>
+            ))}
+          </ol>
+        )
+      }
+    </div>
+  </div>
+  {
+    markers.length > 0 && (
+      <ol class="shot__legend" role="list" style={`--legend-cols: ${markers.length}`}>
+        {markers.map((c, i) => (
+          <li>
+            <span class="shot__num" aria-hidden="true">
+              {i + 1}
+            </span>
+            <span>{c.label}</span>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+  {caption && <figcaption class="shot__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .shot {
+    min-width: 0;
+  }
+  .shot__stage {
+    position: relative;
+  }
+  .shot--staged .shot__stage {
+    padding: var(--shot-pad, clamp(1rem, 0.4rem + 2.6vw, 4rem));
+    border-radius: var(--radius-xl);
+    background-color: var(--color-stage);
+    background-image: linear-gradient(180deg, var(--color-stage), var(--color-stage-2));
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+  }
+  .shot__frame {
+    position: relative;
+    border-radius: var(--radius-lg);
+    background: var(--navy-950);
+    box-shadow: var(--shadow-shot);
+    overflow: hidden;
+    aspect-ratio: var(--frame-ratio);
+    max-width: var(--frame-max, none);
+    margin-inline: auto;
+  }
+  /* The inset ring sits above the image so it stays visible on the dark render. */
+  .shot__frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: var(--ring-shot);
+    pointer-events: none;
+  }
+  .shot__pic {
+    display: block;
+    height: 100%;
+  }
+  /* The image covers the frame from its top left corner: a bleed or a fixed ratio trims the bottom. */
+  .shot__pic--main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+  }
+
+  /* One picture shows at a time: the phone detail below 640, the main image from 640. */
+  .shot__pic--phone {
+    display: none;
+  }
+  @media (max-width: 639.98px) {
+    .shot--has-phone .shot__pic--phone {
+      display: block;
+    }
+    .shot--has-phone .shot__pic--main,
+    .shot--has-phone .shot__markers {
+      display: none;
+    }
+    /* The detail never grows past its own width, so its UI text keeps its size. */
+    .shot--has-phone .shot__frame {
+      max-width: var(--phone-w);
+      margin-inline: auto;
+      aspect-ratio: var(--phone-ratio);
+    }
+    .shot__pic--phone img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  /* Bleed: the frame runs off the stage's bottom edge wherever the main image shows. */
+  .shot--bleed .shot__stage {
+    padding-bottom: 0;
+    overflow: hidden;
+  }
+  .shot--bleed .shot__frame {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  @media (max-width: 639.98px) {
+    .shot--bleed.shot--has-phone .shot__stage {
+      padding-bottom: var(--shot-pad, clamp(1rem, 0.4rem + 2.6vw, 4rem));
+    }
+    .shot--bleed.shot--has-phone .shot__frame {
+      border-radius: var(--radius-lg);
+    }
+  }
+
+  /* Callout markers: 28px accent circles positioned in percent of the shown image. */
+  .shot__markers {
+    position: absolute;
+    inset: 0 0 auto 0;
+    aspect-ratio: var(--view-ratio);
+    margin: 0;
+    pointer-events: none;
+  }
+  .shot__markers li,
+  .shot__num {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    font-size: 0.9375rem;
+    line-height: 1;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .shot__markers li {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    transform: translate(-50%, -50%);
+    background: var(--blue-600);
+    color: #ffffff;
+    box-shadow:
+      0 0 0 2px var(--silver-50),
+      0 4px 12px -2px rgb(7 15 38 / 0.4);
+  }
+  .shot__legend {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4) var(--grid-gap);
+    margin-top: var(--space-5);
+  }
+  @media (min-width: 960px) {
+    .shot__legend {
+      grid-template-columns: repeat(var(--legend-cols), minmax(0, 1fr));
+    }
+  }
+  .shot__legend li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+  .shot__legend li > span:last-child {
+    padding-top: 2px;
+  }
+  .shot__num {
+    flex: none;
+    background: var(--color-accent);
+    color: #ffffff;
+  }
+  [data-tone="dark"] .shot__num {
+    background: var(--blue-600);
+  }
+  .shot__caption {
+    margin-top: var(--space-4);
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    color: var(--color-text-3);
+    max-width: var(--measure);
+  }
+</style>

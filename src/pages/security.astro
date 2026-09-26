@@ -1,0 +1,49 @@
+---
+/*
+ * Security. Owned by work package D. One dark band only: the data-flow diagram.
+ * Tone order: light hero, DARK data flow, light, light (hairline), light (hairline), silver,
+ * light, light (hairline).
+ *
+ * Table-of-contents rail (1280 and wider): .sec-page is the positioning context for the nav in
+ * SecurityHero, which spans the whole page body on the right (3 of 12 columns) and holds a sticky
+ * list. Every light and silver section's content is offset by the rail width so nothing runs
+ * under it; the dark band keeps the full container and sits above the rail (z-index), so the
+ * rail slides under it while it passes.
+ */
+import Base from "../layouts/Base.astro";
+import { PAGES } from "../data/site";
+import SecurityHero from "../components/sections/security/SecurityHero.astro";
+import DataFlow from "../components/sections/security/DataFlow.astro";
+import OutboundConnections from "../components/sections/security/OutboundConnections.astro";
+import ControlsToday from "../components/sections/security/ControlsToday.astro";
+import Hardening from "../components/sections/security/Hardening.astro";
+import InDevelopment from "../components/sections/security/InDevelopment.astro";
+import NotClaimed from "../components/sections/security/NotClaimed.astro";
+import ReportVulnerability from "../components/sections/security/ReportVulnerability.astro";
+---
+
+<Base title={PAGES.security.title} description={PAGES.security.description}>
+  <div class="sec-page">
+    <SecurityHero />
+    <DataFlow />
+    <OutboundConnections />
+    <ControlsToday />
+    <Hardening />
+    <InDevelopment />
+    <NotClaimed />
+    <ReportVulnerability />
+  </div>
+</Base>
+
+<style>
+  @media (min-width: 1280px) {
+    .sec-page {
+      position: relative;
+      /* 3 of 12 columns plus the 2 gaps between them. 100% resolves where the variable is used. */
+      --sec-rail: calc((var(--container) - 11 * var(--grid-gap)) / 4 + 2 * var(--grid-gap));
+    }
+    .sec-page > :global(.section:not(.sec-dark) > .container) {
+      padding-right: calc(var(--sec-rail) + var(--grid-gap));
+    }
+  }
+</style>

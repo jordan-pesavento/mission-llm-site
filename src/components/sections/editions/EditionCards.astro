@@ -1,0 +1,285 @@
+---
+/*
+ * Editions > Community and Enterprise cards (copy.md). Work package B.
+ * Two equal-height cards (1 column below 960px, 2 from 960px). Each card: name, price line
+ * (no prices: pricing is not decided), summary, what it includes, then its one action at the
+ * bottom so both buttons share a baseline. Community's Support group is pinned just above its
+ * action, so spare height sits in the middle of the card rather than above the button.
+ * From 960px the cards share row tracks (CSS subgrid), so heads, rules and buttons line up.
+ * From 1680px the six-item lists run in two columns, so no line runs past a comfortable measure.
+ * Enterprise lists its planned features only under the <Badge /> "In development" label, in the
+ * dashed, muted style used for every roadmap list on the site, followed by its fine print.
+ * Contact us is the example.com placeholder (TODO: real address).
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import Button from "../../ui/Button.astro";
+import Badge from "../../ui/Badge.astro";
+import Icon from "../../ui/Icon.astro";
+import { COUNTS, DOWNLOAD_HREF, PLACEHOLDER } from "../../../data/site";
+
+const communityIncludes = [
+  "Workspaces, threads and document retrieval with sources.",
+  `${COUNTS.llmProviders} model providers, ${COUNTS.vectorDatabases} vector databases and ${COUNTS.embeddingEngines} embedding engines.`,
+  "Agents, custom skills, MCP servers and the agent flow builder.",
+  "Multi-user mode with admin, manager and default roles.",
+  "Event log, API keys and the developer API.",
+  "Docker, Compose, Kubernetes, Helm and OpenShift deployment.",
+];
+
+const enterpriseIncludes = [
+  "Everything in Community.",
+  "Deployment assistance, including disconnected and restricted networks.",
+  "Support on terms set in your agreement.",
+];
+
+const enterprisePlanned = [
+  "Single sign-on with OIDC, SAML and smart card sign-in, plus SCIM provisioning.",
+  "Multi-factor authentication and revocable sessions.",
+  "Workspace roles, custom roles and groups.",
+  "A tamper-evident audit trail with SIEM forwarding.",
+  "Model and tool policy, retention and legal hold.",
+  "An offline distribution kit with signed release bundles.",
+];
+---
+
+<Section id="plans" tone="light" pad="flush-top" labelledby="plans-title">
+  <SectionIntro srOnly title="Community and Enterprise" id="plans-title" />
+  <div class="split-grid editions">
+    <article class="edition" aria-labelledby="edition-community" data-reveal>
+      <header class="edition__head">
+        <h3 id="edition-community" class="edition__name">Community</h3>
+        <p class="edition__price">Free to self-host</p>
+        <p class="edition__summary">Everything Mission LLM does today, on your infrastructure.</p>
+      </header>
+
+      <div class="edition__body">
+        <div class="edition__group">
+          <h4 class="edition__group-title">Includes</h4>
+          <ul class="includes includes--cols" role="list">
+            {
+              communityIncludes.map((text) => (
+                <li>
+                  <span class="includes__mark" aria-hidden="true">
+                    <Icon name="check" size={16} />
+                  </span>
+                  <span>{text}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="edition__group edition__group--end">
+          <h4 class="edition__group-title">Support</h4>
+          <!-- TODO: link documentation and the project issue tracker once they exist. -->
+          <p class="edition__text">Self-supported. Documentation and an issue tracker will be published with the first release.</p>
+        </div>
+      </div>
+
+      <div class="edition__foot">
+        <Button href={DOWNLOAD_HREF}>Download</Button>
+      </div>
+    </article>
+
+    <article class="edition" aria-labelledby="edition-enterprise" data-reveal="2">
+      <header class="edition__head">
+        <h3 id="edition-enterprise" class="edition__name">Enterprise</h3>
+        <p class="edition__price">Contact us</p>
+        <p class="edition__summary">
+          Community, plus support, deployment help, and our roadmap’s governance features as they ship.
+        </p>
+      </header>
+
+      <div class="edition__body">
+        <div class="edition__group">
+          <h4 class="edition__group-title">Includes</h4>
+          <!-- TODO: confirm offering for "Deployment assistance" and "Support on terms set in your agreement". -->
+          <ul class="includes" role="list">
+            {
+              enterpriseIncludes.map((text) => (
+                <li>
+                  <span class="includes__mark" aria-hidden="true">
+                    <Icon name="check" size={16} />
+                  </span>
+                  <span>{text}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="edition__group edition__group--planned">
+          <h4 class="edition__group-title edition__group-title--planned">
+            <span>Planned for Enterprise</span>
+            <Badge />
+          </h4>
+          <ul class="planned" role="list">
+            {
+              enterprisePlanned.map((text) => (
+                <li>
+                  <span class="planned__mark" aria-hidden="true" />
+                  <span>{text}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="edition__fine">
+            Planned features are in development. Which features land in which edition may change before release.
+          </p>
+        </div>
+      </div>
+
+      <div class="edition__foot">
+        <!-- TODO: real contact address (PLACEHOLDER.contactEmail is mailto:contact@example.com). -->
+        <Button href={PLACEHOLDER.contactEmail} variant="secondary">Contact us</Button>
+      </div>
+    </article>
+  </div>
+</Section>
+
+<style>
+  .edition {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: var(--card-pad);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow:
+      0 0 0 1px var(--color-hairline),
+      var(--shadow-card);
+  }
+
+  /* Head: name, price line, summary. */
+  .edition__head {
+    padding-bottom: var(--space-6);
+  }
+  .edition__name {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2);
+    font-weight: var(--fw-h2);
+  }
+  .edition__price {
+    margin-top: var(--space-3);
+    font-size: var(--fs-h4);
+    line-height: var(--lh-h4);
+    font-weight: 500;
+    color: var(--color-text-2);
+  }
+  .edition__summary {
+    margin-top: var(--space-5);
+    max-width: 44ch;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-lead);
+    color: var(--color-text-2);
+  }
+
+  /* Body: the groups. It grows to fill the card, so the action always sits at the bottom. */
+  .edition__body {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .edition__group {
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-hairline);
+  }
+  .edition__group--end {
+    margin-top: auto;
+  }
+  .edition__group-title {
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+  .edition__group-title--planned {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+  }
+
+  .includes li,
+  .planned li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+    break-inside: avoid;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+  .includes__mark {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    margin-top: 3px;
+    border-radius: var(--radius-full);
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 9%, transparent);
+  }
+  .planned__mark {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    margin: 8px 5px 0;
+    border-radius: var(--radius-full);
+    border: 1.5px dashed var(--color-text-3);
+  }
+  .edition__group--planned {
+    border-top-style: dashed;
+    border-top-color: var(--color-hairline-dashed);
+  }
+  .edition__fine {
+    margin-top: var(--space-4);
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    color: var(--color-text-3);
+    max-width: 60ch;
+  }
+  .edition__text {
+    padding-block: var(--space-2);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .edition__foot {
+    display: flex;
+    align-items: flex-start;
+    padding-top: var(--space-7);
+  }
+
+  /*
+   * Side by side (960px and up): each card is a subgrid of the three shared rows (head, body,
+   * foot), so the rules under the heads and the two buttons line up across the cards whatever
+   * the text lengths. Without subgrid support the flex column above still works.
+   */
+  @supports (grid-template-rows: subgrid) {
+    @media (min-width: 960px) {
+      .edition {
+        display: grid;
+        grid-row: span 3;
+        grid-template-rows: subgrid;
+        row-gap: 0;
+      }
+    }
+  }
+
+  /* Wide cards (1680px and up): the six-item lists run in two columns. */
+  @media (min-width: 1680px) {
+    .includes--cols,
+    .planned {
+      columns: 2;
+      column-gap: var(--space-7);
+    }
+  }
+</style>

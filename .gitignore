@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+.astro/
+
+# generated image variants (rebuilt by `npm run images` from public/images/product/*.png)
+public/images/product/generated/
+
+# logs and local env
+npm-debug.log*
+*.log
+.env
+.env.*
+!.env.example
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/

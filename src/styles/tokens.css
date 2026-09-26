@@ -1,0 +1,228 @@
+/*
+ * Mission LLM site: design tokens.
+ * Single source of truth for color, type, space, grid, radii, depth and motion.
+ * Section components use these through var(); never hardcode a color or size a token covers.
+ *
+ * Breakpoints (one shared set; CSS variables cannot be used inside @media, so use these literals):
+ *   sm  640px   8-column layout grid, card grids go 2-up
+ *   md  960px   12-column layout grid, desktop nav, tour tabs
+ *   lg 1280px   card grids go 4-up, sticky security rail
+ *   xl 1680px   widest compositions
+ *   Root font grows to 112.5% at 2200px (all rem sizes scale with it).
+ * Write min-width queries only: @media (min-width: 640px) { ... }
+ */
+
+:root {
+  /* ---------- Brand ramps (from the emblem) ---------- */
+  --navy-950: #070f26;
+  --navy-900: #0b1733;
+  --navy-850: #101d3d;
+  --navy-700: #173063;
+  --silver-50: #f4f8ff;
+  --silver-100: #e9effa;
+  --silver-200: #d6e0f0;
+  --silver-400: #a9bad6;
+  --blue-300: #9bbeff;
+  --blue-400: #5b95ff;
+  --blue-500: #2b63e0;
+  --blue-600: #1c4ed8;
+  --blue-700: #1943bc;
+  --blue-800: #173a9e;
+
+  /* ---------- Semantic color: light tone (default) ---------- */
+  --color-page: #fbfcfe; /* page paper */
+  --color-surface: #ffffff; /* raised cards on paper (edition cards, tables) */
+  --color-stage: var(--silver-50); /* screenshot stage, stepping to --color-stage-2 */
+  --color-stage-2: var(--silver-100);
+  --color-text: #121c33; /* 16.5:1 on page */
+  --color-text-2: #434d61; /* body secondary, 8.3:1 */
+  --color-text-3: #5b6680; /* captions and metadata, 5.6:1 on page, 5.0:1 on stage */
+  --color-eyebrow: #3a4a6b; /* 8.6:1 on page */
+  --color-link: var(--blue-600); /* 6.5:1 on page */
+  --color-link-hover: var(--blue-700);
+  --color-accent: var(--blue-600); /* the one accent: primary buttons, active states, callout dots */
+  --color-hairline: rgb(23 48 99 / 0.12);
+  --color-hairline-strong: rgb(23 48 99 / 0.22);
+  --color-hairline-dashed: rgb(23 48 99 / 0.3); /* "In development" borders */
+  --color-focus: var(--blue-500);
+  --color-code-bg: var(--navy-900); /* code blocks are navy on every tone */
+  --color-code-text: #e6eefc; /* 15.2:1 on code bg */
+  --color-code-muted: #a9bad6; /* 9.0:1 on code bg */
+  --color-code-hairline: rgb(169 186 214 / 0.14);
+  --color-code-placeholder: #c4d8ff; /* REGISTRY-style placeholders, dashed underline */
+  --color-selection: rgb(43 99 224 / 0.18);
+
+  /* Buttons */
+  --btn-primary-bg: var(--blue-600); /* white text 6.7:1 */
+  --btn-primary-bg-hover: var(--blue-700);
+  --btn-primary-bg-active: var(--blue-800);
+  --btn-primary-text: #ffffff;
+  --btn-secondary-ring: rgb(23 48 99 / 0.28);
+  --btn-secondary-ring-hover: rgb(23 48 99 / 0.5);
+  --btn-secondary-text: var(--color-text);
+  --btn-secondary-bg-hover: rgb(23 48 99 / 0.04);
+
+  /* ---------- Type ---------- */
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --fs-display: clamp(2.75rem, 1.9rem + 3.4vw, 5rem); /* 44 to 80 */
+  --lh-display: 1.04;
+  --ls-display: -0.025em;
+  --fw-display: 500;
+
+  --fs-h2: clamp(2rem, 1.5rem + 2vw, 3.25rem); /* 32 to 52 */
+  --lh-h2: 1.1;
+  --ls-h2: -0.02em;
+  --fw-h2: 500;
+
+  --fs-h3: clamp(1.375rem, 1.25rem + 0.5vw, 1.75rem); /* 22 to 28 */
+  --lh-h3: 1.25;
+  --ls-h3: -0.01em;
+  --fw-h3: 600;
+
+  --fs-h4: 1.25rem; /* 20: list group titles, card titles inside dense grids */
+  --lh-h4: 1.35;
+  --fw-h4: 600;
+
+  --fs-lead: clamp(1.25rem, 1.15rem + 0.4vw, 1.5rem); /* 20 to 24 */
+  --lh-lead: 1.5;
+
+  --fs-body: 1.125rem; /* 18: the floor for reading text */
+  --lh-body: 1.65;
+  --measure: 66ch;
+
+  --fs-ui: 1rem; /* 16: buttons, nav, captions, table cells */
+  --lh-ui: 1.5;
+  --fw-ui: 500;
+
+  --fs-eyebrow: 0.9375rem; /* 15, uppercase */
+  --lh-eyebrow: 1.4;
+  --ls-eyebrow: 0.06em;
+  --fw-eyebrow: 600;
+
+  --fs-code: 1rem; /* 16 Plex Mono */
+  --lh-code: 1.6;
+
+  --fs-legal: 0.875rem; /* 14: footer fine print only */
+  --lh-legal: 1.5;
+
+  /* ---------- Space (4px base) ---------- */
+  --space-1: 0.25rem; /* 4 */
+  --space-2: 0.5rem; /* 8 */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.5rem; /* 24 */
+  --space-6: 2rem; /* 32 */
+  --space-7: 3rem; /* 48 */
+  --space-8: 4rem; /* 64 */
+  --space-9: 6rem; /* 96 */
+  --space-10: 8rem; /* 128 */
+  --space-11: 10rem; /* 160 */
+
+  --section-pad: clamp(4.5rem, 2.5rem + 6vw, 10rem); /* vertical padding of a full section */
+  --strip-pad: clamp(2.5rem, 2rem + 2vw, 4rem); /* proof strip and compact bands */
+  --gap-eyebrow: var(--space-4); /* eyebrow to h2: 16 */
+  --gap-heading: var(--space-5); /* h2 to lead: 24 */
+  --gap-visual: clamp(2.5rem, 2rem + 2vw, 4rem); /* text block to its visual */
+  --card-pad: clamp(1.5rem, 1.2rem + 1vw, 2.25rem);
+
+  /* ---------- Grid ---------- */
+  --gutter: clamp(1rem, 0.25rem + 3.5vw, 5rem); /* side gutter: 16 at 390, 80 at 2560 */
+  --container-max: 107.5rem; /* 1720px; grows to 1935px with the 112.5% root at 2200px+ */
+  --container: min(100% - 2 * var(--gutter), var(--container-max));
+  --grid-gap: clamp(1rem, 0.6rem + 1.2vw, 2rem);
+  --grid-cols: 4; /* 8 from 640, 12 from 960 (set below) */
+  --card-cols: 1; /* 2 from 640, 4 from 1280 (set below) */
+  --header-h: 72px;
+
+  /* ---------- Radii ---------- */
+  --radius-xs: 4px; /* kbd, tags */
+  --radius-sm: 6px; /* badges, inline code */
+  --radius-md: 8px; /* buttons, inputs, tabs */
+  --radius-lg: 12px; /* screenshots, cards, code blocks */
+  --radius-xl: 16px; /* screenshot stage, large panels */
+  --radius-full: 999px;
+
+  /* ---------- Depth (navy-tinted, never colored glow) ---------- */
+  --shadow-sm: 0 1px 2px rgb(7 15 38 / 0.06);
+  --shadow-card: 0 1px 2px rgb(7 15 38 / 0.05), 0 8px 24px -12px rgb(7 15 38 / 0.12);
+  --shadow-shot: 0 1px 2px rgb(7 15 38 / 0.06), 0 12px 32px -8px rgb(7 15 38 / 0.14), 0 40px 80px -24px rgb(7 15 38 / 0.18);
+  --ring-shot: inset 0 0 0 1px rgb(23 48 99 / 0.12);
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* ease-out-quint: reveals and crossfades */
+  --ease-standard: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --dur-hover: 150ms; /* color and shadow only; nothing scales */
+  --dur-fade: 200ms; /* tab crossfade */
+  --dur-reveal: 480ms; /* section reveal: opacity + 12px rise */
+  --reveal-rise: 12px;
+  --reveal-stagger: 60ms; /* max 3 staggered items */
+}
+
+@media (min-width: 640px) {
+  :root {
+    --grid-cols: 8;
+    --card-cols: 2;
+  }
+}
+@media (min-width: 960px) {
+  :root {
+    --grid-cols: 12;
+  }
+}
+@media (min-width: 1280px) {
+  :root {
+    --card-cols: 4;
+  }
+}
+@media (min-width: 2200px) {
+  :root {
+    font-size: 112.5%;
+  }
+}
+
+/*
+ * Tones. A section sets data-tone="light" (default), "silver" or "dark"; every semantic token
+ * below is remapped inside it, so shared primitives (Button, Badge, CodeBlock, Screenshot)
+ * adapt without per-section overrides.
+ * Dark bands: navy #070F26 stepping to #0B1733. Never place two dark bands next to each other.
+ */
+[data-tone="silver"] {
+  --color-page: var(--silver-50);
+  --color-surface: #ffffff;
+  --color-stage: #ffffff;
+  --color-stage-2: var(--silver-50);
+}
+
+[data-tone="dark"] {
+  color-scheme: dark;
+  --color-page: var(--navy-950);
+  --color-surface: var(--navy-900);
+  --color-stage: var(--navy-900);
+  --color-stage-2: var(--navy-850);
+  --color-text: var(--silver-50); /* 17.8:1 */
+  --color-text-2: #c8d3e6; /* 11.8:1 on navy-900 */
+  --color-text-3: var(--silver-400); /* 9.0:1 on navy-900 */
+  --color-eyebrow: var(--silver-400);
+  --color-link: var(--blue-300); /* 10.1:1 */
+  --color-link-hover: #c4d8ff;
+  --color-accent: var(--blue-400);
+  --color-hairline: rgb(169 186 214 / 0.14);
+  --color-hairline-strong: rgb(169 186 214 / 0.24);
+  --color-hairline-dashed: rgb(169 186 214 / 0.34);
+  --color-focus: var(--blue-400);
+  --color-code-bg: #050b1d;
+  --color-code-hairline: rgb(169 186 214 / 0.12);
+  --color-selection: rgb(91 149 255 / 0.3);
+  --btn-primary-bg: var(--blue-600);
+  --btn-primary-bg-hover: var(--blue-500);
+  --btn-primary-bg-active: var(--blue-700);
+  --btn-secondary-ring: rgb(169 186 214 / 0.4);
+  --btn-secondary-ring-hover: rgb(169 186 214 / 0.7);
+  --btn-secondary-text: var(--silver-50);
+  --btn-secondary-bg-hover: rgb(169 186 214 / 0.08);
+  --shadow-shot: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -8px rgb(0 0 0 / 0.4), 0 40px 80px -24px rgb(0 0 0 / 0.5);
+  --ring-shot: inset 0 0 0 1px rgb(169 186 214 / 0.16);
+  --shadow-card: 0 0 0 1px rgb(169 186 214 / 0.1);
+}

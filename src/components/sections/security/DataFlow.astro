@@ -1,0 +1,500 @@
+---
+/*
+ * Security > Data flow in plain language (copy.md). The page's only dark band.
+ *
+ * Diagram: HTML nodes on a CSS grid, with the boundary and connectors drawn as inline SVG that
+ * fill their grid cells (no fixed viewBox, so lines stay 1.5px and labels stay real text at every
+ * width). Two compositions from one markup:
+ * - below 960: vertical. Browser, server, then storage and the local runtime side by side; the one
+ *   dashed arrow drops from the server between them, out through the boundary to the providers.
+ * - 960 and wider: horizontal. Runtime above and storage below the server; the dashed arrow runs
+ *   right, across the boundary edge, to the providers. Nodes cap their width and the connectors
+ *   take the extra space, so the figure fills the container without stretching the boxes.
+ * Node labels come from the design brief (Security item 2). The lists and notes are copy.md verbatim.
+ * The band sits above the table-of-contents rail (z-index) so the rail slides under it.
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import Icon from "../../ui/Icon.astro";
+
+const stays = [
+  "Uploaded documents and the text parsed from them.",
+  "Embeddings, when you use the built-in embedder and the built-in LanceDB store.",
+  "Chat history, workspaces, users, API keys and the event log, in a SQLite database in your storage volume.",
+];
+
+const leaves = [
+  { term: "Cloud language model:", text: "the question, recent chat history and retrieved passages go to that provider." },
+  { term: "Cloud embedding engine:", text: "document text goes to that provider to be embedded." },
+  { term: "Hosted vector database:", text: "vectors and passage text are stored with that service." },
+  {
+    term: "Agent skills, MCP servers and data connectors:",
+    text: "each contacts the service you point it at, such as a search provider, a database or a Git server.",
+  },
+];
+---
+
+<Section id="data-flow" tone="dark" labelledby="data-flow-title" class="sec-dark">
+  <SectionIntro title="Data flow in plain language" id="data-flow-title" />
+
+  <figure class="df" aria-labelledby="data-flow-title" data-reveal>
+    <div class="df__boundary" aria-hidden="true">
+      <svg focusable="false"><rect x="0.5" y="0.5" width="100%" height="100%" rx="16"></rect></svg>
+    </div>
+
+    <div class="df__c df__c--bs" aria-hidden="true">
+      <svg focusable="false">
+        <line class="df__h" x1="0" y1="50%" x2="100%" y2="50%"></line>
+        <line class="df__v" x1="50%" y1="0" x2="50%" y2="100%"></line>
+      </svg>
+    </div>
+    <div class="df__c df__c--sr" aria-hidden="true">
+      <svg focusable="false"><line x1="50%" y1="0" x2="50%" y2="100%"></line></svg>
+    </div>
+    <div class="df__c df__c--ss" aria-hidden="true">
+      <svg focusable="false"><line x1="50%" y1="0" x2="50%" y2="100%"></line></svg>
+    </div>
+    <div class="df__c df__c--out" aria-hidden="true">
+      <svg focusable="false">
+        <defs>
+          <marker
+            id="df-arrowhead"
+            viewBox="0 0 12 12"
+            refX="11.5"
+            refY="6"
+            markerWidth="12"
+            markerHeight="12"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+          >
+            <path d="M1 1.25 L11.5 6 L1 10.75 Z"></path>
+          </marker>
+        </defs>
+        <line class="df__h" x1="0" y1="50%" x2="100%" y2="50%" marker-end="url(#df-arrowhead)"></line>
+        <line class="df__v" x1="50%" y1="0" x2="50%" y2="100%" marker-end="url(#df-arrowhead)"></line>
+      </svg>
+    </div>
+
+    <p class="df__zone">Your network</p>
+
+    <div class="df__node df__node--browser">
+      <span class="df__icon"><Icon name="browser" size={22} /></span>
+      <span class="df__text"><span class="df__label">Browser</span></span>
+    </div>
+
+    <div class="df__node df__node--server">
+      <img class="df__emblem" src="/mission-llm-emblem.svg" width="40" height="40" alt="" loading="lazy" />
+      <span class="df__text"><span class="df__label">Mission LLM server</span></span>
+    </div>
+
+    <div class="df__node df__node--runtime df__node--pair">
+      <span class="df__icon"><Icon name="cpu" size={22} /></span>
+      <span class="df__text"><span class="df__label">Local model runtime</span></span>
+    </div>
+
+    <div class="df__node df__node--storage df__node--pair">
+      <span class="df__icon"><Icon name="database" size={22} /></span>
+      <span class="df__text">
+        <span class="df__label">Storage</span>
+        <span class="df__sub">documents, vectors, chats</span>
+      </span>
+    </div>
+
+    <div class="df__node df__node--provider">
+      <span class="df__icon"><Icon name="cloud" size={22} /></span>
+      <span class="df__text">
+        <span class="df__label">Providers you configure</span>
+        <span class="df__sub">(optional)</span>
+      </span>
+    </div>
+  </figure>
+
+  <div class="df-lists">
+    <div class="df-list" data-reveal="2">
+      <h3 class="h3 df-list__title" id="df-stays-title">
+        <svg class="df-key df-key--stays" width="34" height="20" aria-hidden="true" focusable="false">
+          <line x1="7" y1="10" x2="27" y2="10"></line>
+          <circle cx="4.5" cy="10" r="3.5"></circle>
+          <circle cx="29.5" cy="10" r="3.5"></circle>
+        </svg>
+        <span>Stays on your server</span>
+      </h3>
+      <ul class="df-list__items" role="list" aria-labelledby="df-stays-title">
+        {stays.map((item) => <li>{item}</li>)}
+      </ul>
+      <p class="df-list__note">
+        All of it lives in the storage directory you mount, so your existing backup and encryption-at-rest controls apply.
+      </p>
+    </div>
+
+    <div class="df-list" data-reveal="3">
+      <h3 class="h3 df-list__title" id="df-leaves-title">
+        <svg class="df-key df-key--leaves" width="34" height="20" aria-hidden="true" focusable="false">
+          <line x1="0" y1="10" x2="24" y2="10"></line>
+          <path d="M23 4.75 L33.5 10 L23 15.25 Z"></path>
+        </svg>
+        <span>Leaves only when you configure it</span>
+      </h3>
+      <ul class="df-list__items" role="list" aria-labelledby="df-leaves-title">
+        {
+          leaves.map((item) => (
+            <li>
+              <strong>{item.term}</strong> {item.text}
+            </li>
+          ))
+        }
+      </ul>
+      <p class="df-list__note">The Privacy and Data page in Settings shows how each configured provider handles your data.</p>
+    </div>
+  </div>
+</Section>
+
+<style>
+  /* The band covers the sticky table-of-contents rail while it scrolls past (see SecurityHero). */
+  :global(.sec-dark.section) {
+    z-index: 2;
+  }
+
+  /* ---------- Diagram ---------- */
+  .df {
+    --df-pad: clamp(1rem, 0.6rem + 1.2vw, 2rem);
+    --df-link: var(--space-7);
+    --df-vlink: var(--space-7);
+    --df-mid: var(--space-7);
+    --df-line: rgb(169 186 214 / 0.5);
+    --df-out: var(--blue-300);
+    position: relative;
+    display: grid;
+    margin-top: var(--gap-visual);
+    /* Below 960: vertical composition. */
+    grid-template-columns:
+      [b-start] var(--df-pad)
+      [left-start] minmax(0, 1fr)
+      [left-end mid-start] var(--df-mid)
+      [mid-end right-start] minmax(0, 1fr)
+      [right-end] var(--df-pad)
+      [b-end];
+    grid-template-rows:
+      [b-top] var(--df-pad)
+      [label-start] auto
+      [label-end browser-start] auto
+      [browser-end v1-start] var(--df-vlink)
+      [v1-end server-start] auto
+      [server-end v2-start] var(--df-vlink)
+      [v2-end bottom-start] auto
+      [bottom-end] var(--df-pad)
+      [b-bottom] var(--df-vlink)
+      [provider-start] auto
+      [provider-end];
+  }
+
+  .df__boundary {
+    grid-column: b-start / b-end;
+    grid-row: b-top / b-bottom;
+    position: relative;
+  }
+  .df__boundary svg,
+  .df__c svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  /* The rect sits on half-pixel coordinates inside an svg 1px smaller than the cell, so its
+     1px stroke lands on whole pixels at every size. */
+  .df__boundary svg {
+    width: calc(100% - 1px);
+    height: calc(100% - 1px);
+  }
+  .df__boundary rect {
+    fill: rgb(169 186 214 / 0.035);
+    stroke: rgb(169 186 214 / 0.3);
+    stroke-width: 1px;
+  }
+
+  /* Connectors: solid hairlines inside the boundary, one dashed accent arrow leaving it. */
+  .df__c {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    min-height: 0;
+  }
+  .df__c line {
+    stroke: var(--df-line);
+    stroke-width: 1.5px;
+  }
+  .df__c--out line {
+    stroke: var(--df-out);
+    stroke-dasharray: 6 6;
+  }
+  .df__c--out path {
+    fill: var(--df-out);
+  }
+  .df__c--bs .df__h,
+  .df__c--out .df__h {
+    display: none;
+  }
+
+  .df__c--bs {
+    grid-column: left-start / right-end;
+    grid-row: v1;
+  }
+  .df__c--ss {
+    grid-column: left;
+    grid-row: v2;
+  }
+  .df__c--sr {
+    grid-column: right;
+    grid-row: v2;
+  }
+  .df__c--out {
+    grid-column: mid;
+    grid-row: v2-start / provider-start;
+  }
+
+  /* Zone label and nodes. */
+  .df__zone {
+    position: relative;
+    z-index: 2;
+    grid-column: left-start / right-end;
+    grid-row: label;
+    align-self: start;
+    margin-bottom: var(--space-4);
+    font-size: var(--fs-eyebrow);
+    line-height: var(--lh-eyebrow);
+    letter-spacing: var(--ls-eyebrow);
+    font-weight: var(--fw-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  .df__node {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    background: var(--navy-850);
+    box-shadow:
+      inset 0 0 0 1px rgb(169 186 214 / 0.2),
+      0 16px 32px -16px rgb(0 0 0 / 0.55);
+  }
+  .df__node--browser {
+    grid-column: left-start / right-end;
+    grid-row: browser;
+  }
+  .df__node--server {
+    grid-column: left-start / right-end;
+    grid-row: server;
+    box-shadow:
+      inset 0 0 0 1px rgb(91 149 255 / 0.6),
+      0 16px 32px -16px rgb(0 0 0 / 0.55);
+  }
+  .df__node--storage {
+    grid-column: left;
+    grid-row: bottom;
+  }
+  .df__node--runtime {
+    grid-column: right;
+    grid-row: bottom;
+  }
+  .df__node--provider {
+    grid-column: left-start / right-end;
+    grid-row: provider;
+    background: transparent;
+    box-shadow: none;
+    outline: 1px dashed rgb(155 190 255 / 0.55);
+    outline-offset: -1px;
+  }
+  /* Storage and runtime share a row at half width; on phones the icon sits above the label. */
+  @media (max-width: 639.98px) {
+    .df__node--pair {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: var(--space-4) 14px;
+    }
+  }
+
+  .df__icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: rgb(169 186 214 / 0.1);
+    color: var(--silver-100);
+  }
+  .df__node--provider .df__icon {
+    background: rgb(155 190 255 / 0.1);
+    color: var(--df-out);
+  }
+  .df__emblem {
+    flex: none;
+    width: 40px;
+    height: 40px;
+  }
+  .df__text {
+    min-width: 0;
+  }
+  .df__label {
+    display: block;
+    font-size: var(--fs-body);
+    line-height: 1.35;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .df__sub {
+    display: block;
+    margin-top: 2px;
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    color: var(--color-text-3);
+  }
+
+  /* 960 and wider: horizontal composition. */
+  @media (min-width: 960px) {
+    .df {
+      --df-vlink: var(--space-6);
+      grid-template-columns:
+        [b-start] var(--df-pad)
+        [browser-start] minmax(9rem, 16rem)
+        [browser-end l1-start] minmax(var(--df-link), 1fr)
+        [l1-end server-start] minmax(13rem, 20rem)
+        [server-end out-start] minmax(var(--df-link), 1fr)
+        [b-end] minmax(var(--df-link), 1fr)
+        [out-end provider-start] minmax(12rem, 18rem)
+        [provider-end];
+      grid-template-rows:
+        [b-top] var(--df-pad)
+        [top-start] auto
+        [top-end v1-start] var(--df-vlink)
+        [v1-end main-start] auto
+        [main-end v2-start] var(--df-vlink)
+        [v2-end bottom-start] auto
+        [bottom-end] var(--df-pad)
+        [b-bottom];
+    }
+    .df__c--bs .df__h,
+    .df__c--out .df__h {
+      display: inline;
+    }
+    .df__c--bs .df__v,
+    .df__c--out .df__v {
+      display: none;
+    }
+    .df__c--bs {
+      grid-column: l1;
+      grid-row: main;
+    }
+    .df__c--sr {
+      grid-column: server;
+      grid-row: v1;
+    }
+    .df__c--ss {
+      grid-column: server;
+      grid-row: v2;
+    }
+    .df__c--out {
+      grid-column: out-start / out-end;
+      grid-row: main;
+    }
+
+    .df__zone {
+      grid-column: browser-start / l1-end;
+      grid-row: top;
+      margin-bottom: 0;
+    }
+    .df__node--browser {
+      grid-column: browser;
+      grid-row: main;
+      align-self: center;
+    }
+    .df__node--server {
+      grid-column: server;
+      grid-row: main;
+      align-self: center;
+    }
+    .df__node--runtime {
+      grid-column: server;
+      grid-row: top;
+    }
+    .df__node--storage {
+      grid-column: server;
+      grid-row: bottom;
+    }
+    .df__node--provider {
+      grid-column: provider;
+      grid-row: main;
+      align-self: center;
+    }
+  }
+
+  /* ---------- Stays / Leaves lists ---------- */
+  .df-lists {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8) calc(var(--grid-gap) * 2);
+    margin-top: var(--gap-visual);
+  }
+  @media (min-width: 960px) {
+    .df-lists {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .df-list {
+    min-width: 0;
+  }
+  .df-list__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    max-width: none;
+  }
+  .df-key {
+    flex: none;
+  }
+  /* "Stays" key: a solid link between two nodes, like the connectors inside the boundary; it
+     mirrors the dashed "leaves" arrow. */
+  .df-key--stays line {
+    stroke: var(--silver-400);
+    stroke-width: 1.5px;
+  }
+  .df-key--stays circle {
+    fill: var(--navy-850);
+    stroke: var(--silver-400);
+    stroke-width: 1.5px;
+  }
+  .df-key--leaves line {
+    stroke: var(--blue-300);
+    stroke-width: 1.5px;
+    stroke-dasharray: 5 4;
+  }
+  .df-key--leaves path {
+    fill: var(--blue-300);
+  }
+  .df-list__items {
+    margin-top: var(--space-5);
+    max-width: var(--measure);
+  }
+  .df-list__items li {
+    padding-block: var(--space-4);
+    border-top: 1px solid var(--color-hairline);
+    color: var(--color-text-2);
+  }
+  .df-list__items li:last-child {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .df-list__items strong {
+    color: var(--color-text);
+  }
+  .df-list__note {
+    margin-top: var(--space-5);
+    max-width: var(--measure);
+    color: var(--color-text-3);
+  }
+</style>

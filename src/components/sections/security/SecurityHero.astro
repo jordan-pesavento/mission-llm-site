@@ -1,0 +1,265 @@
+---
+/*
+ * Security > Hero (copy.md): eyebrow, h1, summary, last-updated date, the no-certification
+ * callout and the page's table of contents.
+ *
+ * Table of contents, one element at every size:
+ * - below 960: a list under the callout (1 column, 2 from 640).
+ * - 960 to 1279: a vertical list in the hero's right columns (9 to 12).
+ * - 1280 and wider: a sticky rail on the right. The nav is taken out of the hero
+ *   (position: absolute against .sec-page in src/pages/security.astro, which also offsets every
+ *   section's content by --sec-rail) and runs the full height of the page body. The data-flow
+ *   band sits above it (z-index), so the rail slides under the dark band and back out.
+ * With JS, the link of the section in view gets aria-current (color and accent bar only).
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import Icon from "../../ui/Icon.astro";
+import { PAGES } from "../../../data/site";
+
+// Section ids are set by each section component on this page. Labels are the section headings.
+const TOC = [
+  { id: "data-flow", label: "Data flow in plain language" },
+  { id: "outbound", label: "Other outbound connections" },
+  { id: "controls", label: "Controls available today" },
+  { id: "hardening", label: "Hardening an install today" },
+  { id: "in-development", label: "In development" },
+  { id: "not-claimed", label: "What we do not claim" },
+  { id: "report", label: "Reporting a vulnerability" },
+];
+
+const updated = PAGES.security.lastUpdated;
+const updatedLabel = new Date(`${updated}T00:00:00Z`).toLocaleDateString("en-US", {
+  timeZone: "UTC",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<Section tone="light" labelledby="security-title" class="sec-hero" data-sec-hero>
+  <div class="layout-grid sec-hero__grid">
+    <div class="sec-hero__main">
+      <SectionIntro
+        level={1}
+        eyebrow="Security"
+        title="Security and deployment overview."
+        id="security-title"
+        lead="Mission LLM runs inside your boundary. This page covers where data goes, which controls ship today, which are in development, and how to harden an install."
+      >
+        <p class="caption sec-hero__updated">Last updated <time datetime={updated}>{updatedLabel}</time></p>
+      </SectionIntro>
+      <div class="note sec-hero__note">
+        <p>
+          <strong>Mission LLM does not hold any government certification or authorization today.</strong>{" "}
+          Because it runs on your infrastructure, you assess it as part of your own system.
+        </p>
+      </div>
+    </div>
+
+    <nav class="sec-toc" aria-labelledby="sec-toc-title" data-sec-toc>
+      <div class="sec-toc__inner">
+        <p class="eyebrow sec-toc__title" id="sec-toc-title">On this page</p>
+        <ol class="sec-toc__list" role="list">
+          {
+            TOC.map((item) => (
+              <li>
+                <a class="sec-toc__link" href={`#${item.id}`}>
+                  <span>{item.label}</span>
+                  <Icon name="arrow-down" size={18} class="sec-toc__icon" />
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </nav>
+  </div>
+</Section>
+
+<script>
+  // Mark the table-of-contents link for the section in view. Progressive: without JS the list
+  // is a plain set of anchor links.
+  const toc = document.querySelector<HTMLElement>("[data-sec-toc]");
+  const hero = document.querySelector<HTMLElement>("[data-sec-hero]");
+  if (toc && hero && "IntersectionObserver" in window) {
+    const links = [...toc.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
+    const targets = new Map<Element, HTMLAnchorElement | null>([[hero, null]]);
+    for (const a of links) {
+      const el = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+      if (el) targets.set(el, a);
+    }
+    const inView = new Set<Element>();
+    const setCurrent = (current: HTMLAnchorElement | null) => {
+      for (const a of links) {
+        if (a === current) a.setAttribute("aria-current", "true");
+        else a.removeAttribute("aria-current");
+      }
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) inView.add(entry.target);
+          else inView.delete(entry.target);
+        }
+        // The first target (in document order) crossing the reading line wins.
+        for (const [el, link] of targets) {
+          if (inView.has(el)) {
+            setCurrent(link);
+            return;
+          }
+        }
+      },
+      { rootMargin: "-28% 0px -62% 0px", threshold: 0 },
+    );
+    targets.forEach((_, el) => io.observe(el));
+  }
+</script>
+
+<style>
+  .sec-hero__main {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+  .sec-hero__updated {
+    margin-top: var(--space-5);
+  }
+  .sec-hero__updated time {
+    color: var(--color-text-2);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .sec-hero__note {
+    margin-top: var(--space-6);
+    max-width: 50rem;
+  }
+
+  /* ---------- Table of contents ---------- */
+  .sec-toc {
+    grid-column: 1 / -1;
+    margin-top: var(--gap-visual);
+    min-width: 0;
+  }
+  .sec-toc__title {
+    margin-bottom: var(--space-3);
+  }
+  .sec-toc__list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: var(--grid-gap);
+  }
+  .sec-toc__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-height: 52px;
+    padding-block: var(--space-3);
+    border-top: 1px solid var(--color-hairline);
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    transition:
+      color var(--dur-hover) var(--ease-standard),
+      box-shadow var(--dur-hover) var(--ease-standard);
+  }
+  .sec-toc__link:hover {
+    color: var(--color-link);
+  }
+  .sec-toc__link :global(.sec-toc__icon) {
+    color: var(--color-text-3);
+  }
+  .sec-toc__link:hover :global(.sec-toc__icon) {
+    color: currentColor;
+  }
+  .sec-toc li:last-child .sec-toc__link {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  /* 640 to 959: two columns that read down (1 to 4, then 5 to 7); each column closes with a rule. */
+  @media (min-width: 640px) {
+    .sec-toc__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(4, auto);
+      grid-auto-flow: column;
+      align-content: start;
+    }
+    .sec-toc li:nth-child(4) .sec-toc__link {
+      border-bottom: 1px solid var(--color-hairline);
+    }
+  }
+
+  /* 960 and wider: text in columns 1 to 8, a vertical list with a hairline track on the right. */
+  @media (min-width: 960px) {
+    .sec-hero__main {
+      grid-column: 1 / span 8;
+    }
+    .sec-toc {
+      grid-column: 9 / -1;
+      margin-top: 0;
+      padding-left: var(--space-5);
+    }
+    .sec-toc__title {
+      margin-bottom: var(--space-4);
+    }
+    .sec-toc__list {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: none;
+      grid-auto-flow: row;
+      box-shadow: inset 1px 0 0 var(--color-hairline);
+    }
+    .sec-toc__link,
+    .sec-toc li:last-child .sec-toc__link,
+    .sec-toc li:nth-child(4) .sec-toc__link {
+      min-height: 44px;
+      padding: var(--space-2) 0 var(--space-2) var(--space-4);
+      border: 0;
+      color: var(--color-text-2);
+    }
+    .sec-toc__link :global(.sec-toc__icon) {
+      display: none;
+    }
+    .sec-toc__link:hover {
+      color: var(--color-text);
+    }
+    .sec-toc__link[aria-current="true"] {
+      color: var(--color-text);
+      box-shadow: inset 2px 0 0 var(--color-accent);
+    }
+  }
+
+  /*
+   * 1280 and wider: the sticky rail. The hero stops being the positioning context so the nav can
+   * span .sec-page (see security.astro, which defines --sec-rail and offsets the sections).
+   */
+  @media (min-width: 1280px) {
+    :global(.sec-hero.section) {
+      position: static;
+    }
+    .sec-hero__main {
+      grid-column: 1 / -1;
+    }
+    .sec-toc {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      bottom: 0;
+      right: calc((100% - var(--container)) / 2);
+      width: var(--sec-rail, 18rem);
+      padding: var(--section-pad) 0 var(--space-8) var(--space-5);
+      pointer-events: none;
+    }
+    .sec-toc__inner {
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-7));
+      pointer-events: auto;
+    }
+    /* While one of its links has focus, the rail rises above the dark data-flow band (z-index 2),
+       so a focused link is never hidden under it (WCAG 2.2, 2.4.11 Focus Not Obscured). */
+    .sec-toc:focus-within {
+      z-index: 3;
+    }
+  }
+</style>

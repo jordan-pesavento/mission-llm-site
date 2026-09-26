@@ -1,0 +1,72 @@
+---
+/*
+ * Download > System requirements. Work package C.
+ * Copy: src/content/copy.md > Download > System requirements (7 rows, verbatim).
+ * A .data-table--stack: on phones each row becomes a block. The row header already names the
+ * value, so the repeated "Requirement" label is hidden visually (data-label stays on every td).
+ */
+import Section from "../../ui/Section.astro";
+import Rail from "./_Rail.astro";
+
+const ROWS = [
+  { item: "Memory", req: "2 GB of RAM or more." },
+  { item: "Disk", req: "10 GB minimum recommended. Storage grows with your documents, vectors and models." },
+  { item: "CPU architecture", req: "x86-64 (amd64) or ARM64." },
+  {
+    item: "Container runtime",
+    req: "Docker. Use 18.03 or later on Windows and macOS, or 20.10 or later on Linux, so the container can reach model runtimes on the host.",
+  },
+  { item: "Language model", req: "A local runtime such as Ollama or LM Studio, or an account with a cloud provider you approve." },
+  { item: "Local model hardware", req: "Depends on the model and runtime you choose." },
+  { item: "Kubernetes installs", req: "A cluster with persistent volume support. Helm 3 for the chart." },
+];
+---
+
+<Section id="requirements" tone="light" hairline labelledby="requirements-title">
+  <Rail title="System requirements" id="requirements-title">
+    <table class="data-table data-table--stack req">
+      <thead>
+        <tr>
+          <th scope="col">Item</th>
+          <th scope="col">Requirement</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          ROWS.map((r) => (
+            <tr>
+              <th scope="row">{r.item}</th>
+              <td data-label="Requirement">{r.req}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </Rail>
+</Section>
+
+<style>
+  .req th[scope="row"] {
+    width: 32%;
+  }
+  .req td {
+    max-width: 66ch;
+  }
+  @media (min-width: 640px) {
+    .req tbody tr:last-child th,
+    .req tbody tr:last-child td {
+      border-bottom: 0;
+    }
+  }
+  @media (max-width: 639.98px) {
+    .req th[scope="row"] {
+      width: 100%;
+    }
+    .req td[data-label]::before {
+      display: none;
+    }
+    .req td {
+      margin-top: var(--space-1);
+    }
+  }
+</style>

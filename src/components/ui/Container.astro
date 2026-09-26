@@ -1,0 +1,15 @@
+---
+/*
+ * Container: the shared content width, min(100% - 2 * gutter, 1720px), centered.
+ * Bands and screenshot stages may bleed full width outside it; text measure is capped inside.
+ * Usage: <Container> ... </Container>  or  <Container as="nav" class="layout-grid"> ... </Container>
+ */
+interface Props {
+  as?: "div" | "nav" | "header" | "footer" | "article" | "aside";
+  class?: string;
+  [key: string]: unknown;
+}
+const { as: Tag = "div", class: className, ...rest } = Astro.props;
+---
+
+<Tag class:list={["container", className]} {...rest}><slot /></Tag>

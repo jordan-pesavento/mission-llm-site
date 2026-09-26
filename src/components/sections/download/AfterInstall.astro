@@ -1,0 +1,88 @@
+---
+/*
+ * Download > After you install. Work package C.
+ * Copy: src/content/copy.md > Download > After you install (5 steps, verbatim).
+ * Numbered steps on hairlines, in the content column of the heading rail.
+ */
+import Section from "../../ui/Section.astro";
+import Rail from "./_Rail.astro";
+import { LOCAL_URL, TELEMETRY_ENV } from "../../../data/site";
+---
+
+<Section id="after-install" tone="light" hairline labelledby="after-install-title">
+  <Rail title="After you install" id="after-install-title">
+    <ol class="steps" role="list">
+      <li>
+        <span class="steps__num tnum">1</span>
+        <p>Open <code>{LOCAL_URL}</code>, or your server's address on port 3001.</p>
+      </li>
+      <li>
+        <span class="steps__num tnum">2</span>
+        <p>
+          In onboarding, choose your model provider. Documents are embedded with the built-in embedder and stored in the
+          built-in LanceDB store by default. You can change both in Settings.
+        </p>
+      </li>
+      <li>
+        <span class="steps__num tnum">3</span>
+        <p>
+          Choose “Just me” to set a password, or “My team” to turn on multi-user mode, before anyone else can reach the
+          server.
+        </p>
+      </li>
+      <li>
+        <span class="steps__num tnum">4</span>
+        <p>Confirm <code>{TELEMETRY_ENV}</code> is set in the server environment.</p>
+      </li>
+      <li>
+        <span class="steps__num tnum">5</span>
+        <p>Create a workspace and add your documents.</p>
+      </li>
+    </ol>
+  </Rail>
+</Section>
+
+<style>
+  .steps {
+    display: grid;
+  }
+  .steps li {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--color-hairline);
+  }
+  .steps li:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .steps li:last-child {
+    padding-bottom: 0;
+  }
+  @media (min-width: 640px) {
+    .steps li {
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: var(--space-5);
+    }
+  }
+  .steps__num {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    box-shadow: inset 0 0 0 1px var(--color-hairline-strong);
+    background: var(--color-surface);
+    font-size: var(--fs-ui);
+    line-height: 1;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .steps p {
+    max-width: var(--measure);
+    padding-top: 3px;
+    color: var(--color-text-2);
+  }
+</style>

@@ -1,0 +1,147 @@
+---
+/*
+ * Security > Controls available today (copy.md): four groups (Access, Oversight, Transport and
+ * runtime, Integrations) as .dl-grid definition lists. Each term runs into its definition so the
+ * copy reads exactly as written. From 960 the group title sits in a left column beside its list.
+ * The telemetry row reuses the copy.md Home > Security and control item verbatim so this list
+ * names DISABLE_TELEMETRY (design brief, Security item 3). Only shipped controls belong here;
+ * roadmap items live in InDevelopment.astro.
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import { TELEMETRY_ENV } from "../../../data/site";
+
+const code = (s: string) => `<code>${s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;")}</code>`;
+
+// term is the bold lead-in; text is HTML (inline code only).
+const GROUPS: { id: string; title: string; items: { term: string; text: string }[] }[] = [
+  {
+    id: "controls-access",
+    title: "Access",
+    items: [
+      {
+        term: "Authentication:",
+        text: "a single password, or multi-user mode with individual accounts. You choose during onboarding.",
+      },
+      {
+        term: "Roles:",
+        text: "admin, manager and default. Default users chat only in the workspaces they are assigned to.",
+      },
+      { term: "Account controls:", text: "invitations, suspension and per-user daily message limits." },
+      {
+        term: "Password complexity:",
+        text: `minimum and maximum length and required character types, set with ${code("PASSWORDMINCHAR")}, ${code("PASSWORDREQUIREMENTS")} and related variables.`,
+      },
+      {
+        term: "Simple SSO passthrough:",
+        text: `sign users in with temporary tokens issued through your own identity bridge (${code("SIMPLE_SSO_ENABLED")}).`,
+      },
+    ],
+  },
+  {
+    id: "controls-oversight",
+    title: "Oversight",
+    items: [
+      {
+        term: "Admin event log:",
+        text: "sign-ins, failed sign-ins, attempts on suspended accounts, changes to users, invites and API keys, workspace and document changes, and chat exports.",
+      },
+      { term: "Chat history export:", text: "CSV, JSON or JSONL." },
+      { term: "Hide chat history", text: `from the interface: ${code("DISABLE_VIEW_CHAT_HISTORY")}.` },
+      { term: "Workspace deletion protection:", text: `${code("WORKSPACE_DELETION_PROTECTION")}.` },
+    ],
+  },
+  {
+    id: "controls-transport",
+    title: "Transport and runtime",
+    items: [
+      {
+        term: "Built-in HTTPS",
+        text: `with your certificate and key (${code("ENABLE_HTTPS")}, ${code("HTTPS_CERT_PATH")}, ${code("HTTPS_KEY_PATH")}), or TLS at your own reverse proxy.`,
+      },
+      { term: "The container runs as a non-root user", text: "(UID 1000 by default) and has a health check." },
+      { term: "The Helm chart", text: "keeps credentials in Kubernetes Secrets and ships with telemetry off." },
+      { term: "Telemetry off with one setting.", text: `Set ${code(TELEMETRY_ENV)} and no usage events are sent.` },
+    ],
+  },
+  {
+    id: "controls-integrations",
+    title: "Integrations",
+    items: [
+      {
+        term: "Developer API:",
+        text: `admin-issued API keys, OpenAPI documentation at ${code("/api/docs")}, and OpenAI-compatible endpoints.`,
+      },
+      { term: "Agent tools:", text: "admins turn each agent skill and MCP server on or off." },
+    ],
+  },
+];
+---
+
+<Section id="controls" tone="light" hairline labelledby="controls-title">
+  <SectionIntro title="Controls available today" id="controls-title" />
+
+  <div class="ct">
+    {
+      GROUPS.map((group) => (
+        <div class="ct-group">
+          <h3 class="h4 ct-group__title" id={group.id}>
+            {group.title}
+          </h3>
+          <dl class="dl-grid ct-dl" aria-labelledby={group.id}>
+            {group.items.map((item) => (
+              <div>
+                <dt>{item.term}</dt>{" "}<dd set:html={item.text} />
+              </div>
+            ))}
+          </dl>
+        </div>
+      ))
+    }
+  </div>
+</Section>
+
+<style>
+  .ct {
+    margin-top: var(--gap-visual);
+    border-bottom: 1px solid var(--color-hairline-strong);
+  }
+  .ct-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    border-top: 1px solid var(--color-hairline-strong);
+    padding-top: var(--space-5);
+  }
+  .ct-group__title {
+    padding-bottom: var(--space-2);
+  }
+  /* Run-in terms: the definition continues the sentence, as the copy is written. */
+  .ct-dl > div {
+    max-width: var(--measure);
+    padding-block: var(--space-4);
+  }
+  .ct-dl > div:first-child {
+    border-top: 0;
+  }
+  .ct-dl dt,
+  .ct-dl dd {
+    display: inline;
+  }
+  .ct-dl dd {
+    margin: 0;
+  }
+
+  @media (min-width: 960px) {
+    .ct-group {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      column-gap: var(--grid-gap);
+      padding-top: 0;
+    }
+    .ct-group__title {
+      padding-block: 20px;
+    }
+    .ct-dl > div {
+      padding-block: 20px;
+    }
+  }
+</style>

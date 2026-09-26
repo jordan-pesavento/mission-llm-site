@@ -1,0 +1,167 @@
+---
+/*
+ * CodeBlock: a navy code surface with a label bar and a Copy button (announced via aria-live).
+ * Plex Mono 16px, no syntax colors. Long lines scroll inside the block, never the page. The <pre>
+ * is a labelled region and a Tab stop (so keyboard users can scroll it); with JS it stays a Tab
+ * stop only while its content is wider than the block (src/scripts/copy.ts re-checks on resize). Placeholders the reader must replace (REGISTRY, REPOSITORY_URL, ...) are
+ * underlined so nobody pastes them blindly; the copied text is unchanged.
+ * - code: the exact command text (keep it verbatim from copy.md).
+ * - label: shown in the bar and used as the accessible name ("Run with Docker (Linux or macOS)").
+ * - lang: "shell" | "powershell" | "yaml" | "text" (dims # comments for shell and yaml).
+ * - caption: optional line under the block (for example the REGISTRY placeholder note).
+ * - placeholders: extra tokens to mark, added to the defaults.
+ * Usage: <CodeBlock label="Linux or macOS" lang="shell" code={`docker compose up -d`} />
+ */
+import Icon from "./Icon.astro";
+
+interface Props {
+  code: string;
+  label: string;
+  lang?: "shell" | "powershell" | "yaml" | "text";
+  caption?: string;
+  placeholders?: string[];
+  class?: string;
+}
+
+const { code, label, lang = "shell", caption, placeholders = [], class: className } = Astro.props;
+const DEFAULT_PLACEHOLDERS = ["REGISTRY", "REPOSITORY_URL", "REPLACE_WITH_A_LONG_RANDOM_STRING", "/path/on/local/disk"];
+const marks = [...new Set([...DEFAULT_PLACEHOLDERS, ...placeholders])].sort((a, b) => b.length - a.length);
+
+const escape = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const reEscape = (s: string) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+const markRe = new RegExp(`(?<![A-Za-z0-9_])(${marks.map((m) => reEscape(escape(m))).join("|")})(?![A-Za-z0-9_])`, "g");
+
+const highlight = (line: string) => {
+  let body = line;
+  let comment = "";
+  if (lang === "shell" || lang === "yaml") {
+    const m = line.match(/^(\s*#.*)$|^(.*?\s)(#\s.*)$/);
+    if (m) {
+      if (m[1] !== undefined) {
+        body = "";
+        comment = m[1];
+      } else {
+        body = m[2];
+        comment = m[3];
+      }
+    }
+  }
+  const b = escape(body).replace(markRe, '<mark class="ph">$1</mark>');
+  return b + (comment ? `<span class="c">${escape(comment)}</span>` : "");
+};
+const html = code.replace(/\n+$/, "").split("\n").map(highlight).join("\n");
+---
+
+<figure class:list={["code", className]} data-codeblock>
+  <div class="code__bar">
+    <span class="code__label">{label}</span>
+    <button type="button" class="code__copy" data-copy hidden aria-label={`Copy: ${label}`}>
+      <Icon name="copy" size={18} class="code__icon code__icon--copy" />
+      <Icon name="check" size={18} class="code__icon code__icon--done" />
+      <span data-copy-label>Copy</span>
+    </button>
+  </div>
+  <pre class="code__pre" data-scrollx role="region" tabindex="0" aria-label={`${label} code`}><code set:html={html} /></pre>
+  <span class="sr-only" aria-live="polite" data-copy-status></span>
+  {caption && <figcaption class="code__caption">{caption}</figcaption>}
+</figure>
+
+<script>
+  import "../../scripts/copy.ts";
+</script>
+
+<style>
+  .code {
+    min-width: 0;
+    border-radius: var(--radius-lg);
+    background: var(--color-code-bg);
+    color: var(--color-code-text);
+    box-shadow: 0 0 0 1px var(--color-code-hairline), var(--shadow-card);
+    overflow: hidden;
+  }
+  .code__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 52px;
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
+    border-bottom: 1px solid var(--color-code-hairline);
+  }
+  .code__label {
+    min-width: 0;
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    font-weight: 500;
+    color: var(--color-code-muted);
+  }
+  .code__copy {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: 36px;
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-ui);
+    line-height: 1;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--color-code-text);
+    transition:
+      background-color var(--dur-hover) var(--ease-standard),
+      color var(--dur-hover) var(--ease-standard);
+  }
+  .code__copy:hover {
+    background: rgb(169 186 214 / 0.1);
+  }
+  .code__copy:focus-visible {
+    outline: 2px solid var(--blue-400);
+    outline-offset: 0;
+  }
+  .code__copy :global(.code__icon--done),
+  .code__copy[data-state="copied"] :global(.code__icon--copy) {
+    display: none;
+  }
+  .code__copy[data-state="copied"] :global(.code__icon--done) {
+    display: inline-block;
+  }
+  .code__pre {
+    margin: 0;
+    padding: var(--space-5);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: var(--fs-code);
+    line-height: var(--lh-code);
+    tab-size: 2;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(169 186 214 / 0.3) transparent;
+  }
+  .code__pre:focus-visible {
+    outline: 2px solid var(--blue-400);
+    outline-offset: -2px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+  .code__pre code {
+    font-size: inherit;
+    font-family: inherit;
+    white-space: pre;
+  }
+  .code__pre :global(.c) {
+    color: var(--color-code-muted);
+  }
+  .code__pre :global(mark.ph) {
+    background: none;
+    color: var(--color-code-placeholder);
+    text-decoration: underline dashed var(--color-code-placeholder);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+  }
+  .code__caption {
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--color-code-hairline);
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    color: var(--color-code-muted);
+  }
+</style>

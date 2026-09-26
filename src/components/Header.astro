@@ -1,0 +1,349 @@
+---
+/*
+ * Site header: 72px, sticky; a hairline appears once the page scrolls (IntersectionObserver
+ * sentinel, no scroll listeners). Emblem and wordmark, primary nav, one solid Download button.
+ * Below 960px the nav collapses behind a Menu button (aria-expanded, Escape closes, focus returns).
+ * Opening the menu moves focus to its first link; Tab from the last link returns to the Menu
+ * button, and focus leaving the header closes the menu. DOM order (brand, nav, actions) stays, so
+ * the desktop focus order matches the visual order.
+ * Without JS the nav stays visible as a wrapping second row, so every link works.
+ * Nav entries whose destination is still a TODO ("#", for example Docs) render as muted text
+ * with a "Coming soon" label for assistive tech, not as links that jump to the top of the page.
+ */
+import Button from "./ui/Button.astro";
+import Icon from "./ui/Icon.astro";
+import { NAV, DOWNLOAD_HREF, SITE, isPlaceholder } from "../data/site";
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isCurrent = (href: string) => !href.includes("#") && href !== "/" && path === href.replace(/\/$/, "");
+---
+
+<div class="header-sentinel" data-header-sentinel aria-hidden="true"></div>
+<header class="site-header" data-site-header>
+  <div class="container site-header__inner">
+    <a class="brand" href="/">
+      <img class="brand__emblem" src="/mission-llm-emblem.svg" width="32" height="32" alt="" />
+      <span class="brand__word">{SITE.name}</span>
+    </a>
+
+    <nav class="site-nav" id="site-nav" aria-label="Primary">
+      <ul role="list" class="site-nav__list">
+        {
+          NAV.map((item) => (
+            <li>
+              {isPlaceholder(item.href) ? (
+                /* TODO: becomes a link when the destination exists (see src/data/site.ts). */
+                <span class="site-nav__link site-nav__link--soon" aria-disabled="true" data-todo={item.todo}>
+                  {item.label}
+                  <span class="soon-tag">Soon</span>
+                </span>
+              ) : (
+                <a class="site-nav__link" href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
+                  {item.label}
+                </a>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <Button href={DOWNLOAD_HREF} class="site-header__download">Download</Button>
+      <button
+        type="button"
+        class="menu-toggle"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="site-nav"
+        aria-label="Menu"
+        hidden
+      >
+        <Icon name="list" size={24} class="menu-toggle__open" />
+        <Icon name="x" size={24} class="menu-toggle__close" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  const sentinel = document.querySelector<HTMLElement>("[data-header-sentinel]");
+  if (header && sentinel && "IntersectionObserver" in window) {
+    new IntersectionObserver(([entry]) => {
+      header.toggleAttribute("data-scrolled", !entry.isIntersecting);
+    }).observe(sentinel);
+  }
+
+  const toggle = header?.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  const nav = document.getElementById("site-nav");
+  if (header && toggle && nav) {
+    const desktop = window.matchMedia("(min-width: 960px)");
+    toggle.hidden = false;
+    const isOpen = () => toggle.getAttribute("aria-expanded") === "true";
+    const links = () => [...nav.querySelectorAll<HTMLAnchorElement>("a.site-nav__link")];
+    const setOpen = (open: boolean, { restoreFocus = false, focusFirst = false } = {}) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Menu");
+      header.toggleAttribute("data-menu-open", open);
+      if (open && focusFirst) links()[0]?.focus();
+      if (!open && restoreFocus) toggle.focus();
+    };
+    toggle.addEventListener("click", () => setOpen(!isOpen(), { focusFirst: true }));
+    // Tab from the last link cycles back to the Menu button instead of leaving the open menu.
+    nav.addEventListener("keydown", (e) => {
+      if (e.key !== "Tab" || e.shiftKey || !isOpen() || desktop.matches) return;
+      const all = links();
+      if (document.activeElement === all[all.length - 1]) {
+        e.preventDefault();
+        toggle.focus();
+      }
+    });
+    // Focus leaving the header (for example Tab past the Menu button) closes the menu.
+    header.addEventListener("focusout", (e) => {
+      const next = e.relatedTarget as Node | null;
+      if (isOpen() && next && !header.contains(next)) setOpen(false);
+    });
+    nav.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest("a")) setOpen(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && isOpen()) setOpen(false, { restoreFocus: true });
+    });
+    document.addEventListener("click", (e) => {
+      if (isOpen() && !header.contains(e.target as Node)) setOpen(false);
+    });
+    desktop.addEventListener("change", () => setOpen(false));
+  }
+</script>
+
+<style>
+  .header-sentinel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 8px;
+    pointer-events: none;
+  }
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--color-page);
+    box-shadow: 0 1px 0 transparent;
+    transition: box-shadow var(--dur-hover) var(--ease-standard);
+  }
+  .site-header[data-scrolled],
+  .site-header[data-menu-open] {
+    box-shadow: 0 1px 0 var(--color-hairline);
+  }
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--space-6);
+    min-height: var(--header-h);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    margin-right: auto;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  .brand:hover {
+    color: var(--color-text);
+  }
+  .brand__emblem {
+    width: 32px;
+    height: 32px;
+  }
+  .brand__word {
+    font-size: 1.1875rem; /* 19px */
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .site-nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-2);
+  }
+  .site-nav__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-ui);
+    line-height: 1;
+    font-weight: var(--fw-ui);
+    white-space: nowrap;
+    color: var(--color-text-2);
+    text-decoration: none;
+    transition:
+      color var(--dur-hover) var(--ease-standard),
+      background-color var(--dur-hover) var(--ease-standard);
+  }
+  .site-nav__link:hover {
+    color: var(--color-text);
+    background: rgb(23 48 99 / 0.05);
+  }
+  .site-nav__link--soon,
+  .site-nav__link--soon:hover {
+    gap: var(--space-2);
+    color: var(--color-text-3);
+    background: none;
+    cursor: default;
+  }
+  .soon-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding-inline: 6px;
+    border: 1px dashed var(--color-hairline-dashed);
+    border-radius: var(--radius-xs);
+    font-size: var(--fs-legal);
+    line-height: 1;
+    font-weight: 500;
+    color: var(--color-text-3);
+  }
+  .site-nav__link[aria-current="page"] {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.5em;
+  }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .menu-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    box-shadow: inset 0 0 0 1px var(--btn-secondary-ring);
+    transition:
+      background-color var(--dur-hover) var(--ease-standard),
+      box-shadow var(--dur-hover) var(--ease-standard);
+  }
+  .menu-toggle:hover {
+    background: var(--btn-secondary-bg-hover);
+    box-shadow: inset 0 0 0 1px var(--btn-secondary-ring-hover);
+  }
+  .menu-toggle:focus-visible {
+    border-radius: var(--radius-md);
+  }
+  .menu-toggle :global(.menu-toggle__close),
+  .menu-toggle[aria-expanded="true"] :global(.menu-toggle__open) {
+    display: none;
+  }
+  .menu-toggle[aria-expanded="true"] :global(.menu-toggle__close) {
+    display: inline-block;
+  }
+
+  /* Phones: brand, Download and Menu must share one row at 390 (container 358px). */
+  @media (max-width: 639.98px) {
+    .site-header__inner {
+      column-gap: var(--space-3);
+    }
+    .site-header__actions :global(.site-header__download) {
+      padding-inline: var(--space-4);
+    }
+  }
+  /* Very narrow phones (under 360): keep the emblem, hide the wordmark visually. */
+  @media (max-width: 359.98px) {
+    .brand__word {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  /* Below 960 without JS: the nav wraps into a second row under the brand. */
+  @media (max-width: 959.98px) {
+    .site-nav {
+      order: 3;
+      flex-basis: 100%;
+      padding-bottom: var(--space-2);
+    }
+    .site-nav__link {
+      padding-inline: var(--space-2);
+    }
+    .site-nav__list {
+      margin-inline: calc(-1 * var(--space-2));
+    }
+
+    /* With JS: the nav collapses into a panel under the header. */
+    :global(.js) .site-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      padding: var(--space-2) var(--gutter) var(--space-5);
+      background: var(--color-page);
+      box-shadow:
+        0 1px 0 var(--color-hairline),
+        0 24px 32px -24px rgb(7 15 38 / 0.18);
+    }
+    :global(.js) .site-header[data-menu-open] .site-nav {
+      display: block;
+    }
+    :global(.js) .site-nav__list {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      margin: 0;
+    }
+    :global(.js) .site-nav__list li + li {
+      border-top: 1px solid var(--color-hairline);
+    }
+    :global(.js) .site-nav__link {
+      width: 100%;
+      min-height: 56px;
+      padding-inline: 0;
+      font-size: var(--fs-h4);
+      color: var(--color-text);
+    }
+    :global(.js) .site-nav__link:hover {
+      background: none;
+      color: var(--color-link);
+    }
+    :global(.js) .site-nav__link--soon,
+    :global(.js) .site-nav__link--soon:hover {
+      color: var(--color-text-3);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .site-header__inner {
+      flex-wrap: nowrap;
+    }
+    .brand {
+      margin-right: 0;
+    }
+    .site-nav {
+      margin-inline: auto;
+    }
+    .menu-toggle {
+      display: none;
+    }
+  }
+</style>

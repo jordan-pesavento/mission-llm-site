@@ -1,0 +1,62 @@
+---
+/*
+ * Badge: a status label. The honesty rules depend on it: anything on the roadmap must sit under
+ * an "In development" label, never mixed into current features.
+ * - kind "dev": "In development" (dashed hairline, muted). Default.
+ * - kind "soon": "Coming soon" (dashed hairline, muted), for desktop installers.
+ * - kind "today": "Available today" (solid hairline, accent dot).
+ * - kind "pending": "Published with first release" (dashed), for checksum and signature slots.
+ * The slot overrides the default text. Labels never wrap. 15px/500, so it passes the 14px floor.
+ * Usage: <Badge /> , <Badge kind="today" /> , <Badge kind="soon" />
+ */
+interface Props {
+  kind?: "dev" | "soon" | "today" | "pending";
+  class?: string;
+}
+const { kind = "dev", class: className } = Astro.props;
+const TEXT = {
+  dev: "In development",
+  soon: "Coming soon",
+  today: "Available today",
+  pending: "Published with first release",
+} as const;
+const hasSlot = Astro.slots.has("default");
+---
+
+<span class:list={["badge", `badge--${kind}`, className]}>
+  {kind === "today" && <span class="badge__dot" aria-hidden="true" />}
+  {hasSlot ? <slot /> : TEXT[kind]}
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: 30px;
+    padding-inline: 10px;
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-eyebrow);
+    line-height: 1;
+    font-weight: 500;
+    white-space: nowrap;
+    vertical-align: middle;
+    color: var(--color-text-2);
+  }
+  .badge--dev,
+  .badge--soon,
+  .badge--pending {
+    border: 1px dashed var(--color-hairline-dashed);
+    color: var(--color-text-3);
+  }
+  .badge--today {
+    border: 1px solid var(--color-hairline-strong);
+    color: var(--color-text);
+  }
+  .badge__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+  }
+</style>

@@ -1,0 +1,117 @@
+---
+/*
+ * 404. Work package C.
+ * Copy: src/content/copy.md > 404 (display code, heading, body, links verbatim).
+ * The oversized "404" is decorative (aria-hidden); the h1 carries the meaning. From 960 the code
+ * and the text sit side by side and the block fills the first screen, so the footer never floats
+ * mid-page. The links are a short list of full-width rows (large touch targets, no button noise).
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import Icon from "../../ui/Icon.astro";
+import { DOWNLOAD_HREF } from "../../../data/site";
+
+const LINKS = [
+  { label: "Home", href: "/" },
+  { label: "Download", href: DOWNLOAD_HREF },
+  { label: "Security overview", href: "/security" },
+];
+---
+
+<Section tone="light" labelledby="not-found-title">
+  <div class="nf">
+    <p class="nf__code tnum" aria-hidden="true" data-decorative data-reveal>404</p>
+    <div class="nf__body" data-reveal="2">
+      <SectionIntro
+        level={1}
+        title="Page not found."
+        id="not-found-title"
+        lead="The page you asked for does not exist or has moved."
+      />
+      <nav class="nf__nav" aria-label="Suggested pages">
+        <ul role="list">
+          {
+            LINKS.map((l) => (
+              <li>
+                <a href={l.href}>
+                  <span>{l.label}</span>
+                  <Icon name="arrow-right" size={22} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .nf {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+    column-gap: var(--grid-gap);
+    row-gap: var(--space-5);
+    align-content: center;
+    align-items: center;
+  }
+  .nf__code,
+  .nf__body {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+  .nf__code {
+    font-size: clamp(7rem, 3rem + 16vw, 22rem);
+    line-height: 0.86;
+    letter-spacing: -0.025em;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--silver-200) 60%, var(--silver-400));
+    user-select: none;
+  }
+  .nf__nav {
+    margin-top: var(--space-7);
+  }
+  .nf__nav ul {
+    border-top: 1px solid var(--color-hairline-strong);
+  }
+  .nf__nav a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 64px;
+    padding-block: var(--space-3);
+    border-bottom: 1px solid var(--color-hairline);
+    font-size: var(--fs-h4);
+    line-height: var(--lh-h4);
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    transition:
+      color var(--dur-hover) var(--ease-standard),
+      border-color var(--dur-hover) var(--ease-standard);
+  }
+  .nf__nav a :global(.icon) {
+    color: var(--color-link);
+  }
+  .nf__nav a:hover {
+    color: var(--color-link);
+    border-bottom-color: var(--color-link);
+  }
+  .nf__nav a:focus-visible {
+    outline-offset: 2px;
+  }
+  @media (min-width: 960px) {
+    .nf {
+      /* Roughly the first screen of a 16:9 or 16:10 desktop under the header, so the footer sits
+         at the fold. Width-based on purpose: a height-based min-height grows with full-page captures. */
+      min-height: 40vw;
+    }
+    .nf__code {
+      grid-column: 1 / span 6;
+    }
+    .nf__body {
+      grid-column: 7 / -1;
+    }
+  }
+</style>

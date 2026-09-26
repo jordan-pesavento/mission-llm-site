@@ -1,0 +1,47 @@
+---
+/*
+ * Text link with a trailing arrow, for secondary navigation inside a section
+ * ("See every install option", "Read the security overview"). Not a button: use Button for CTAs.
+ * Usage: <ArrowLink href="/download">See every install option</ArrowLink>
+ */
+import Icon from "./Icon.astro";
+
+interface Props {
+  href: string;
+  class?: string;
+  /** Use "arrow-up-right" for links that leave the site. */
+  icon?: "arrow-right" | "arrow-up-right";
+}
+const { href, class: className, icon = "arrow-right" } = Astro.props;
+const external = /^https?:\/\//.test(href);
+---
+
+<a
+  href={href}
+  class:list={["arrow-link", className]}
+  rel={external ? "noopener" : undefined}
+><span><slot /></span><Icon name={icon} size={18} /></a>
+
+<style>
+  .arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    font-weight: 600;
+    color: var(--color-link);
+    text-decoration: none;
+  }
+  .arrow-link span {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    transition: text-decoration-color var(--dur-hover) var(--ease-standard);
+  }
+  .arrow-link:hover span {
+    text-decoration-color: currentColor;
+  }
+</style>

@@ -1,0 +1,97 @@
+---
+/*
+ * Base layout: document head (meta, fonts, icons), skip link, header, <main id="main">, footer,
+ * and the one-time section reveal. Every page uses it:
+ *   <Base title={PAGES.home.title} description={PAGES.home.description}> ...sections... </Base>
+ * Fonts are self-hosted (Fontsource, latin subset): Plex Sans 400/500/600 and Plex Mono 400.
+ */
+import "@fontsource/ibm-plex-sans/latin-400.css";
+import "@fontsource/ibm-plex-sans/latin-500.css";
+import "@fontsource/ibm-plex-sans/latin-600.css";
+import "@fontsource/ibm-plex-mono/latin-400.css";
+import "../styles/global.css";
+import plexSans400 from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url";
+import plexSans500 from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-500-normal.woff2?url";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { SITE } from "../data/site";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = SITE.description } = Astro.props;
+// Canonical URL, og:url and the share image need absolute URLs, so they are emitted only once
+// SITE.origin is set (TODO: production domain not chosen; set astro.config `site` at the same
+// time and add @astrojs/sitemap). The image is public/og/mission-llm.png (1200x630).
+const canonical = SITE.origin ? new URL(Astro.url.pathname, SITE.origin).href : undefined;
+const shareImage = SITE.origin ? new URL(SITE.shareImage, SITE.origin).href : undefined;
+---
+
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content={SITE.themeColor} />
+    <meta name="generator" content={Astro.generator} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {shareImage && <meta property="og:image" content={shareImage} />}
+    {shareImage && <meta property="og:image:width" content="1200" />}
+    {shareImage && <meta property="og:image:height" content="630" />}
+    {shareImage && <meta property="og:image:alt" content={SITE.shareImageAlt} />}
+    {shareImage && <meta name="twitter:image" content={shareImage} />}
+    <meta name="twitter:card" content={shareImage ? "summary_large_image" : "summary"} />
+    <link rel="preload" href={plexSans400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={plexSans500} as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      // Reveal once per element marked data-reveal (see global.css). Skipped entirely with reduced
+      // motion, where the CSS never hides anything.
+      const items = [...document.querySelectorAll<HTMLElement>("[data-reveal]")];
+      const showAll = () => items.forEach((el) => el.classList.add("is-in"));
+      if (items.length) {
+        if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          showAll();
+        } else {
+          const io = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (!entry.isIntersecting) continue;
+                entry.target.classList.add("is-in");
+                io.unobserve(entry.target);
+              }
+            },
+            { rootMargin: "0px 0px -6% 0px", threshold: 0 },
+          );
+          items.forEach((el) => io.observe(el));
+          window.addEventListener("beforeprint", showAll);
+        }
+      }
+    </script>
+  </body>
+</html>

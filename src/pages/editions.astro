@@ -1,0 +1,18 @@
+---
+/*
+ * Editions. Owned by work package B. No prices: pricing is not decided.
+ */
+import Base from "../layouts/Base.astro";
+import { PAGES } from "../data/site";
+import EditionsHero from "../components/sections/editions/EditionsHero.astro";
+import EditionCards from "../components/sections/editions/EditionCards.astro";
+import Comparison from "../components/sections/editions/Comparison.astro";
+import EditionsFaq from "../components/sections/editions/EditionsFaq.astro";
+---
+
+<Base title={PAGES.editions.title} description={PAGES.editions.description}>
+  <EditionsHero />
+  <EditionCards />
+  <Comparison />
+  <EditionsFaq />
+</Base>

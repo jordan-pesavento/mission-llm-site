@@ -1,0 +1,55 @@
+---
+/*
+ * SectionIntro: eyebrow, heading and lead with the shared rhythm
+ * (eyebrow to heading 16px, heading to lead 24px). Use it at the top of every section so all
+ * pages share one heading system.
+ * - level: 1 for page heroes (display size), 2 for sections (default), 3 for sub-blocks.
+ * - id: set on the heading; pass the same value to <Section labelledby>.
+ * - lead: one short paragraph (lead size). Put longer text in the default slot below it.
+ * - srOnly: keep the heading for screen readers and outline but hide it visually
+ *   (for example the proof strip's "At a glance").
+ * Usage: <SectionIntro eyebrow="Deployment" title="Deploy it where your data already lives." id="deploy-title" lead="..." />
+ */
+interface Props {
+  title: string;
+  eyebrow?: string;
+  lead?: string;
+  id?: string;
+  level?: 1 | 2 | 3;
+  srOnly?: boolean;
+  class?: string;
+}
+
+const { title, eyebrow, lead, id, level = 2, srOnly = false, class: className } = Astro.props;
+const Heading = `h${level}` as "h1" | "h2" | "h3";
+const headingClass = level === 1 ? "display" : level === 2 ? "h2" : "h3";
+---
+
+{
+  srOnly ? (
+    <Heading id={id} class="sr-only">
+      {title}
+    </Heading>
+  ) : (
+    <div class:list={["intro", className]}>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <Heading id={id} class:list={[headingClass, "intro__title"]}>
+        {title}
+      </Heading>
+      {lead && <p class="lead intro__lead">{lead}</p>}
+      <slot />
+    </div>
+  )
+}
+
+<style>
+  .intro .eyebrow {
+    margin-bottom: var(--gap-eyebrow);
+  }
+  .intro__lead {
+    margin-top: var(--gap-heading);
+  }
+  .intro > :global(:not(.eyebrow, .intro__title, .intro__lead)) {
+    margin-top: var(--space-5);
+  }
+</style>

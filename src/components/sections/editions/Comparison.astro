@@ -1,0 +1,222 @@
+---
+/*
+ * Editions > Comparison (copy.md). Work package B.
+ * A real table with text labels (Included, Not included, In development, Self-supported,
+ * By agreement); a check only reinforces "Included", and "Not included" is muted text. "In development" uses <Badge />, the site's one
+ * roadmap marker. Rows are grouped (shipping today, service, planned) with a stronger rule.
+ * - From 640px: a table; the header row sticks under the 72px site header while you scroll.
+ * - From 1280px: title in columns 1 to 3 (sticky beside the table), table in columns 4 to 12.
+ * - Below 640px: .data-table--stack blocks; each capability shows its two values side by side.
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import Badge from "../../ui/Badge.astro";
+import Icon from "../../ui/Icon.astro";
+
+type Value = "Included" | "Not included" | "In development" | "Self-supported" | "By agreement";
+type Row = { capability: string; community: Value; enterprise: Value };
+
+const groups: Row[][] = [
+  [
+    { capability: "Self-hosted deployment", community: "Included", enterprise: "Included" },
+    { capability: "Local and cloud models, per workspace", community: "Included", enterprise: "Included" },
+    { capability: "Document retrieval with sources", community: "Included", enterprise: "Included" },
+    { capability: "Agents, skills, MCP and flows", community: "Included", enterprise: "Included" },
+    { capability: "Multi-user roles and event log", community: "Included", enterprise: "Included" },
+    { capability: "Developer API and API keys", community: "Included", enterprise: "Included" },
+  ],
+  [
+    { capability: "Support", community: "Self-supported", enterprise: "By agreement" },
+    { capability: "Deployment assistance", community: "Not included", enterprise: "Included" },
+  ],
+  [
+    { capability: "SSO, SCIM and smart card sign-in", community: "Not included", enterprise: "In development" },
+    { capability: "MFA and session controls", community: "Not included", enterprise: "In development" },
+    { capability: "Tamper-evident audit trail", community: "Not included", enterprise: "In development" },
+    { capability: "Model and tool policy", community: "Not included", enterprise: "In development" },
+    { capability: "Retention and legal hold", community: "Not included", enterprise: "In development" },
+  ],
+];
+
+// Only "Included" carries a mark. "Not included" is muted text with no glyph (a minus reads as a dash).
+const ICON: Partial<Record<Value, string>> = { Included: "check" };
+const KIND: Record<Value, string> = {
+  Included: "yes",
+  "Not included": "no",
+  "In development": "dev",
+  "Self-supported": "text",
+  "By agreement": "text",
+};
+---
+
+<Section id="compare" tone="light" hairline labelledby="compare-title">
+  <div class="layout-grid compare">
+    <div class="compare__intro" data-reveal>
+      <SectionIntro title="Comparison" id="compare-title" />
+    </div>
+
+    <div class="compare__table" data-reveal="2">
+      <table class="data-table data-table--stack cmp">
+        <caption class="sr-only">Community and Enterprise capabilities</caption>
+        <thead>
+          <tr>
+            <th scope="col">Capability</th>
+            <th scope="col">Community</th>
+            <th scope="col">Enterprise</th>
+          </tr>
+        </thead>
+        {
+          groups.map((rows) => (
+            <tbody>
+              {rows.map((row) => (
+                <tr>
+                  <th scope="row">{row.capability}</th>
+                  {(["community", "enterprise"] as const).map((col) => {
+                    const value = row[col];
+                    return (
+                      <td data-label={col === "community" ? "Community" : "Enterprise"}>
+                        {value === "In development" ? (
+                          <Badge />
+                        ) : (
+                          <span class:list={["status", `status--${KIND[value]}`]}>
+                            <span class="status__icon" aria-hidden="true">
+                              {ICON[value] && <Icon name={ICON[value]!} size={16} />}
+                            </span>
+                            <span>{value}</span>
+                          </span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          ))
+        }
+      </table>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .compare {
+    row-gap: var(--gap-visual);
+  }
+  @media (min-width: 1280px) {
+    .compare__intro {
+      grid-column: 1 / span 3;
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-4));
+      align-self: start;
+    }
+    .compare__table {
+      grid-column: 4 / -1;
+    }
+  }
+
+  /* Separate borders: with collapsed borders Chrome let row text paint over the stuck header row. */
+  .cmp {
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  .cmp th,
+  .cmp td {
+    vertical-align: middle;
+  }
+  .cmp thead th:first-child {
+    width: 40%;
+  }
+  @media (min-width: 960px) {
+    .cmp thead th:first-child {
+      width: 46%;
+    }
+  }
+  .cmp tbody th {
+    font-weight: 500;
+  }
+  /* Stronger rule between groups (shipping today, service, planned), drawn as the last row's
+     bottom edge. */
+  .cmp tbody:not(:last-child) tr:last-child > * {
+    border-bottom-color: var(--color-hairline-strong);
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 30px;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .status__icon {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+  }
+  .status--yes {
+    color: var(--color-text);
+  }
+  .status--yes .status__icon {
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 9%, transparent);
+  }
+  .status--no {
+    color: var(--color-text-3);
+  }
+  .status--no .status__icon {
+    color: var(--color-text-3);
+  }
+  .status--text {
+    color: var(--color-text);
+  }
+  /* Text-only values keep the empty icon column so their words line up with the rows above. */
+
+  /* Table form (640px and up): sticky header row under the 72px site header. */
+  @media (min-width: 640px) {
+    .cmp thead th {
+      position: sticky;
+      top: var(--header-h);
+      z-index: 2;
+      padding-top: var(--space-4);
+      background: var(--color-page);
+      border-bottom: 0;
+      /* The upward page-colored shadow covers row text passing under the site header's hairline. */
+      box-shadow:
+        inset 0 -1px 0 var(--color-hairline-strong),
+        0 -6px 0 var(--color-page);
+    }
+    .cmp th,
+    .cmp td {
+      padding-block: var(--space-4);
+    }
+  }
+
+  /* Phones: each capability is a block, with its two values side by side. */
+  @media (max-width: 639.98px) {
+    .cmp tbody tr {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-4);
+    }
+    .cmp tbody th {
+      grid-column: 1 / -1;
+      font-weight: 600;
+    }
+    .cmp tbody td {
+      margin-top: var(--space-2);
+    }
+    .cmp tbody td[data-label]::before {
+      font-size: var(--fs-ui);
+      font-weight: 500;
+      margin-bottom: var(--space-1);
+    }
+    /* Each group's first row already carries the strong top rule (global stack style). */
+    .cmp tbody:not(:last-child) tr:last-child {
+      border-bottom: 0;
+    }
+  }
+</style>

@@ -1,0 +1,652 @@
+---
+/*
+ * Download > Install options (anchor #options). Work package C.
+ * Copy: src/content/copy.md > Download > Install options. Every command is read verbatim from
+ * copy.md by ./_commands.ts and rendered in a CodeBlock.
+ *
+ * Method tabs use src/scripts/tabs.ts (data-tabs-hash, so /download#p-helm opens Helm).
+ * Panel ids: p-source (first, the default), p-docker, p-compose, p-kubernetes, p-helm, p-openshift.
+ * Arrow keys in either axis move between methods (tabs.ts), whether the list is a grid or a rail.
+ * Without JS the tablists stay hidden and every panel renders in order under its own h3.
+ * Layout: below 960 the tabs are a 2-up (phone) or 3-up grid above the panel; from 960 they are a
+ * sticky vertical rail in columns 1 to 4 beside the panel; from 1280 the section heading joins
+ * the rail, matching the heading rail of the other Download sections.
+ * The container methods end with "Then open http://localhost:3001" (the Ollama pattern). The
+ * cluster methods do not: their address is the ingress, route or service you configure.
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import CodeBlock from "../../ui/CodeBlock.astro";
+import { LOCAL_URL } from "../../../data/site";
+import { fences } from "./_commands";
+
+const [dockerUnix, dockerWindows] = fences("Docker", 2);
+const [composeFile, composeUp] = fences("Docker Compose", 2);
+const [sourceBuild, sourceCompose] = fences("Build from source", 2);
+const [k8sApply] = fences("Kubernetes", 1);
+const [helmValues, helmInstall] = fences("Helm", 2);
+const [openshiftCmds] = fences("OpenShift", 1);
+
+// Build from source is first and selected by default: it is the one method that works before public
+// images exist (every other method needs an image in your registry).
+const METHODS = [
+  { id: "source", label: "Build from source" },
+  { id: "docker", label: "Docker" },
+  { id: "compose", label: "Docker Compose" },
+  { id: "kubernetes", label: "Kubernetes" },
+  { id: "helm", label: "Helm" },
+  { id: "openshift", label: "OpenShift" },
+];
+
+/** Inline command text that may wrap only after "=" and ":" (never at the hyphens of a flag). */
+const flag = (text: string) =>
+  text
+    .split(/(?<=[=:])/)
+    .map((part) => `<span class="nowrap">${part.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</span>`)
+    .join("<wbr>");
+
+const CLOUD = [
+  { name: "AWS CloudFormation", detail: "One EC2 instance running the container." },
+  { name: "Google Cloud Deployment Manager", detail: "One Compute Engine VM." },
+  { name: "DigitalOcean Terraform", detail: "One Droplet." },
+  { name: "Hugging Face Spaces", detail: "A Dockerfile for evaluation in a Space." },
+];
+---
+
+<Section id="options" tone="light" hairline labelledby="options-title">
+  <div class="opts" data-tabs data-tabs-hash data-install>
+    <div class="opts__head" data-reveal>
+      <SectionIntro title="Install options" id="options-title" />
+    </div>
+
+    <div
+      class="opts__tabs"
+      role="tablist"
+      aria-label="Install method"
+      aria-orientation="vertical"
+      hidden
+      data-row="install-tabs"
+      data-install-tabs
+    >
+      {
+        METHODS.map((m, i) => (
+          <button
+            type="button"
+            role="tab"
+            class="opts__tab"
+            id={`t-${m.id}`}
+            aria-controls={`p-${m.id}`}
+            aria-selected={i === 0 ? "true" : "false"}
+            tabindex={i === 0 ? undefined : "-1"}
+          >
+            {m.label}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="opts__panels" data-reveal="2">
+      <!-- Build from source -->
+      <div class="panel" role="tabpanel" id="p-source" aria-labelledby="t-source">
+        <div class="panel__head">
+          <h3 class="h3">Build from source</h3>
+          <p class="body">Build the image yourself from the repository. This is the supported path today.</p>
+        </div>
+        <!-- TODO: REPOSITORY_URL stays a placeholder until repository access is decided. -->
+        <CodeBlock label="Terminal" lang={sourceBuild.lang} code={sourceBuild.code} />
+        <p class="body panel__prose">
+          Then run it with the <a href="#p-docker">Docker command</a>, using <code>mission-llm:latest</code> as the image
+          name. Or build and run with Compose from the repository:
+        </p>
+        <CodeBlock label="Terminal" lang={sourceCompose.lang} code={sourceCompose.code} />
+        <p class="panel__next">Then open <code>{LOCAL_URL}</code></p>
+        <ul class="panel__notes" role="list">
+          <li>
+            The build downloads packages from the internet. For a disconnected site, build on a connected machine and move
+            the image across with your approved transfer process.
+          </li>
+        </ul>
+      </div>
+
+      <!-- Docker -->
+      <div class="panel" role="tabpanel" id="p-docker" aria-labelledby="t-docker">
+        <div class="panel__head">
+          <h3 class="h3">Docker</h3>
+          <p class="body">One container and one storage folder. Your data persists across image updates.</p>
+        </div>
+        <div class="os" data-tabs>
+          <div class="os__switch" role="tablist" aria-label="Operating system" hidden data-row="os-switch">
+            <button type="button" role="tab" class="os__tab" id="t-docker-unix" aria-controls="p-docker-unix" aria-selected="true">Linux or macOS</button>
+            <button type="button" role="tab" class="os__tab" id="t-docker-windows" aria-controls="p-docker-windows" aria-selected="false" tabindex="-1">Windows</button>
+          </div>
+          <div role="tabpanel" id="p-docker-unix" aria-labelledby="t-docker-unix" class="os__panel">
+            <CodeBlock label="Linux or macOS" lang={dockerUnix.lang} code={dockerUnix.code} />
+          </div>
+          <div role="tabpanel" id="p-docker-windows" aria-labelledby="t-docker-windows" class="os__panel">
+            <CodeBlock label="Windows (PowerShell)" lang={dockerWindows.lang} code={dockerWindows.code} />
+          </div>
+        </div>
+        <p class="panel__next">Then open <code>{LOCAL_URL}</code></p>
+        <ul class="panel__notes" role="list">
+          <li>To turn off telemetry from the first start, add <code>-e DISABLE_TELEMETRY="true"</code> before the image name.</li>
+          <li>
+            Model runtime on the same machine: in Mission LLM, use <code>http://host.docker.internal:PORT</code> instead of <code>localhost</code>. On Linux, also add <code class="code-flag" set:html={flag("--add-host=host.docker.internal:host-gateway")} /> to the run command.
+          </li>
+        </ul>
+      </div>
+
+      <!-- Docker Compose -->
+      <div class="panel" role="tabpanel" id="p-compose" aria-labelledby="t-compose">
+        <div class="panel__head">
+          <h3 class="h3">Docker Compose</h3>
+          <p class="body">The same container as a managed service that restarts automatically.</p>
+        </div>
+        <div class="panel__code">
+          <CodeBlock label="docker-compose.yml" lang={composeFile.lang} code={composeFile.code} />
+          <CodeBlock label="Terminal" lang={composeUp.lang} code={composeUp.code} />
+        </div>
+        <p class="panel__next">Then open <code>{LOCAL_URL}</code></p>
+        <ul class="panel__notes" role="list">
+          <li>Any setting from <code>docker/.env.example</code> can go in the <code>environment</code> list.</li>
+        </ul>
+      </div>
+
+      <!-- Kubernetes -->
+      <div class="panel" role="tabpanel" id="p-kubernetes" aria-labelledby="t-kubernetes">
+        <div class="panel__head">
+          <h3 class="h3">Kubernetes</h3>
+          <p class="body">An example manifest with a persistent volume, deployment, service and ingress.</p>
+        </div>
+        <ol class="panel__steps" role="list">
+          <li>
+            <span class="panel__num tnum">1</span>
+            <p>Set <code>image</code> to the image in your registry.</p>
+          </li>
+          <li>
+            <span class="panel__num tnum">2</span>
+            <p>Replace the volume placeholder with storage that fits your cluster. The example uses an AWS EBS volume.</p>
+          </li>
+          <li>
+            <span class="panel__num tnum">3</span>
+            <div class="panel__step-body">
+              <p>Apply it:</p>
+              <CodeBlock label="Terminal" lang={k8sApply.lang} code={k8sApply.code} />
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Helm -->
+      <div class="panel" role="tabpanel" id="p-helm" aria-labelledby="t-helm">
+        <div class="panel__head">
+          <h3 class="h3">Helm</h3>
+          <p class="body">
+            A chart with ConfigMap settings, Secret references, persistent storage, and Ingress and Gateway API support.
+            Telemetry is off by default in the chart.
+          </p>
+        </div>
+        <div class="panel__code">
+          <CodeBlock label="values-secret.yaml" lang={helmValues.lang} code={helmValues.code} />
+          <CodeBlock label="Terminal" lang={helmInstall.lang} code={helmInstall.code} />
+        </div>
+        <ul class="panel__notes" role="list">
+          <li>
+            Keep API keys and other secrets in Kubernetes Secrets. The chart's <code>config</code> values render to a
+            ConfigMap, which is not encrypted.
+          </li>
+        </ul>
+      </div>
+
+      <!-- OpenShift -->
+      <div class="panel" role="tabpanel" id="p-openshift" aria-labelledby="t-openshift">
+        <div class="panel__head">
+          <h3 class="h3">OpenShift</h3>
+          <p class="body">
+            A dedicated image for restricted security context constraints, arbitrary user IDs and GID 0. The template is
+            community-maintained.
+          </p>
+        </div>
+        <CodeBlock label="Terminal" lang={openshiftCmds.lang} code={openshiftCmds.code} />
+      </div>
+    </div>
+  </div>
+
+  <div class="more">
+    <div class="more__row">
+      <h3 class="h3 more__title" id="cloud-title">Cloud templates</h3>
+      <div class="more__body">
+        <dl class="cloud" aria-labelledby="cloud-title">
+          {
+            CLOUD.map((t) => (
+              <div>
+                <dt>{t.name}</dt>
+                <dd>{t.detail}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="note more__note">
+          Each template pulls the image you name and serves HTTP on port 3001 without TLS. Add TLS and a password before
+          you expose it.
+        </p>
+      </div>
+    </div>
+    <div class="more__row">
+      <h3 class="h3 more__title">Without containers</h3>
+      <div class="more__body">
+        <p class="body measure">
+          Running directly on Node.js 18 or later with Yarn 1.x is documented for reference only and is not a supported
+          deployment method.
+        </p>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+  import "../../../scripts/tabs.ts";
+
+  // Deep links (/download#p-helm) and in-page links (#p-docker): once tabs.ts has shown the
+  // panel, scroll to the method list (not the panel) so the selected tab stays in view on phones.
+  // The browser cannot do this itself: the panel was hidden, or the list sits above it.
+  const root = document.querySelector<HTMLElement>("[data-install]");
+  const panelFor = (hash: string) => {
+    if (!root || !/^#p-[a-z]+$/.test(hash)) return null;
+    const el = document.getElementById(hash.slice(1));
+    return el && root.contains(el) && el.getAttribute("role") === "tabpanel" ? el : null;
+  };
+  const scrollToList = () => {
+    const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    window.scrollTo(0, root!.getBoundingClientRect().top + window.scrollY - pad);
+  };
+  const landed = panelFor(location.hash);
+  if (landed) {
+    // After load, so the browser's own jump to the fragment does not override this one. The
+    // fragment jump also focuses the panel, which would draw a focus ring on arrival; drop that
+    // (the sequential focus starting point stays at the panel for keyboard users).
+    const go = () =>
+      requestAnimationFrame(() => {
+        if (document.activeElement === landed) landed.blur();
+        scrollToList();
+      });
+    if (document.readyState === "complete") go();
+    else window.addEventListener("load", go, { once: true });
+  }
+  window.addEventListener("hashchange", () => {
+    const panel = panelFor(location.hash);
+    if (!panel) return;
+    requestAnimationFrame(() => {
+      const top = panel.getBoundingClientRect().top;
+      if (top < 0 || top > window.innerHeight * 0.6) scrollToList();
+    });
+  });
+</script>
+
+<style>
+  /* ---------- Frame: heading, method tabs, panel ---------- */
+  .opts {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+    column-gap: var(--grid-gap);
+  }
+  /* Explicit classes, not .opts > *: the scoped wildcard would outrank the media queries. */
+  .opts__head,
+  .opts__tabs,
+  .opts__panels {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+  .opts__head {
+    margin-bottom: var(--gap-visual);
+  }
+
+  /* Tabs: 2-up on phones, 3-up from 640 (equal height, one line each). */
+  .opts__tabs {
+    --tab-cols: 2;
+    display: grid;
+    grid-template-columns: repeat(var(--tab-cols), minmax(0, 1fr));
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+  }
+  @media (min-width: 640px) {
+    .opts__tabs {
+      --tab-cols: 3;
+    }
+  }
+  .opts__tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: inset 0 0 0 1px var(--color-hairline-strong);
+    font-size: var(--fs-ui);
+    line-height: 1;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--color-text-2);
+    transition:
+      color var(--dur-hover) var(--ease-standard),
+      box-shadow var(--dur-hover) var(--ease-standard),
+      background-color var(--dur-hover) var(--ease-standard);
+  }
+  .opts__tab:hover {
+    color: var(--color-text);
+    box-shadow: inset 0 0 0 1px var(--btn-secondary-ring-hover);
+  }
+  .opts__tab[aria-selected="true"] {
+    color: var(--color-text);
+    box-shadow: inset 0 0 0 2px var(--color-accent);
+  }
+  .opts__tab:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-md);
+  }
+
+  /* From 960: a sticky vertical rail in columns 1 to 4, the panel in 5 to 12. */
+  @media (min-width: 960px) {
+    .opts {
+      grid-template-rows: auto 1fr;
+    }
+    .opts__tabs {
+      grid-column: 1 / span 4;
+      grid-row: 2;
+      align-self: start;
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-6));
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      margin: 0;
+      box-shadow: inset 1px 0 0 var(--color-hairline-strong);
+    }
+    .opts__panels {
+      grid-column: 5 / -1;
+      grid-row: 2;
+    }
+    .opts__tab {
+      position: relative;
+      /* No box-shadow transition here: a media query change (for example a full-page capture) must not animate the phone ring away. */
+      transition:
+        color var(--dur-hover) var(--ease-standard),
+        background-color var(--dur-hover) var(--ease-standard);
+      justify-content: flex-start;
+      padding-inline: var(--space-5);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    .opts__tab::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      border-radius: 2px;
+      background: transparent;
+      transition: background-color var(--dur-hover) var(--ease-standard);
+    }
+    .opts__tab:hover {
+      box-shadow: none;
+      background: var(--btn-secondary-bg-hover);
+    }
+    .opts__tab[aria-selected="true"] {
+      box-shadow: none;
+      background: transparent;
+      font-weight: 600;
+    }
+    .opts__tab[aria-selected="true"]::before {
+      background: var(--color-accent);
+      top: 6px;
+      bottom: 6px;
+    }
+    .opts__tab:focus-visible {
+      outline-offset: -2px;
+      border-radius: var(--radius-md);
+    }
+  }
+  /* From 1280: the section heading joins the rail above the tabs. */
+  @media (min-width: 1280px) {
+    .opts__head {
+      grid-column: 1 / span 4;
+      grid-row: 1;
+      margin-bottom: var(--space-7);
+    }
+    .opts__panels {
+      grid-row: 1 / span 2;
+    }
+  }
+
+  /* ---------- Panel ---------- */
+  .panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    min-width: 0;
+  }
+  .panel:focus-visible {
+    outline-offset: 8px;
+    border-radius: var(--radius-lg);
+  }
+  /* Without JS every panel shows in order: separate them. */
+  .panel + .panel {
+    margin-top: var(--space-8);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-hairline);
+  }
+  :global(.js) .panel + .panel {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+  .panel__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+    max-width: var(--measure);
+    margin-bottom: var(--space-2);
+  }
+  .panel__code {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    min-width: 0;
+  }
+  .panel__prose {
+    max-width: var(--measure);
+  }
+  .panel__next {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--color-hairline);
+    font-size: var(--fs-body);
+    line-height: var(--lh-ui);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+  .panel__next code {
+    font-size: 0.95em;
+  }
+  @media (min-width: 640px) {
+    /* Keep flags and URLs on one line where the column is wide enough. */
+    .panel__notes code,
+    .panel__prose code {
+      white-space: nowrap;
+      overflow-wrap: normal;
+    }
+  }
+  .panel__notes {
+    display: grid;
+    gap: var(--space-3);
+    max-width: var(--measure);
+    color: var(--color-text-2);
+  }
+  .panel__notes li {
+    position: relative;
+    padding-left: var(--space-5);
+  }
+  .panel__notes li::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: calc(0.5lh - 3px);
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-text-3);
+  }
+  .panel__steps {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    min-width: 0;
+  }
+  .panel__steps li {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    border-top: 1px solid var(--color-hairline);
+    color: var(--color-text-2);
+  }
+  .panel__steps li:last-child {
+    padding-bottom: 0;
+  }
+  .panel__num {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    box-shadow: inset 0 0 0 1px var(--color-hairline-strong);
+    font-size: 0.9375rem;
+    line-height: 1;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .panel__steps p {
+    padding-top: 2px;
+  }
+  .panel__step-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  /* ---------- Operating system switch inside the Docker panel ---------- */
+  .os {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    min-width: 0;
+  }
+  .os__switch {
+    display: inline-grid;
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    justify-self: start;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px var(--color-hairline-strong);
+    background: var(--color-surface);
+  }
+  .os__tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding-inline: var(--space-4);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-ui);
+    line-height: 1;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--color-text-2);
+    transition:
+      color var(--dur-hover) var(--ease-standard),
+      background-color var(--dur-hover) var(--ease-standard);
+  }
+  .os__tab:hover {
+    color: var(--color-text);
+  }
+  .os__tab[aria-selected="true"] {
+    background: var(--navy-900);
+    color: var(--silver-50);
+  }
+  .os__tab:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* ---------- Cloud templates and Without containers ---------- */
+  .more {
+    margin-top: var(--gap-visual);
+  }
+  .more__row {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+    column-gap: var(--grid-gap);
+    row-gap: var(--space-5);
+    padding-block: var(--space-7);
+    border-top: 1px solid var(--color-hairline);
+  }
+  .more__row:last-child {
+    padding-bottom: 0;
+  }
+  .more__title,
+  .more__body {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+  @media (min-width: 960px) {
+    .more__title {
+      grid-column: 1 / span 4;
+    }
+    .more__body {
+      grid-column: 5 / -1;
+    }
+  }
+  .cloud {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: var(--grid-gap);
+  }
+  @media (min-width: 640px) {
+    .cloud {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .cloud > div {
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .cloud > div:first-child {
+    padding-top: 0;
+  }
+  @media (min-width: 640px) {
+    .cloud > div:nth-child(2) {
+      padding-top: 0;
+    }
+  }
+  .cloud dt {
+    font-size: var(--fs-body);
+    line-height: var(--lh-h4);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .cloud dd {
+    margin-top: var(--space-1);
+    color: var(--color-text-2);
+  }
+  .more__note {
+    margin-top: var(--space-6);
+  }
+</style>

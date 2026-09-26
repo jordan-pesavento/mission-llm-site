@@ -1,0 +1,192 @@
+---
+/*
+ * Security > In development (copy.md): intro plus seven groups, verbatim. Silver band.
+ * Nothing here ships today, so every group carries the In development badge and the visual
+ * language is the site's "not yet" set: dashed hairlines, hollow bullets, muted text.
+ * Items stay at the capability level; the precise gaps behind them belong in the hardening guide.
+ * Layout keeps the copy order and balances the uneven groups without boxes: from 640, the first
+ * four groups share one grid (two columns, two rows, filled column by column: Identity and access,
+ * Audit and oversight | Data protection, Disconnected operations), so the second-row headings and
+ * their dashed rules sit on one line. The three one-line groups follow as a closing row (stacked,
+ * three columns from 1680).
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import Badge from "../../ui/Badge.astro";
+
+const GROUPS: { title: string; items: string[] }[] = [
+  {
+    title: "Identity and access",
+    items: [
+      "Single sign-on with OIDC and SAML 2.0, with group-to-role mapping.",
+      "SCIM provisioning and deprovisioning.",
+      "Smart card (PIV and CAC) sign-in.",
+      "Multi-factor authentication (TOTP) and revocable sessions with idle timeout.",
+      "Permission-based roles, workspace-level roles and groups.",
+      "Sign-in protection and a lockout policy.",
+      "A system use notice at sign-in and a configurable classification banner.",
+    ],
+  },
+  {
+    title: "Audit and oversight",
+    items: [
+      "An attributable, tamper-evident audit trail with syslog, webhook and file forwarding.",
+      "Filterable, exportable event logs with a retention setting.",
+      "Usage and cost reporting with budgets.",
+    ],
+  },
+  {
+    title: "Data protection",
+    items: [
+      "An encrypted secrets store.",
+      "API key scopes, expiry and rate limits.",
+      "Model policy: provider allow-lists, local-only workspaces, and redaction before external calls.",
+      "Agent tool policy: tool profiles for each workspace and one approval policy.",
+      "Retention rules, legal hold and scoped eDiscovery export.",
+      "Backup and restore.",
+    ],
+  },
+  {
+    title: "Disconnected operations",
+    items: [
+      "An offline mode switch and an outbound connections report.",
+      "Telemetry off by default.",
+      "A model mirror setting for internal model hosting.",
+      "An offline distribution kit with signed release bundles.",
+    ],
+  },
+  {
+    title: "Hardening",
+    items: ["Hardened HTTP defaults."],
+  },
+  {
+    title: "Answer quality",
+    items: ["Strict grounding in Query mode, inline citations with page references, and hybrid keyword and vector search."],
+  },
+  {
+    title: "Accessibility",
+    items: ["A Section 508 and WCAG 2.2 AA conformance pass."],
+  },
+];
+---
+
+<Section id="in-development" tone="silver" labelledby="in-development-title">
+  <SectionIntro
+    title="In development"
+    id="in-development-title"
+    lead="These items are not in the current release. They move to ‘Available today’ only when they ship. Dates are not published."
+  />
+
+  <div class="idv">
+    {
+      GROUPS.map((group, i) => {
+        const id = `idv-${i}`;
+        return (
+          <div class:list={["idv-group", { "idv-group--short": i >= 4 }]}>
+            <div class="idv-group__head">
+              <h3 class="h4" id={id}>
+                {group.title}
+              </h3>
+              <Badge />
+            </div>
+            <ul class="idv-group__items" role="list" aria-labelledby={id}>
+              {group.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        );
+      })
+    }
+  </div>
+</Section>
+
+<style>
+  .idv {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: calc(var(--grid-gap) * 2);
+    margin-top: var(--gap-visual);
+  }
+  .idv-group {
+    min-width: 0;
+  }
+  @media (min-width: 640px) {
+    /* Groups 1 to 4 fill a 2 x 2 block column by column; the one-line groups follow, full width. */
+    .idv {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: auto auto;
+    }
+    .idv-group:nth-child(1) {
+      grid-area: 1 / 1;
+    }
+    .idv-group:nth-child(2) {
+      grid-area: 2 / 1;
+    }
+    .idv-group:nth-child(3) {
+      grid-area: 1 / 2;
+    }
+    .idv-group:nth-child(4) {
+      grid-area: 2 / 2;
+    }
+    .idv-group--short {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 1680px) {
+    .idv {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .idv-group:nth-child(1) {
+      grid-area: 1 / 1 / 2 / 4;
+    }
+    .idv-group:nth-child(2) {
+      grid-area: 2 / 1 / 3 / 4;
+    }
+    .idv-group:nth-child(3) {
+      grid-area: 1 / 4 / 2 / 7;
+    }
+    .idv-group:nth-child(4) {
+      grid-area: 2 / 4 / 3 / 7;
+    }
+    .idv-group--short {
+      grid-column: span 2;
+    }
+  }
+  .idv-group {
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-7);
+    border-top: 1px dashed var(--color-hairline-dashed);
+  }
+  .idv-group__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+  }
+  .idv-group__head h3 {
+    color: var(--color-text);
+  }
+  .idv-group__items {
+    margin-top: var(--space-4);
+  }
+  .idv-group__items li {
+    position: relative;
+    padding-left: var(--space-6);
+    color: var(--color-text-2);
+  }
+  .idv-group__items li + li {
+    margin-top: var(--space-3);
+  }
+  /* Hollow bullet: not shipped yet (the Available-today lists use solid rules and dots). */
+  .idv-group__items li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 0.58em;
+    width: 9px;
+    height: 9px;
+    border-radius: var(--radius-full);
+    box-shadow: inset 0 0 0 1.5px var(--color-text-3);
+  }
+</style>

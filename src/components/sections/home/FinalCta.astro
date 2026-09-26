@@ -1,0 +1,83 @@
+---
+/*
+ * Home > Final CTA (copy.md). Work package B. Dark band that merges into the dark footer:
+ * its gradient runs navy-900 to navy-950, so the bottom edge meets the footer's navy-950 and the
+ * footer's own 8% hairline is the only seam. The Grounded answers band is the only other dark
+ * band on Home and is not adjacent.
+ * From 960px the heading (display size, columns 1 to 7) sits beside the body and the two actions
+ * (columns 8 to 12), bottom-aligned. Actions: Download (primary) and Compare editions (secondary).
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import Button from "../../ui/Button.astro";
+import { DOWNLOAD_HREF } from "../../../data/site";
+---
+
+<Section tone="dark" labelledby="cta-title" class="final-cta">
+  <div class="layout-grid cta">
+    <div class="cta__head" data-reveal>
+      <SectionIntro title="Stand it up on your own hardware." id="cta-title" class="cta__intro" />
+    </div>
+    <div class="cta__side" data-reveal="2">
+      <p class="lead cta__lead">
+        Start with one container and a local model. Add users, workspaces and documents when you are ready.
+      </p>
+      <div class="cta__actions" data-row="cta-actions">
+        <Button href={DOWNLOAD_HREF}>Download</Button>
+        <Button href="/editions" variant="secondary">Compare editions</Button>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  /* Reverse the dark step so the band's lower edge matches the footer. */
+  :global(.section.final-cta[data-tone="dark"]) {
+    background-color: var(--navy-950);
+    background-image: linear-gradient(180deg, var(--navy-900), var(--navy-950));
+  }
+
+  .cta {
+    row-gap: var(--space-6);
+    align-items: end;
+  }
+  /* Balanced lines at every width: on phones a slightly smaller size and the full column give
+     "Stand it up on / your own hardware." instead of a short first line. */
+  .cta__head :global(.intro__title) {
+    font-size: clamp(2.25rem, 1.2rem + 4.2vw, 5rem);
+    line-height: var(--lh-display);
+    letter-spacing: var(--ls-display);
+    font-weight: var(--fw-display);
+    text-wrap: balance;
+    max-width: none;
+  }
+  @media (min-width: 960px) {
+    .cta__head :global(.intro__title) {
+      max-width: 14ch;
+    }
+  }
+  .cta__lead {
+    max-width: 40ch;
+  }
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+
+  @media (min-width: 960px) {
+    .cta__head {
+      grid-column: 1 / span 7;
+    }
+    .cta__side {
+      grid-column: 8 / -1;
+      padding-bottom: 0.35em;
+    }
+  }
+  @media (min-width: 1680px) {
+    .cta__side {
+      grid-column: 9 / -1;
+    }
+  }
+</style>

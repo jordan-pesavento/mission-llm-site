@@ -1,0 +1,146 @@
+---
+/*
+ * Home > Hero (copy.md: Home > Hero). Work package A.
+ * - Below 1280px: text first (columns 1 to 8 from 960), then chat-sources.png across the container
+ *   on a silver stage. The frame bleeds 0.36 off the stage's bottom edge, so it ends just below the
+ *   answer and the cited passage instead of showing the empty lower half of the render.
+ * - From 1280px: two columns. Text in columns 1 to 5; the stage starts at column 6 and runs to the
+ *   viewport's right edge, where the frame is cut (the page clips horizontally, so nothing scrolls).
+ *   The legend and caption stay inside the container.
+ * - Phones show the Sources panel detail (chat-sources/sources) at its own size, so its text stays
+ *   legible; the numbered legend is hidden there because the markers are not on that detail.
+ * No reveal here: the first paint is complete. Callouts point only at things that ship today;
+ * their labels are tour titles from copy.md (Workspaces and threads, Model choice, Document knowledge).
+ */
+import Section from "../../ui/Section.astro";
+import SectionIntro from "../../ui/SectionIntro.astro";
+import Button from "../../ui/Button.astro";
+import Screenshot from "../../ui/Screenshot.astro";
+import { DOWNLOAD_HREF } from "../../../data/site";
+
+// Marker positions are percent of the full 1920x1080 frame (see public/images/product/chat-sources.png).
+const callouts = [
+  { x: 9, y: 12, label: "Workspaces keep teams and subjects apart." }, // "Workspaces" heading in the sidebar
+  { x: 32.4, y: 4, label: "Local or cloud models, chosen per workspace." }, // just left of the model picker
+  { x: 55.1, y: 9.3, label: "Answers drawn from your documents, with the sources listed." }, // sources list
+];
+---
+
+<Section tone="light" pad="none" labelledby="hero-title" class="hero-section">
+  <div class="hero layout-grid">
+    <div class="hero__text">
+      <SectionIntro
+        level={1}
+        eyebrow="Self-hosted AI for documents and agents"
+        title="Private AI, grounded in your own documents."
+        id="hero-title"
+        lead="Mission LLM runs on infrastructure you control, answers from your documents with the sources listed, and works with local models on networks that have no internet connection."
+      />
+      <div class="hero__actions" data-row="hero-actions">
+        <Button href={DOWNLOAD_HREF}>Download</Button>
+        <Button href="/security" variant="secondary">Security overview</Button>
+      </div>
+      <p class="hero__support">Free to self-host. Runs in Docker, Kubernetes, Helm and OpenShift.</p>
+    </div>
+
+    <div class="hero__stage" data-offcanvas>
+      <Screenshot
+        name="chat-sources"
+        phone="chat-sources/sources"
+        priority
+        bleed={0.36}
+        sizes="(min-width: 2200px) 1740px, (min-width: 1280px) 69vw, calc(100vw - 64px)"
+        alt="Mission LLM chat answering a question about a change control process, with a sources panel listing three documents."
+        phoneAlt="The Sources panel of a Mission LLM answer, listing the three documents it used."
+        callouts={callouts}
+      />
+    </div>
+  </div>
+</Section>
+
+<style>
+  .hero {
+    padding-top: clamp(2.5rem, 1rem + 3vw, 5rem);
+    padding-bottom: var(--strip-pad);
+    row-gap: var(--gap-visual);
+  }
+  .hero__text,
+  .hero__stage {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+  @media (min-width: 960px) {
+    .hero__text {
+      grid-column: 1 / span 8;
+    }
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+  .hero__support {
+    margin-top: var(--space-5);
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+    color: var(--color-text-3);
+  }
+  /*
+   * Phones show the Sources detail, where the numbered markers do not exist, so the numbered
+   * legend would point at nothing. Hide it there; the caption stays.
+   */
+  @media (max-width: 639.98px) {
+    .hero__stage :global(.shot__legend) {
+      display: none;
+    }
+  }
+
+  /* ---------- Two columns from 1280px ---------- */
+  @media (min-width: 1280px) {
+    :global(.hero-section > .container) {
+      overflow: clip;
+      overflow-clip-margin: 50vw;
+    }
+    .hero {
+      /* The distance from the container's right edge to the viewport's right edge. --container
+         cannot be used here: its 100% would resolve against the grid column, not the page. */
+      --hero-bleed: calc((100vw - min(100vw - 2 * var(--gutter), var(--container-max))) / 2);
+      align-items: start;
+      /* The stage paints past the container to the viewport edge on purpose; clipping with a
+         margin (here and on the container) keeps that overflow out of the scrollable area.
+         The margin must be a plain length: Chrome ignores a calc() value there. */
+      overflow: clip;
+      overflow-clip-margin: 50vw;
+    }
+    .hero__text {
+      grid-column: 1 / span 5;
+      padding-top: var(--space-4);
+    }
+    .hero__text :global(.display) {
+      font-size: clamp(3rem, 1rem + 2.7vw, 4.5rem);
+      max-width: none;
+    }
+    .hero__text :global(.intro__lead) {
+      max-width: 40ch;
+    }
+    .hero__stage {
+      grid-column: 6 / -1;
+      margin-right: calc(-1 * var(--hero-bleed));
+    }
+    /* The stage runs to the viewport edge; the frame is wider than it and is cut there. */
+    .hero__stage :global(.shot__stage) {
+      padding-right: 0;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    .hero__stage :global(.shot__frame) {
+      width: 128%;
+      border-top-right-radius: 0;
+    }
+    .hero__stage :global(.shot__legend),
+    .hero__stage :global(.shot__caption) {
+      margin-right: var(--hero-bleed);
+    }
+  }
+</style>
