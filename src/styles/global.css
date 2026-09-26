@@ -32,8 +32,16 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Jump targets (#fragments) land below the sticky header: its height (64 on phones, 68 from 1024,
+     tokens.css --header-h) plus its 1px border, plus 16px of air. */
   scroll-padding-top: calc(var(--header-h) + 1px + var(--space-4));
   hanging-punctuation: first last;
+}
+/* Without JavaScript the header is not sticky below 1024 (Header.astro), so nothing covers a target. */
+@media (max-width: 1023.98px) {
+  html:not(.js) {
+    scroll-padding-top: var(--space-4);
+  }
 }
 body {
   min-height: 100vh;

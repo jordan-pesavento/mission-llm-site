@@ -1,0 +1,13 @@
+---
+/*
+ * Contact (/contact): the contact form. The form posts to the Vercel function api/contact.js and works
+ * without JavaScript; see src/components/sections/contact/ContactSection.astro and README > Contact form.
+ */
+import Base from "../layouts/Base.astro";
+import { PAGES } from "../data/site";
+import ContactSection from "../components/sections/contact/ContactSection.astro";
+---
+
+<Base title={PAGES.contact.title} description={PAGES.contact.description}>
+  <ContactSection />
+</Base>

@@ -10,16 +10,16 @@
  * dashed, muted style used for every roadmap list on the site, followed by its fine print.
  * Its service offerings (deployment assistance, support by agreement) are not confirmed yet
  * (copy.md: TODO confirm offering), so they sit under a "Planned" label in the same muted style
- * instead of carrying a check. There is no contact address yet (PLACEHOLDER.contactEmail is "#"), so
- * the action is a same-size non-link "Contact details coming soon" and the price line says pricing
- * is not published; both become the copy.md versions ("Contact us") once the address exists.
+ * instead of carrying a check. The action is "Contact us", a secondary button to the contact form
+ * (CONTACT_HREF, /contact). The price line says pricing is not published yet (copy.md has "Contact
+ * us" there; the button already says it, so the line states the fact instead).
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 import Button from "../../ui/Button.astro";
 import Badge from "../../ui/Badge.astro";
 import Icon from "../../ui/Icon.astro";
-import { COUNTS, DOWNLOAD_HREF, PLACEHOLDER, isPlaceholder } from "../../../data/site";
+import { CONTACT_HREF, COUNTS, DOWNLOAD_HREF } from "../../../data/site";
 
 const communityIncludes = [
   "Workspaces, threads and document retrieval with sources.",
@@ -153,16 +153,7 @@ const enterprisePlanned = [
       </div>
 
       <div class="edition__foot">
-        {
-          isPlaceholder(PLACEHOLDER.contactEmail) ? (
-            /* TODO: real contact address (PLACEHOLDER.contactEmail). Becomes the "Contact us" button. */
-            <span class="edition__pending">Contact details coming soon</span>
-          ) : (
-            <Button href={PLACEHOLDER.contactEmail} variant="secondary">
-              Contact us
-            </Button>
-          )
-        }
+        <Button href={CONTACT_HREF} variant="secondary">Contact us</Button>
       </div>
     </article>
   </div>
@@ -301,20 +292,6 @@ const enterprisePlanned = [
     display: flex;
     align-items: flex-start;
     padding-top: var(--space-8);
-  }
-  /* The same size as the Download button beside it, clearly not a control: dashed and muted. */
-  .edition__pending {
-    display: inline-flex;
-    align-items: center;
-    height: 44px;
-    padding-inline: var(--space-5);
-    border: 1px dashed #9aa7c2;
-    border-radius: var(--radius-sm);
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    font-weight: var(--fw-medium);
-    white-space: nowrap;
-    color: var(--color-text-muted);
   }
 
   /*

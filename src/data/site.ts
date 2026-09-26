@@ -59,9 +59,6 @@ export const PLACEHOLDER = {
   image: "REGISTRY/mission-llm:latest",
   repositoryUrl: "https://github.com/jordan-pesavento/mission-llm",
   docsUrl: "#", // TODO: no Mission LLM docs site yet
-  // TODO: real addresses. "#" until the owner supplies them, so nothing links to a dead example.com
-  // address; the pages that need them say the address will be published instead.
-  contactEmail: "#", // TODO: real contact address
   securityEmail: "https://github.com/jordan-pesavento/mission-llm/security/advisories/new", // GitHub private vulnerability reporting
   privacyUrl: "#", // TODO
   termsUrl: "#", // TODO
@@ -104,6 +101,9 @@ export const NAV: NavItem[] = [
 /** Every Download button on the site points here. */
 export const DOWNLOAD_HREF = "/download";
 
+/** Every "Contact us" link points here: the contact form (src/pages/contact.astro, api/contact.js). */
+export const CONTACT_HREF = "/contact";
+
 /** One line under the footer wordmark (copy.md: Global > Footer). */
 export const FOOTER_DESCRIPTOR = "Self-hosted AI for documents and agents, on infrastructure you control.";
 
@@ -113,7 +113,7 @@ export const FOOTER_DESCRIPTOR = "Self-hosted AI for documents and agents, on in
  * TODO: Resources > Documentation (PLACEHOLDER.docsUrl, docs site), Security policy
  * (PLACEHOLDER.securityPolicyUrl, link SECURITY.md); Project > Source code (PLACEHOLDER.sourceCodeUrl,
  * repository access not decided), Licenses and notices (PLACEHOLDER.licensesUrl, link LICENSE and
- * NOTICE); Contact > Contact us (PLACEHOLDER.contactEmail, real address).
+ * NOTICE).
  */
 export const FOOTER: { title: string; links: NavItem[] }[] = [
   {
@@ -140,7 +140,10 @@ export const FOOTER: { title: string; links: NavItem[] }[] = [
   },
   {
     title: "Contact",
-    links: [{ label: "Report a vulnerability", href: "/security#report" }],
+    links: [
+      { label: "Contact us", href: CONTACT_HREF },
+      { label: "Report a vulnerability", href: "/security#report" },
+    ],
   },
 ];
 
@@ -173,6 +176,15 @@ export const PAGES = {
     title: "Editions | Mission LLM",
     description:
       "Mission LLM Community is free to self-host. Mission LLM Enterprise adds planned support, deployment help and governance features.",
+  },
+  contact: {
+    title: "Contact | Mission LLM",
+    description:
+      "Contact the Mission LLM team. Course instructors, students, independent learners, school IT teams and companies are welcome. We reply by email.",
+  },
+  contactSent: {
+    title: "Message sent | Mission LLM",
+    description: "Your message reached the Mission LLM team. We reply by email.",
   },
   notFound: {
     title: "Page not found | Mission LLM",
