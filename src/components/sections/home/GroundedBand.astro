@@ -6,9 +6,15 @@
  * Text column: eyebrow 20/28, H2 36/40 white, paragraph 16/26 (max 584), a 32px gap to three
  * bullets (16/24, 6px apart, muted, 6px round markers), a 32px gap to "Learn more ->" (16/24 600).
  * Phones: text first, screenshot 48px below it (reference 390 capture), 64px band padding.
- * Honesty: only what ships today. Answers list the documents they used, and the Sources panel shows
- * the retrieved passages with their match scores (copy.md evidence: Citation/index.jsx,
- * SourcesSidebar). Inline citations and a passage viewer are in development and are not shown here.
+ * Honesty: only what ships today. Answers list the documents they used when documents were
+ * retrieved, and the Sources panel shows the retrieved passages with their match scores (copy.md
+ * evidence: Citation/index.jsx, SourcesSidebar). Never "cite": inline citations are in development, so
+ * the heading says the answers show their readings, and the body says exactly what Sources shows.
+ * The capture is a student's answer in a fictional course workspace with the Sources panel open.
+ * Query mode with a refusal message you write is real
+ * (ChatModeSelection, ChatQueryRefusalResponse); no strictness claim, since Query mode is not strict
+ * after the first turn. Inline citations and a passage viewer are in development and are not shown
+ * here.
  * Anchor #grounded is linked from the footer.
  */
 import DarkBand from "../../ui/DarkBand.astro";
@@ -16,17 +22,17 @@ import Eyebrow from "../../ui/Eyebrow.astro";
 import ArrowLink from "../../ui/ArrowLink.astro";
 import Screenshot from "../../ui/Screenshot.astro";
 
-const points = ["Sources listed under grounded answers", "Retrieved passages with match scores", "A similarity threshold per workspace"];
+const points = ["Sources listed under grounded answers", "Retrieved passages with match scores", "Query mode, with a refusal message you write"];
 ---
 
 <DarkBand id="grounded" labelledby="grounded-title">
   <div class="split split--band grounded">
     <div class="grounded__text" data-reveal>
       <Eyebrow>Grounded answers</Eyebrow>
-      <h2 id="grounded-title" class="h2 grounded__title">Answers you can trace.</h2>
+      <h2 id="grounded-title" class="h2 grounded__title">Answers that show their readings.</h2>
       <p class="body-relaxed grounded__lead">
-        When a workspace has documents, Mission LLM searches them before the model answers. Open Sources on an answer to see the
-        documents it used, the passages it retrieved and how closely each one matched.
+        When a course workspace has documents, Mission LLM searches them before the model answers. Students open Sources to see
+        which readings an answer used, the passages it pulled and how closely each one matched.
       </p>
       <ul class="dot-list grounded__list" role="list">
         {points.map((p) => <li>{p}</li>)}
@@ -34,7 +40,7 @@ const points = ["Sources listed under grounded answers", "Retrieved passages wit
       <p class="grounded__more"><ArrowLink href="/security#data-flow">Learn more</ArrowLink></p>
     </div>
     <div class="grounded__visual" data-reveal="2">
-      <Screenshot name="grounded" alt="A Mission LLM answer in light mode with the Sources panel open, listing each cited document with its match score." />
+      <Screenshot name="grounded" alt="A student's answer about energy flow and the nitrogen cycle in light mode, with the Sources panel open: each course reading it drew on, a passage from it and its match score." />
     </div>
   </div>
 </DarkBand>

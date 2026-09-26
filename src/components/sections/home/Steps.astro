@@ -1,6 +1,6 @@
 ---
 /*
- * Four steps from install to answers. Replica of the reference's "Up and running in a few clicks."
+ * Ready for class in four steps. Replica of the reference's "Up and running in a few clicks."
  * (section-1440x900-04): pad "section" (96 to 128), H2 48/48 (SectionIntro size="lg", 36/40 below
  * 1024), then a row of four columns 96px below it (64 on phones).
  * Columns (1440: 4 x 318 with 40 gaps): a 1px mist-300 rule on the left and 24px inset; the number
@@ -12,36 +12,39 @@
  * mist and ink strokes, page-colored occlusion only, no gradients or stock art). They show only
  * real things: the Docker layers and port 3001, a local model runtime, the upload panel and the
  * Users page with the three real roles. Decorative (alt=""); the title and text carry the step.
+ * The owner loves this art: keep the SVGs and this markup byte-identical; only the words change.
+ * Step titles hold two lines or fewer in the 190px column at 1024 (the 56px title slot). Step 4 is
+ * accurate because invites carry workspace ids (mission-llm server/models/invite.js:10-16).
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 
 const steps = [
   {
-    title: "Install with Docker",
-    body: "One container serves the app and API on port 3001, with your data in one storage folder.",
+    title: "Install on your server",
+    body: "One container serves the app and API on port 3001, with all course files and chats in one storage folder.",
     visual: "/images/steps/install.svg",
   },
   {
     title: "Connect a local model",
-    body: "Point it at Ollama, LM Studio or another runtime on your network. Cloud providers work too.",
+    body: "Point it at Ollama, LM Studio or another runtime on your campus network. Cloud providers work too.",
     visual: "/images/steps/model.svg",
   },
   {
-    title: "Add your documents",
-    body: "Drop files into a workspace. Mission LLM parses, embeds and indexes them on your server.",
+    title: "Add the syllabus and readings",
+    body: "Create a workspace for each course and drop in its files. Mission LLM indexes them on your server.",
     visual: "/images/steps/documents.svg",
   },
   {
-    title: "Invite your team",
-    body: "Turn on multi-user mode, invite people, and give each person a role and workspaces.",
+    title: "Invite your students",
+    body: "Turn on multi-user mode, invite students, and add each one to the workspaces for their courses.",
     visual: "/images/steps/team.svg",
   },
 ];
 ---
 
 <Section id="steps" labelledby="steps-title">
-  <SectionIntro title="Four steps from install to answers." size="lg" id="steps-title" />
+  <SectionIntro title="Ready for class in four steps." size="lg" id="steps-title" />
   <ol class="steps" role="list" data-reveal>
     {
       steps.map((s, i) => (

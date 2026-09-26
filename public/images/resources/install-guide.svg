@@ -1,28 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 443 215" width="443" height="215" fill="none" font-family="'Plus Jakarta Sans', system-ui, sans-serif">
-  <!-- Resource card: Install guide. The /download install options in miniature: the method tabs
-       and the Build from source commands from copy.md (the build command split with a line
-       continuation so it fits). REPOSITORY_URL is the placeholder the page marks the same way.
-       Labels are 12 units or larger (9px at 390); the comment line (class art-sm) hides below 640. -->
-  <rect width="443" height="215" fill="#070F26"/>
-  <rect x="24.5" y="22.5" width="394" height="170" rx="10" fill="#0B1430" stroke="#CCD4E5" stroke-opacity="0.14"/>
-  <path d="M25 64.5H418" stroke="#CCD4E5" stroke-opacity="0.12"/>
-
-  <g font-size="12" font-weight="500" fill="#A3AFC8">
-    <text x="40" y="49" fill="#FFFFFF" font-weight="600">Source</text>
-    <text x="97" y="49">Docker</text>
-    <text x="155" y="49">Compose</text>
-    <text x="222" y="49">Kubernetes</text>
-    <text x="303" y="49">Helm</text>
-    <text x="345" y="49">OpenShift</text>
-  </g>
-  <path d="M40 63.5H83" stroke="#5B95FF" stroke-width="1.5"/>
-
-  <g font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="12" fill="#E6ECF8">
-    <text x="40" y="94">git clone <tspan fill="#C4D8FF">REPOSITORY_URL</tspan> mission-llm</text>
-    <text x="40" y="114">cd mission-llm</text>
-    <text x="40" y="134">docker build -f docker/Dockerfile \</text>
-    <text x="40" y="154">  -t mission-llm:latest .</text>
-    <text class="art-sm" x="40" y="178" fill="#A3AFC8"># Then open http://localhost:3001</text>
-  </g>
-  <path d="M112 97.5H213" stroke="#C4D8FF" stroke-dasharray="2 2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 443 215" width="443" height="215" fill="none" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+<title>From one lab workstation to a campus cluster</title>
+<!-- Resource card: Install guide. Isometric line drawing: one workstation on a small plate carries a container cube with the emblem; a dotted run leads to a shared plate where three two-slab servers stand in a triangle (two at the back, one in front), each topped by a container cube; the emblem marks the workstation and the front server only. Drawn at 1.3x so the scene fills the card like its neighbours; the group stroke (0.88) keeps outlines at the resources weight (about 1.15). No text. -->
+<rect width="443" height="215" fill="#FFFFFF"/>
+<g transform="matrix(1.3 0 0 1.3 -66.45 -32.25)" stroke-width="0.88">
+<polygon points="265.87,49 354.61,100 354.61,104 265.87,155 177.13,104 177.13,100" fill="#F8FAFC" stroke="#92A0BC"/>
+<path d="M354.61,100L265.87,151L177.13,100M265.87,151L265.87,155" stroke="#CCD4E5"/>
+<polygon points="213.67,74 243.25,91 243.25,100 213.67,117 184.09,100 184.09,91" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M243.25,91L213.67,108L184.09,91M213.67,108L213.67,117" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 184.09 91)"><circle cx="5" cy="4.5" r="1.8" stroke="#47546F"/><path d="M10 4.5H17" stroke="#CCD4E5"/></g>
+<path transform="matrix(0.87 -0.5 0 1 213.67 108)" d="M15.3 2.7V6.3M20.4 2.7V6.3M25.5 2.7V6.3M30.6 2.7V6.3" stroke="#CCD4E5"/>
+<path d="M184.09,91L184.09,79M213.67,108L213.67,96M243.25,91L243.25,79" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<polygon points="213.67,53 243.25,70 243.25,79 213.67,96 184.09,79 184.09,70" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M243.25,70L213.67,87L184.09,70M213.67,87L213.67,96" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 184.09 70)"><circle cx="5" cy="4.5" r="1.8" stroke="#47546F"/><path d="M10 4.5H17" stroke="#CCD4E5"/></g>
+<polygon points="213.67,46 227.59,54 227.59,70 213.67,78 199.75,70 199.75,54" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M227.59,54L213.67,62L199.75,54M213.67,62L213.67,78" stroke="#CCD4E5"/>
+<polygon points="318.07,74 347.65,91 347.65,100 318.07,117 288.49,100 288.49,91" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M347.65,91L318.07,108L288.49,91M318.07,108L318.07,117" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 288.49 91)"><circle cx="5" cy="4.5" r="1.8" stroke="#47546F"/><path d="M10 4.5H17" stroke="#CCD4E5"/></g>
+<path transform="matrix(0.87 -0.5 0 1 318.07 108)" d="M15.3 2.7V6.3M20.4 2.7V6.3M25.5 2.7V6.3M30.6 2.7V6.3" stroke="#CCD4E5"/>
+<path d="M288.49,91L288.49,79M318.07,108L318.07,96M347.65,91L347.65,79" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<polygon points="318.07,53 347.65,70 347.65,79 318.07,96 288.49,79 288.49,70" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M347.65,70L318.07,87L288.49,70M318.07,87L318.07,96" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 288.49 70)"><circle cx="5" cy="4.5" r="1.8" stroke="#47546F"/><path d="M10 4.5H17" stroke="#CCD4E5"/></g>
+<polygon points="318.07,46 331.99,54 331.99,70 318.07,78 304.15,70 304.15,54" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M331.99,54L318.07,62L304.15,54M318.07,62L318.07,78" stroke="#CCD4E5"/>
+<polygon points="265.87,100 295.45,117 295.45,126 265.87,143 236.29,126 236.29,117" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M295.45,117L265.87,134L236.29,117M265.87,134L265.87,143" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 236.29 117)"><circle cx="5" cy="4.5" r="1.8" stroke="#47546F"/><path d="M10 4.5H17" stroke="#CCD4E5"/></g>
+<path transform="matrix(0.87 -0.5 0 1 265.87 134)" d="M15.3 2.7V6.3M20.4 2.7V6.3M25.5 2.7V6.3M30.6 2.7V6.3" stroke="#CCD4E5"/>
+<path d="M236.29,117L236.29,105M265.87,134L265.87,122M295.45,117L295.45,105" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<polygon points="265.87,79 295.45,96 295.45,105 265.87,122 236.29,105 236.29,96" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M295.45,96L265.87,113L236.29,96M265.87,113L265.87,122" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 236.29 96)"><circle cx="5" cy="4.5" r="1.8" stroke="#47546F"/><path d="M10 4.5H17" stroke="#CCD4E5"/></g>
+<polygon points="265.87,72 279.79,80 279.79,96 265.87,104 251.95,96 251.95,80" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M279.79,80L265.87,88L251.95,80M265.87,88L265.87,104" stroke="#CCD4E5"/>
+<polygon transform="matrix(0.87 0.5 0 1 251.95 80)" points="8,3 12.95,13 8,10.81 3.05,13" fill="#47546F" stroke="none"/>
+<path d="M145.81,134L189.31,109" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<circle cx="189.31" cy="109" r="1.8" fill="#FFFFFF" stroke="#47546F"/>
+<polygon points="130.15,117 171.91,141 171.91,145 130.15,169 88.39,145 88.39,141" fill="#F8FAFC" stroke="#92A0BC"/>
+<path d="M171.91,141L130.15,165L88.39,141M130.15,165L130.15,169" stroke="#CCD4E5"/>
+<polygon points="130.15,104 156.25,119 156.25,141 130.15,156 104.05,141 104.05,119" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M156.25,119L130.15,134L104.05,119M130.15,134L130.15,156" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 104.05 119)"><circle cx="5" cy="11" r="1.8" stroke="#47546F"/><path d="M10 11H17" stroke="#CCD4E5"/></g>
+<path transform="matrix(0.87 -0.5 0 1 130.15 134)" d="M12 6V16M18.5 6V16M25 6V16" stroke="#CCD4E5"/>
+<polygon points="130.15,95 144.07,103 144.07,119 130.15,127 116.23,119 116.23,103" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M144.07,103L130.15,111L116.23,103M130.15,111L130.15,127" stroke="#CCD4E5"/>
+<polygon transform="matrix(0.87 0.5 0 1 116.23 103)" points="8,3 12.95,13 8,10.81 3.05,13" fill="#47546F" stroke="none"/>
+</g>
 </svg>

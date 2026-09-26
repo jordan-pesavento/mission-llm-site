@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" width="250" height="250" fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+<title>A syllabus, a reading and a slide dropping into a course workspace</title>
+<!-- After you install, step 5. Isometric line drawing: a stack of three course files (a syllabus with open bullets at the back, a reading, and a slide with its picture on top) hovers over an open course workspace, a square tray with both inner back walls showing; dashed guides drop from the stack's corners into the tray, and the emblem sits centred on the tray's front wall. Outlines mist-600, inner lines mist-300, no text. -->
+<g transform="matrix(1.28 0 0 1.28 14.8 10.7)" stroke-width="0.77">
+<polygon points="82.33,76.79 143.23,111.79 143.23,135.79 87.55,167.79 26.65,132.79 26.65,108.79" fill="#F8FAFC" stroke="#47546F"/>
+<polygon points="82.33,80.79 136.27,111.79 87.55,139.79 33.61,108.79" fill="#F8FAFC" stroke="#47546F"/>
+<path d="M82.33,80.79L82.33,100.79M118.87,121.79L82.33,100.79L51.01,118.79" stroke="#CCD4E5"/>
+<path d="M111.91,39.79L111.91,125.79M68.41,64.79L68.41,150.79M33.61,44.79L33.61,130.79" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<polygon points="33.61,108.79 87.55,139.79 136.27,111.79 143.23,111.79 143.23,135.79 87.55,167.79 26.65,132.79 26.65,108.79" fill="#F8FAFC" stroke="none"/>
+<path d="M33.61,108.79L87.55,139.79L136.27,111.79" stroke="#47546F"/>
+<path d="M143.23,111.79L143.23,135.79L87.55,167.79L26.65,132.79L26.65,108.79" stroke="#47546F"/>
+<path d="M26.65,108.79L87.55,143.79L143.23,111.79M87.55,143.79L87.55,167.79" stroke="#CCD4E5"/>
+<polygon transform="matrix(0.87 0.5 0 1 26.65 108.79)" points="35,4 42.92,20 35,16.5 27.08,20" fill="#47546F" stroke="none"/>
+<g transform="matrix(0.87 0.5 -0.87 0.5 77.11 19.79)"><path d="M0 0H33L40 7V50H0Z" fill="#FFFFFF" stroke="#47546F"/><path d="M33 0V7H40" stroke="#47546F"/><path d="M5 7H19" stroke="#47546F" stroke-width="1.2"/><circle cx="5" cy="15" r="1.1" stroke="#47546F" stroke-width="0.8"/><path d="M9 15H32" stroke="#CCD4E5" stroke-width="1.2"/><circle cx="5" cy="22" r="1.1" stroke="#47546F" stroke-width="0.8"/><path d="M9 22H27" stroke="#CCD4E5" stroke-width="1.2"/><circle cx="5" cy="29" r="1.1" stroke="#47546F" stroke-width="0.8"/><path d="M9 29H34" stroke="#CCD4E5" stroke-width="1.2"/><circle cx="5" cy="36" r="1.1" stroke="#47546F" stroke-width="0.8"/><path d="M9 36H24" stroke="#CCD4E5" stroke-width="1.2"/><circle cx="5" cy="43" r="1.1" stroke="#47546F" stroke-width="0.8"/><path d="M9 43H29" stroke="#CCD4E5" stroke-width="1.2"/></g>
+<g transform="matrix(0.87 0.5 -0.87 0.5 97.12 15.29)"><path d="M0 0H33L40 7V50H0Z" fill="#FFFFFF" stroke="#47546F"/><path d="M33 0V7H40" stroke="#47546F"/><path d="M5 7H21" stroke="#47546F" stroke-width="1.2"/><path d="M5 14H34M5 18.5H31M5 23H21M5 29H33M5 33.5H29M5 38H18M5 44H27" stroke="#CCD4E5" stroke-width="1.2"/></g>
+<g transform="matrix(0.87 0.5 -0.87 0.5 117.13 10.79)"><path d="M0 0H33L40 7V50H0Z" fill="#FFFFFF" stroke="#47546F"/><path d="M33 0V7H40" stroke="#47546F"/><path d="M5 7H17" stroke="#47546F" stroke-width="1.2"/><rect x="5" y="13" width="28" height="20" rx="1.5" stroke="#92A0BC"/><path d="M9 29l6-6.5l5 5l3-3l6 4.5" stroke="#92A0BC" stroke-width="0.9"/><path d="M5 40H26" stroke="#CCD4E5" stroke-width="1.2"/></g>
+</g>
+</svg>

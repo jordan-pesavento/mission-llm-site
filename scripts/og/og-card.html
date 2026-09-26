@@ -1,0 +1,106 @@
+<!doctype html>
+<!--
+  Share card source (Open Graph and X): public/og/mission-llm.png, 1200 x 630.
+  Not part of the site build and never published: it is rendered once to a PNG.
+  Light card on the page tone with the hero's top wash, the emblem and wordmark, the home H1 and a
+  one-line summary on the left, and the lecture hall illustration (public/images/scenes/lecture-hall.svg,
+  the same art as the /editions hero) on the right. Fonts load from the repo: Clash Display from
+  public/fonts, Plus Jakarta Sans from node_modules/@fontsource.
+  Render: node scripts/og/render-og.mjs (Chrome from D:/DevCache/puppeteer; writes the raw capture to
+  D:/DevCache/claude-work/site-edu/og/ and the compressed PNG to public/og/mission-llm.png). Keep the
+  text in step with SITE.shareImageAlt in src/data/site.ts and the home hero.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mission LLM share card</title>
+    <style>
+      @font-face {
+        font-family: "Clash Display";
+        src: url("../../public/fonts/clash-display/ClashDisplay-Medium.woff2") format("woff2");
+        font-weight: 500;
+      }
+      @font-face {
+        font-family: "Clash Display";
+        src: url("../../public/fonts/clash-display/ClashDisplay-Semibold.woff2") format("woff2");
+        font-weight: 600;
+      }
+      @font-face {
+        font-family: "Plus Jakarta Sans";
+        src: url("../../node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff2") format("woff2");
+        font-weight: 400;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+      }
+      body {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(180deg, #e3e8f2 0%, #f8fafc 62%);
+        color: #0b1430;
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .text {
+        position: absolute;
+        left: 80px;
+        top: 100px;
+        width: 620px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .brand img {
+        width: 64px;
+        height: 64px;
+      }
+      .brand span {
+        font-family: "Clash Display", sans-serif;
+        font-weight: 600;
+        font-size: 34px;
+        letter-spacing: -0.01em;
+      }
+      h1 {
+        margin-top: 64px;
+        font-family: "Clash Display", sans-serif;
+        font-weight: 500;
+        font-size: 88px;
+        line-height: 0.98;
+        letter-spacing: -0.025em;
+      }
+      p {
+        margin-top: 32px;
+        max-width: 560px;
+        font-size: 28px;
+        line-height: 1.4;
+        color: #47546f;
+      }
+      .art {
+        position: absolute;
+        right: 56px;
+        top: 150px;
+        width: 460px;
+        height: 345px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="text">
+      <div class="brand">
+        <img src="../../public/mission-llm-emblem.svg" alt="" />
+        <span>Mission LLM</span>
+      </div>
+      <h1>Your class,<br />answered.</h1>
+      <p>A course assistant that answers from your readings and lists its sources.</p>
+    </div>
+    <img class="art" src="../../public/images/scenes/lecture-hall.svg" width="460" height="345" alt="" />
+  </body>
+</html>

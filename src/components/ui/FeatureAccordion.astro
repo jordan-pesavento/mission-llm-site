@@ -12,8 +12,9 @@
  * its arrow 10px after the words.
  *
  * - id: unique prefix for this instance (element ids and aria wiring).
- * - items: { id, title, body, link?: { href, label }, image: { name, alt } }[]. Each item needs its
- *   own image (a real capture of that feature). Keep 3 to 5 items.
+ * - items: { id, title, body, html?, link?: { href, label }, image: { name, alt } }[]. Each item needs
+ *   its own image (a real capture of that feature). Keep 3 to 5 items. body is plain text; set html
+ *   (trusted, build-time markup such as a <code> chip) to render the body as markup instead.
  * - label: accessible name for the list (for example "Product features").
  * - reverse: accordion on the left, screenshot on the right (from 1024 only).
  * - initial: index of the item open on load (default 0).
@@ -36,6 +37,7 @@ export type AccordionItem = {
   id: string;
   title: string;
   body: string;
+  html?: string;
   link?: { href: string; label: string };
   image: { name: ImageName; alt: string };
 };
@@ -95,7 +97,7 @@ const open = Math.min(Math.max(initial, 0), items.length - 1);
           >
             <div class="facc__panel-inner">
               <div class="facc__panel-body">
-                <p class="facc__text">{item.body}</p>
+                {item.html ? <p class="facc__text" set:html={item.html} /> : <p class="facc__text">{item.body}</p>}
                 {item.link && (
                   <p class="facc__link">
                     <ArrowLink href={item.link.href} variant="underline">

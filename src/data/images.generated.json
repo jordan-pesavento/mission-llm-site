@@ -321,6 +321,144 @@
       }
     ]
   },
+  "security-offline": {
+    "width": 714,
+    "height": 417,
+    "variants": [
+      {
+        "width": 480,
+        "avif": "/images/product/generated/security-offline-480.avif",
+        "webp": "/images/product/generated/security-offline-480.webp"
+      },
+      {
+        "width": 714,
+        "avif": "/images/product/generated/security-offline-714.avif",
+        "webp": "/images/product/generated/security-offline-714.webp"
+      },
+      {
+        "width": 720,
+        "avif": "/images/product/generated/security-offline-720.avif",
+        "webp": "/images/product/generated/security-offline-720.webp"
+      },
+      {
+        "width": 960,
+        "avif": "/images/product/generated/security-offline-960.avif",
+        "webp": "/images/product/generated/security-offline-960.webp"
+      },
+      {
+        "width": 1428,
+        "avif": "/images/product/generated/security-offline-1428.avif",
+        "webp": "/images/product/generated/security-offline-1428.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/security-offline-1440.avif",
+        "webp": "/images/product/generated/security-offline-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/security-offline-1920.avif",
+        "webp": "/images/product/generated/security-offline-1920.webp"
+      },
+      {
+        "width": 2880,
+        "avif": "/images/product/generated/security-offline-2880.avif",
+        "webp": "/images/product/generated/security-offline-2880.webp"
+      }
+    ]
+  },
+  "security-roles": {
+    "width": 714,
+    "height": 417,
+    "variants": [
+      {
+        "width": 480,
+        "avif": "/images/product/generated/security-roles-480.avif",
+        "webp": "/images/product/generated/security-roles-480.webp"
+      },
+      {
+        "width": 714,
+        "avif": "/images/product/generated/security-roles-714.avif",
+        "webp": "/images/product/generated/security-roles-714.webp"
+      },
+      {
+        "width": 720,
+        "avif": "/images/product/generated/security-roles-720.avif",
+        "webp": "/images/product/generated/security-roles-720.webp"
+      },
+      {
+        "width": 960,
+        "avif": "/images/product/generated/security-roles-960.avif",
+        "webp": "/images/product/generated/security-roles-960.webp"
+      },
+      {
+        "width": 1428,
+        "avif": "/images/product/generated/security-roles-1428.avif",
+        "webp": "/images/product/generated/security-roles-1428.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/security-roles-1440.avif",
+        "webp": "/images/product/generated/security-roles-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/security-roles-1920.avif",
+        "webp": "/images/product/generated/security-roles-1920.webp"
+      },
+      {
+        "width": 2880,
+        "avif": "/images/product/generated/security-roles-2880.avif",
+        "webp": "/images/product/generated/security-roles-2880.webp"
+      }
+    ]
+  },
+  "security-history": {
+    "width": 714,
+    "height": 417,
+    "variants": [
+      {
+        "width": 480,
+        "avif": "/images/product/generated/security-history-480.avif",
+        "webp": "/images/product/generated/security-history-480.webp"
+      },
+      {
+        "width": 714,
+        "avif": "/images/product/generated/security-history-714.avif",
+        "webp": "/images/product/generated/security-history-714.webp"
+      },
+      {
+        "width": 720,
+        "avif": "/images/product/generated/security-history-720.avif",
+        "webp": "/images/product/generated/security-history-720.webp"
+      },
+      {
+        "width": 960,
+        "avif": "/images/product/generated/security-history-960.avif",
+        "webp": "/images/product/generated/security-history-960.webp"
+      },
+      {
+        "width": 1428,
+        "avif": "/images/product/generated/security-history-1428.avif",
+        "webp": "/images/product/generated/security-history-1428.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/security-history-1440.avif",
+        "webp": "/images/product/generated/security-history-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/security-history-1920.avif",
+        "webp": "/images/product/generated/security-history-1920.webp"
+      },
+      {
+        "width": 2880,
+        "avif": "/images/product/generated/security-history-2880.avif",
+        "webp": "/images/product/generated/security-history-2880.webp"
+      }
+    ]
+  },
   "security": {
     "width": 714,
     "height": 417,
@@ -367,34 +505,49 @@
       }
     ]
   },
-  "deploy": {
+  "security-telemetry": {
     "width": 714,
-    "height": 416,
+    "height": 417,
     "variants": [
       {
         "width": 480,
-        "avif": "/images/product/generated/deploy-480.avif",
-        "webp": "/images/product/generated/deploy-480.webp"
+        "avif": "/images/product/generated/security-telemetry-480.avif",
+        "webp": "/images/product/generated/security-telemetry-480.webp"
       },
       {
         "width": 714,
-        "avif": "/images/product/generated/deploy-714.avif",
-        "webp": "/images/product/generated/deploy-714.webp"
+        "avif": "/images/product/generated/security-telemetry-714.avif",
+        "webp": "/images/product/generated/security-telemetry-714.webp"
       },
       {
         "width": 720,
-        "avif": "/images/product/generated/deploy-720.avif",
-        "webp": "/images/product/generated/deploy-720.webp"
+        "avif": "/images/product/generated/security-telemetry-720.avif",
+        "webp": "/images/product/generated/security-telemetry-720.webp"
       },
       {
         "width": 960,
-        "avif": "/images/product/generated/deploy-960.avif",
-        "webp": "/images/product/generated/deploy-960.webp"
+        "avif": "/images/product/generated/security-telemetry-960.avif",
+        "webp": "/images/product/generated/security-telemetry-960.webp"
       },
       {
         "width": 1428,
-        "avif": "/images/product/generated/deploy-1428.avif",
-        "webp": "/images/product/generated/deploy-1428.webp"
+        "avif": "/images/product/generated/security-telemetry-1428.avif",
+        "webp": "/images/product/generated/security-telemetry-1428.webp"
+      },
+      {
+        "width": 1440,
+        "avif": "/images/product/generated/security-telemetry-1440.avif",
+        "webp": "/images/product/generated/security-telemetry-1440.webp"
+      },
+      {
+        "width": 1920,
+        "avif": "/images/product/generated/security-telemetry-1920.avif",
+        "webp": "/images/product/generated/security-telemetry-1920.webp"
+      },
+      {
+        "width": 2880,
+        "avif": "/images/product/generated/security-telemetry-2880.avif",
+        "webp": "/images/product/generated/security-telemetry-2880.webp"
       }
     ]
   }

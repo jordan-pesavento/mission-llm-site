@@ -14,7 +14,8 @@
  * ink with an arrow, the others mist-600. The list sticks under the header while the panel scrolls.
  * Below 1024 the methods are a 2-up (phones) or 3-up grid of 44px, radius-8 controls above the
  * panel (secondary ring; the selected one is solid navy like the primary button).
- * Cloud templates and Without containers follow on hairline rows in the same two columns.
+ * Cloud templates, For evaluation and Without containers follow on hairline rows in the same two
+ * columns. The cloud list holds exactly COUNTS.cloudTemplates entries (the home page shows the count).
  * The container methods end with "Then open http://localhost:3001" (the Ollama pattern). The
  * cluster methods do not: their address is the ingress, route or service you configure.
  */
@@ -22,7 +23,7 @@ import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 import CodeBlock from "../../ui/CodeBlock.astro";
 import Icon from "../../ui/Icon.astro";
-import { LOCAL_URL } from "../../../data/site";
+import { COUNTS, LOCAL_URL } from "../../../data/site";
 import { fences } from "./_commands";
 
 const [dockerUnix, dockerWindows] = fences("Docker", 2);
@@ -50,12 +51,15 @@ const flag = (text: string) =>
     .map((part) => `<span class="nowrap">${part.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</span>`)
     .join("<wbr>");
 
+// Exactly COUNTS.cloudTemplates entries (src/data/site.ts): the home page counts them. Hugging Face
+// Spaces is an evaluation Dockerfile, not a cloud template, so it has its own row below.
 const CLOUD = [
   { name: "AWS CloudFormation", detail: "One EC2 instance running the container." },
   { name: "Google Cloud Deployment Manager", detail: "One Compute Engine VM." },
   { name: "DigitalOcean Terraform", detail: "One Droplet." },
-  { name: "Hugging Face Spaces", detail: "A Dockerfile for evaluation in a Space." },
 ];
+if (CLOUD.length !== COUNTS.cloudTemplates)
+  throw new Error(`InstallOptions: ${CLOUD.length} cloud templates listed, COUNTS.cloudTemplates is ${COUNTS.cloudTemplates}.`);
 ---
 
 <Section id="options" divider labelledby="options-title">
@@ -233,6 +237,15 @@ const CLOUD = [
         <p class="note more__note">
           Each template pulls the image you name and serves HTTP on port 3001 without TLS. Add TLS and a password before
           you expose it.
+        </p>
+      </div>
+    </div>
+    <div class="more__row">
+      <h3 class="h3 more__title">For evaluation</h3>
+      <div class="more__body">
+        <p class="body measure">
+          A Hugging Face Spaces Dockerfile runs the image you name in a Space. Keep the Space private until you set a
+          password or turn on multi-user mode.
         </p>
       </div>
     </div>

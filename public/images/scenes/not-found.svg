@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" width="250" height="250" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+<title>A course binder with a missing page</title>
+<!-- 404. Isometric line drawing: an open ring binder lies flat, lined sheets on the left page; on the right page the place of one sheet is a dashed outline, and that sheet floats above it in the same plane, lifted and a little to the right, with a dotted guide dropping straight down into its place. No text. -->
+<rect transform="matrix(0.87 0.5 -0.87 0.5 146.65 95.75)" width="92" height="66" rx="4" fill="#F8FAFC" stroke="#47546F"/>
+<rect transform="matrix(0.87 0.5 -0.87 0.5 146.65 92.75)" width="92" height="66" rx="4" fill="#F8FAFC" stroke="#47546F"/>
+<g transform="matrix(0.87 0.5 -0.87 0.5 147.52 97.25)" stroke="#92A0BC" stroke-dasharray="1.5 3"><rect width="82" height="56" rx="2"/></g>
+<rect transform="matrix(0.87 0.5 -0.87 0.5 80.83 133.75)" width="92" height="66" rx="4" fill="#F8FAFC" stroke="#47546F"/>
+<rect transform="matrix(0.87 0.5 -0.87 0.5 80.83 130.75)" width="92" height="66" rx="4" fill="#F8FAFC" stroke="#47546F"/>
+<rect transform="matrix(0.87 0.5 -0.87 0.5 83.43 133.25)" width="82" height="56" rx="2" fill="#F8FAFC" stroke="#CCD4E5"/>
+<rect transform="matrix(0.87 0.5 -0.87 0.5 83.43 132.05)" width="82" height="56" rx="2" fill="#F8FAFC" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 -0.87 0.5 83.43 130.85)"><rect width="82" height="56" rx="2" fill="#F8FAFC" stroke="#47546F"/>
+<path d="M11.6 11V50M20 11V50M28.4 11V50M36.8 11V50M45.2 11V50M53.6 11V50M62 11V50M70.4 11V50" stroke="#CCD4E5"/>
+<path d="M6 11H76" stroke="#CCD4E5"/>
+<circle cx="15.24" cy="5" r="1.6" stroke="#47546F"/>
+<circle cx="41" cy="5" r="1.6" stroke="#47546F"/>
+<circle cx="66.76" cy="5" r="1.6" stroke="#47546F"/></g>
+<polygon points="94.69,127.75 160.51,165.75 160.51,168.75 155.31,171.75 89.49,133.75 89.49,130.75" fill="#F8FAFC" stroke="#47546F"/>
+<path d="M160.51,165.75L155.31,168.75L89.49,130.75M155.31,168.75L155.31,171.75" stroke="#CCD4E5"/>
+<path d="M103.56,134.87C103.56,121.87 92.3,128.37 92.3,140.97" stroke="#47546F" stroke-width="1.4"/>
+<path d="M125.87,147.75C125.87,134.75 114.61,141.25 114.61,153.85" stroke="#47546F" stroke-width="1.4"/>
+<path d="M148.17,160.63C148.17,147.63 136.92,154.13 136.92,166.73" stroke="#47546F" stroke-width="1.4"/>
+<path d="M164.83,71.75V135.2" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<g transform="matrix(0.87 0.5 -0.87 0.5 153.52 37.25)"><rect width="82" height="56" rx="2" fill="#F8FAFC" stroke="#47546F"/>
+<path d="M11.6 6V45M20 6V45M28.4 6V45M36.8 6V45M45.2 6V45M53.6 6V45M62 6V45M70.4 6V45" stroke="#CCD4E5"/>
+<path d="M6 45H76" stroke="#CCD4E5"/>
+<circle cx="15.24" cy="51" r="1.6" stroke="#47546F"/>
+<circle cx="41" cy="51" r="1.6" stroke="#47546F"/>
+<circle cx="66.76" cy="51" r="1.6" stroke="#47546F"/></g>
+</svg>

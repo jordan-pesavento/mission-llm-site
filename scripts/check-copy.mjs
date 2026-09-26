@@ -1,6 +1,7 @@
 // Honesty and copy guard for the built site. Run after `npm run build`: npm run check:copy
-// Fails (exit 1) on: em dashes or emojis in visible text, certification or affiliation claims,
-// "Sigmatech", Space Force or DoD names outside the non-affiliation line, and any Download link
+// Fails (exit 1) on: em dashes or emojis in visible text, certification, compliance or affiliation
+// claims, LMS integration or invented study features (quizzes, flashcards, grading), "every answer"
+// overclaims, "cite" wording (inline citations are in development), "Sigmatech", Space Force or DoD names outside the non-affiliation line, and any Download link
 // that does not point to /download. Lists every TODO placeholder link, and every entry shown as
 // "Soon" text until its destination exists, so none ships unnoticed.
 import fs from "node:fs";
@@ -25,6 +26,17 @@ const BANNED = [
   [/\btrusted by\b|\bused by\b/i, "social proof claim"],
   [/\btestimonial/i, "testimonial"],
   [/\bcertified\b|\baccredited\b/i, "certification wording"],
+  // Education pass: no compliance claims, no LMS integration, no invented study features, and no
+  // "every answer" (sources appear only when documents are retrieved). "compliance" itself stays
+  // allowed: /security uses it in a non-claim ("Student privacy compliance: None claimed.").
+  [/\bFERPA\b|\bCOPPA\b|\bHIPAA\b|\bSOC ?2\b|\bISO ?27001\b/i, "compliance or certification claim"],
+  [/\bcompliant\b/i, "compliance claim"],
+  [/\bLMS\b|\bCanvas\b|\bBlackboard\b|\bMoodle\b/, "LMS integration claim"],
+  [/\bquiz(zes)?\b|\bflashcards?\b|\bgrading\b|\bgradebook\b/i, "invented study feature"],
+  [/\bevery answer\b/i, "overclaim: sources appear only when documents are retrieved"],
+  // Say "lists its sources", not "cites": inline citations are in development (/security). The
+  // In development line itself says "citations", which this does not match.
+  [/\bcite[sd]?\b|\bciting\b/i, "cite wording (say lists its sources; inline citations are in development)"],
 ];
 
 const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));

@@ -1,7 +1,9 @@
 ---
 /*
- * Security > Data flow > Other outbound connections (copy.md): an 8-row, 4-column table and its
+ * Security > Data flow > Other outbound connections (copy.md): a 7-row, 4-column table and its
  * footnote. Text is verbatim. Package C.
+ * No onboarding survey row: on JP/local-stack (the branch this page describes) the survey step only
+ * records locally that it was completed (mission-llm 0b4edb75, Survey/index.jsx sendQuestionnaire).
  * Host names stay in the text face and may only wrap where marked with "|" below (never mid-label);
  * settings and paths are set in code type and never break.
  * - below 640: .data-table--stack (each row a block, column names from data-label).
@@ -66,13 +68,6 @@ const ROWS: { name: string; detail?: string; when: string; sent: string; avoid: 
     when: "Only when an admin browses or imports items",
     sent: "Browse and import requests",
     avoid: "Do not open the Community Hub pages",
-  },
-  {
-    name: "Onboarding survey",
-    detail: `(${host("onboarding.|anythingllm.com")})`,
-    when: "Only if someone fills it in and submits it, from their browser",
-    sent: "The email, use case and comment entered",
-    avoid: "Leave the survey blank",
   },
 ];
 ---

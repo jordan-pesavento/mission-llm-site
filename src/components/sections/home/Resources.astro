@@ -9,10 +9,15 @@
  * the meta line names the page the card opens.
  * Layout: three columns from 1024; from 640 to 1023 each card is a row (image left, text right);
  * phones stack the cards with 32px between them (reference phone layout).
- * Images: brand illustrations in public/images/resources/ (navy and mist, no gradients except the
- * emblem). They are inlined at build time so their labels use the site's own fonts; they are
- * decorative (the card title carries the meaning). Labels are at least 12 units (9px at 390, 12px at
- * 1440); secondary labels (class "art-sm") hide below 640.
+ * Images: public/images/resources/*.svg, isometric line illustrations in the language of the home
+ * steps art (public/images/steps/*.svg): hairline ink and mist strokes, page-colored occlusion, the
+ * solid emblem arrow, no text and no gradients. All three cards use the light tone (white surface with
+ * the card shadow), so the row reads as one set like the steps row. The SVGs are inlined at build
+ * time (the regex below needs width="443" height="215" adjacent on the root <svg>), so every id in a
+ * file is prefixed per file (sec-, inst-, ed-) to stay unique on the page. They are decorative (the
+ * card title carries the meaning). The Security card counts the eight hardening steps on
+ * /security#hardening (Hardening.astro STEPS); the Enterprise body says "is planned to add" because its
+ * services are Planned and its features In development (EditionCards).
  * Card titles wrap greedily (text-wrap: wrap), as the reference's, not balanced.
  * The whole card is one link: the title's link stretches over the card, and its focus ring outlines
  * the card.
@@ -23,34 +28,41 @@ import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 import { INSTALL_METHODS } from "../../../data/site";
 
-const art = (file: string) =>
-  fs
-    .readFileSync(path.join(process.cwd(), "public/images/resources", file), "utf8")
-    .replace(/<!--[\s\S]*?-->/g, "")
-    .replace(/<svg\b([^>]*?)\swidth="\d+"\sheight="\d+"/, '<svg$1 aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid slice"');
+const ROOT_SIZE = /<svg\b([^>]*?)\swidth="\d+"\sheight="\d+"/;
+const art = (file: string) => {
+  const svg = fs.readFileSync(path.join(process.cwd(), "public/images/resources", file), "utf8");
+  if (!ROOT_SIZE.test(svg)) throw new Error(`Resources: ${file} needs width="443" height="215" next to each other on its root <svg>.`);
+  return (
+    svg
+      .replace(/<!--[\s\S]*?-->/g, "")
+      // Decorative inline art: drop the file's <title> so it adds no tooltip or duplicate text.
+      .replace(/<title>[\s\S]*?<\/title>/g, "")
+      .replace(ROOT_SIZE, '<svg$1 aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid slice"')
+  );
+};
 
 const cards = [
   {
     href: "/security",
     meta: "Security overview",
-    title: "See where your data goes and which controls ship today.",
-    body: "A plain-language data flow, every outbound connection and how to avoid it, and seven steps to harden an install.",
+    title: "See where student questions go and which controls ship today.",
+    body: "A plain-language data flow, every outbound connection and how to avoid it, and eight steps to harden an install.",
     art: art("security-overview.svg"),
-    tone: "dark",
+    tone: "light",
   },
   {
     href: "/download",
     meta: "Install guide",
-    title: "Install it on one workstation or a whole cluster.",
+    title: "Install it on one lab workstation or a whole campus cluster.",
     body: `Build the image from source, then run it with ${INSTALL_METHODS.slice(0, -1).join(", ")} or ${INSTALL_METHODS.at(-1)}.`,
     art: art("install-guide.svg"),
-    tone: "dark",
+    tone: "light",
   },
   {
     href: "/editions",
     meta: "Editions",
-    title: "Start free, and add support when you need it.",
-    body: "Community is the full application, free to self-host. Enterprise adds planned support, deployment help and governance features.",
+    title: "Start free with the full application, for one class or a whole school.",
+    body: "Community is the full application, free to self-host. Enterprise is planned to add support, deployment help and governance features.",
     art: art("editions.svg"),
     tone: "light",
   },
@@ -107,6 +119,12 @@ const cards = [
     .cards {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+    /* Cards in a row share the tallest card's height; the text fills the rest of it, so the meta
+       labels (pushed to the bottom below) sit on one line whatever the body length. */
+    .card {
+      grid-template-rows: auto 1fr;
+      align-content: stretch;
+    }
   }
 
   .card__image {
@@ -131,11 +149,6 @@ const cards = [
   .card__title {
     margin-top: var(--space-5);
     text-wrap: wrap;
-  }
-  @media (max-width: 639.98px) {
-    .card__image :global(.art-sm) {
-      display: none;
-    }
   }
   @media (min-width: 640px) and (max-width: 1023.98px) {
     .card__title {
@@ -172,7 +185,14 @@ const cards = [
     line-height: var(--lh-body);
     color: var(--mist-700);
   }
+  .card__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  /* 20px below the body, and pushed to the card's foot when the row is taller (three columns). */
   .card__meta {
-    margin-top: var(--space-5);
+    margin-top: auto;
+    padding-top: var(--space-5);
   }
 </style>

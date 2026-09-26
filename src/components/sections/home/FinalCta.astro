@@ -6,7 +6,7 @@
  * primary button (32px side padding) 20px below that. Light page; the dark footer follows 32px
  * further down than the padding alone (reference: the section ends at 7238 and the footer starts at
  * 7270 at 1440, and the same 32px at 1920 and 390).
- * Copy: copy.md > Home > Final CTA.
+ * Copy: copy.md > Home > Final CTA. The H2 holds one line from 768 (602px of Clash 48).
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
@@ -17,11 +17,11 @@ import { DOWNLOAD_HREF } from "../../../data/site";
 <Section pad="cta" labelledby="cta-title" class="final-cta">
   <div class="cta" data-reveal>
     <SectionIntro
-      title="Stand it up on your own hardware."
+      title="Bring it to your next course."
       size="cta"
       align="center"
       id="cta-title"
-      lead="Start with one container and a local model. Add users, workspaces and documents when you are ready."
+      lead="Start with one container, a local model and one course. Add students, workspaces and readings when you are ready."
     />
     <div class="cta__action">
       <Button href={DOWNLOAD_HREF} size="lg">Download Mission LLM</Button>

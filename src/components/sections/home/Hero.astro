@@ -7,7 +7,12 @@
  * the mist wash from top to bottom. Phones stack text, actions (one row), label, screenshot.
  *
  * Copy rules: each H1 line stays under 329px of Clash 60/500 so it holds two lines from 1024 up (the
- * text column is 329px there; "Intelligence," is 318px), and the second line never breaks. No
+ * text column is 329px there; "Your class," is 298px and "answered." 294px), and the second line
+ * never breaks. The lead leads with the classroom story and says "lists its sources", not "cites":
+ * inline citations are in development, and sources appear only when documents were retrieved. The
+ * label and alt describe the real capture: a student's thread in a fictional course workspace, two
+ * answers about a field lab, each with the course documents it drew on listed under it. The label
+ * holds one line at 390 (318px of 342). No
  * standalone "AI" in Clash Display: its capital I and lowercase l are one glyph, so "AI" reads "Al".
  * The quiet action stays about 12 characters so both actions share one row at 390.
  * Actions: an 18px-ink download glyph (bold) in the primary button, as the reference's 18px mark, and
@@ -23,8 +28,8 @@ import { DOWNLOAD_HREF } from "../../../data/site";
 <Section pad="hero" wash labelledby="hero-title" class="hero">
   <div class="split split--hero">
     <div class="hero__text">
-      <h1 id="hero-title" class="h1 hero__title">Intelligence, <span class="nowrap">in house.</span></h1>
-      <p class="lead hero__lead">A self-hosted assistant for your documents and agents. No cloud or internet required.</p>
+      <h1 id="hero-title" class="h1 hero__title">Your class, <span class="nowrap">answered.</span></h1>
+      <p class="lead hero__lead">A course assistant that answers from your readings and lists its sources, on your school's own servers.</p>
       <div class="hero__actions">
         <Button href={DOWNLOAD_HREF} iconStart="download-simple" iconWeight="bold" iconSize={22}>Download Free</Button>
         <Button href="/security" variant="quiet" iconStart="shield-check" iconWeight="fill" iconSize={30}>Security</Button>
@@ -33,15 +38,15 @@ import { DOWNLOAD_HREF } from "../../../data/site";
     <Screenshot
       name="hero"
       priority
-      label="Private AI that runs on your network"
-      alt="The Mission LLM app answering a question about change control, with the workspace sidebar, the model picker and the two source documents it cited."
+      label="Answers with sources, on your server"
+      alt="A student's thread in an Intro to Ecology course workspace. Mission LLM answers two questions about a field lab and lists the course documents each answer drew on, such as the lab handout, the syllabus and a reading."
       class="hero__shot"
     />
   </div>
 </Section>
 
 <style>
-  /* Greedy wrapping: a balanced H1 would narrow the line below "Intelligence," and break the word. */
+  /* Greedy wrapping: a balanced H1 would narrow the line below "Your class," and break the word. */
   .hero__title {
     max-width: 30rem;
     text-wrap: wrap;

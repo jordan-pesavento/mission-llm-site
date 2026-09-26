@@ -1,17 +1,27 @@
 ---
 /*
- * Feature accordion 2: security and control that ship today. Replica of the reference's "Magic
- * Features" block (section-1440x900-03, bottom): pad "feature" (64 to 112), eyebrow 20/28 and H2
- * 36/40, then the FeatureAccordion with the screenshot on the LEFT (the reference keeps it there for
- * both accordions) and the accordion on the right, 714 | 584 with a 94 gap at 1440.
- * Items are only what ships today (copy.md "Security and control"). Loopback-only binding is the
- * Docker port binding (-p 127.0.0.1:3001:3001), which works with every release and is step 8 of
- * /security#hardening. The SERVER_HOST and COLLECTOR_HOST settings (mission-llm commit c590dee0) are
- * not on master yet, so they are listed on /security under "In development", not here; setting
- * SERVER_HOST=127.0.0.1 inside a container would also make the app unreachable from the host.
+ * Feature accordion 2: security and control that ship today, told for schools. Replica of the
+ * reference's "Magic Features" block (section-1440x900-03, bottom): pad "feature" (64 to 112),
+ * eyebrow 20/28 and H2 36/40, then the FeatureAccordion with the screenshot on the LEFT (the
+ * reference keeps it there for both accordions) and the accordion on the right, 714 | 584 with a 94
+ * gap at 1440.
+ * Items are only what ships today (copy.md "Security and control" and the evidence table):
+ * - Roles: the manager role is server-wide, not scoped to one course (Workspace.getWithUser returns
+ *   every workspace for admins and managers; per-workspace roles are "In development" on /editions),
+ *   so the title says "staff and student roles", never "instructor role", and the body says the
+ *   manager role opens every workspace.
+ * - Chat history review: admins and managers read every workspace chat with its sender and export
+ *   it (server/endpoints/system.js:1178-1235, frontend/src/main.jsx:313 ManagerRoute).
+ * - Telemetry keeps "before the first start": the server sends a server_boot event at start unless
+ *   DISABLE_TELEMETRY is "true" (server/utils/database/index.js:104).
+ * Loopback-only binding (the Docker port binding -p 127.0.0.1:3001:3001) is not on the home page; it
+ * stays as step 8 of /security#hardening. The SERVER_HOST and COLLECTOR_HOST settings (mission-llm
+ * commit c590dee0) are not on master yet, so /security lists them under "In development".
  * Roadmap items (SSO, MFA, audit trail forwarding, an offline switch) stay on /security under
  * "In development". Open bodies stay at two lines at 1440, so the section holds 800px.
- * Only security.png exists for this block, so every item shows it until more captures land.
+ * Each item swaps to its own real capture (scripts/image-sources.mjs): LLM Preference on a model
+ * server on the same machine, a course workspace's Members tab, Workspace Chats, Event Logs, and
+ * Privacy & Data-Handling with the telemetry switch off.
  * Titles stay short enough to hold one line at 390 (18px Clash Display in a 306px row).
  */
 import Section from "../../ui/Section.astro";
@@ -19,48 +29,48 @@ import SectionIntro from "../../ui/SectionIntro.astro";
 import FeatureAccordion, { type AccordionItem } from "../../ui/FeatureAccordion.astro";
 import { TELEMETRY_ENV } from "../../../data/site";
 
-const shot = { name: "security", alt: "The Event Logs admin page in Mission LLM." } as const;
-
 const items: AccordionItem[] = [
   {
     id: "offline",
-    title: "Runs fully offline",
+    title: "Runs in an offline lab",
     body: "Pair it with a local model runtime and stage the built-in models. Chat, embeddings and search then run offline.",
     link: { href: "/security#outbound", label: "Learn more about offline use" },
-    image: shot,
-  },
-  {
-    id: "loopback",
-    title: "Loopback-only binding",
-    body: "In Docker, bind the published port to 127.0.0.1 (-p 127.0.0.1:3001:3001) and only that machine can connect.",
-    link: { href: "/security#hardening", label: "Learn more about hardening" },
-    image: shot,
+    image: { name: "security-offline", alt: "The LLM Preference page, set to an OpenAI-compatible model server on the same machine (127.0.0.1)." },
   },
   {
     id: "roles",
-    title: "Roles and API keys",
-    body: "Admin, manager and default roles, with workspace membership. Admins issue and revoke keys for the developer API.",
-    link: { href: "/security#controls", label: "Learn more about access" },
-    image: shot,
+    title: "Staff and student roles",
+    body: "Instructors get the manager role, which opens every workspace. Students see only the ones they are added to.",
+    link: { href: "/security#controls-access", label: "Learn more about access" },
+    image: { name: "security-roles", alt: "The Members tab of a course workspace, listing the students added to it, each with the default role." },
+  },
+  {
+    id: "history",
+    title: "Chat history for review",
+    body: "Admins and managers can read every workspace chat, see who sent it, and export it as CSV, JSON or JSONL.",
+    link: { href: "/security#controls-oversight", label: "Learn more about oversight" },
+    image: { name: "security-history", alt: "The Workspace Chats page as an instructor sees it: each question with the student who sent it, the workspace, the answer and the time, with an Export menu." },
   },
   {
     id: "events",
     title: "Admin event log",
     body: "Sign-ins, failed sign-ins, and changes to users, API keys, invites, workspaces and documents, in one log for admins.",
-    link: { href: "/security#controls", label: "Learn more about oversight" },
-    image: shot,
+    link: { href: "/security#controls-oversight", label: "Learn more about oversight" },
+    image: { name: "security", alt: "The Event Logs page: sign-ins, a failed sign-in, an uploaded document, a new user and an invite, each with the user and the time." },
   },
   {
     id: "telemetry",
     title: "Telemetry off switch",
-    body: `Set ${TELEMETRY_ENV} before the first start and no usage events are sent. Admins can also turn it off in Settings.`,
+    body: `Set ${TELEMETRY_ENV} before the first start and no usage events are sent. Or turn it off in Settings.`,
+    // The variable is a code chip, as on /security and /download.
+    html: `Set <code>${TELEMETRY_ENV.replace(/"/g, "&quot;")}</code> before the first start and no usage events are sent. Or turn it off in Settings.`,
     link: { href: "/security#outbound", label: "Learn more about telemetry" },
-    image: shot,
+    image: { name: "security-telemetry", alt: "The Privacy & Data-Handling page with the anonymous telemetry switch off, and the vectors kept in the built-in LanceDB store on the instance." },
   },
 ];
 ---
 
 <Section id="control" pad="feature" class="section--h800" labelledby="control-title">
-  <SectionIntro eyebrow="Security and control" title="You set the boundary." id="control-title" />
+  <SectionIntro eyebrow="Security and control" title="Your school sets the boundary." id="control-title" />
   <FeatureAccordion id="control-acc" label="Security and control" items={items} />
 </Section>

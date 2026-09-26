@@ -1,68 +1,73 @@
 ---
 /*
- * Feature accordion 1 (package A): the reference's first feature block. Anchor #product is linked
- * from the header and footer. Measured at 1440: pad "feature" (112), eyebrow 20/28, H2 36/40 16px
- * below it, then the FeatureAccordion 58px below the H2 (screenshot 714 x 416 at x 24, accordion
+ * Feature accordion 1 (package A): the reference's first feature block, used here as the audience
+ * section ("Who it is for"): instructors, students in a course, independent learners, school IT,
+ * then organizations, so the page leads with the classroom story. Anchor #product is linked from
+ * the header and footer. Measured at 1440: pad "feature" (112), eyebrow 20/28, H2 36/40 16px below
+ * it, then the FeatureAccordion 58px below the H2 (screenshot 714 x 416 at x 24, accordion
  * 832..1416). Phones: screenshot above the list.
  *
- * Copy rules: titles stay on one line at 390 (26 characters or fewer); bodies are one or two
- * sentences that fit two lines at 1440 (about 100 characters), so the open item keeps the list as
- * tall as the screenshot. Every item carries a link to a real page or anchor, as in the reference,
- * so the list height does not jump when another item opens.
- * Facts: src/content/copy.md "Product tour" and the evidence table (retrieval and the Sources list,
- * @agent, skills and MCP servers switched on by admins, 38 providers chosen per workspace, per-
- * workspace documents, prompt and model, threads, three roles in multi-user mode).
+ * Copy rules: titles stay on one line at 390 (24 characters or fewer); bodies are one or two
+ * sentences that fit two lines in the 448px column at 1440, so the open item keeps the list as tall
+ * as the screenshot. Every item carries a link to a real page or anchor, as in the reference, so the
+ * list height does not jump when another item opens. Each item shows a real capture of the view it
+ * names, from a test instance seeded with a fictional course (scripts/image-sources.mjs); the alts
+ * describe those captures.
+ * Facts: src/content/copy.md evidence table. Managers and admins create workspaces, add documents
+ * and users, and read chat history with the sender (system.js /system/workspace-chats, ManagerRoute
+ * GeneralChats); default users see only the workspaces they are added to; answers list sources only
+ * when documents were retrieved (so never "under each answer"); threads per workspace; local models
+ * and a different provider per workspace; agents use the skills and MCP servers admins turn on.
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 import FeatureAccordion, { type AccordionItem } from "../../ui/FeatureAccordion.astro";
-import { COUNTS } from "../../../data/site";
 
 // Real captures of the app (test instance with fictional sample documents).
 const items: AccordionItem[] = [
   {
-    id: "documents",
-    title: "Documents with sources",
-    body: "Files you add are parsed and indexed on your server. Answers drawn from them list their sources.",
+    id: "instructors",
+    title: "For instructors",
+    body: "Build a course workspace from your syllabus and readings, add your students, and see how they use it.",
+    link: { href: "#steps", label: "Set up a course in four steps" },
+    image: { name: "feature-users", alt: "The Users page as an instructor with the manager role sees it: the admin, the instructor and the student accounts, each with its role." },
+  },
+  {
+    id: "students",
+    title: "For students in a course",
+    body: "Ask questions about the course. Answers drawn from its readings list the sources they used.",
     link: { href: "#grounded", label: "See how sources work" },
-    image: { name: "feature-documents", alt: "An answer drawn from workspace documents, with the Sources panel showing each document and its match score." },
+    image: { name: "feature-documents", alt: "A student's question about carrying capacity in a course workspace, answered from the readings, with the Sources panel listing each reading and its match score." },
   },
   {
-    id: "agents",
-    title: "Agents and tools",
-    body: "Type @agent to hand off a task. Agents use the skills and MCP servers your admins turn on.",
-    link: { href: "/security#controls", label: "How admins control tools" },
-    image: { name: "feature-agents", alt: "The Agent Skills settings page in Mission LLM." },
+    id: "learners",
+    title: "For independent learners",
+    body: "Make a workspace for any subject, add your own notes and readings, and keep each topic in its own thread.",
+    link: { href: "/download", label: "See install options" },
+    image: { name: "feature-workspaces", alt: "A learner's Spanish Practice workspace with one thread per topic, and two answers drawn from the learner's own grammar notes." },
   },
   {
-    id: "models",
-    title: "Model choice per workspace",
-    body: `Pick from ${COUNTS.llmProviders} model providers, local or cloud, and set a different one for each workspace.`,
-    link: { href: "/security#data-flow", label: "Where your data goes" },
-    image: { name: "feature-models", alt: "The LLM provider settings page in Mission LLM." },
+    id: "school-it",
+    title: "For school IT",
+    body: "Run it on school servers with local models and no internet, or set a different provider for each workspace.",
+    link: { href: "/security", label: "Read the security overview" },
+    image: { name: "feature-models", alt: "The Chat Settings of a course workspace: its own LLM provider setting (the system default here) and its chat mode." },
   },
   {
-    id: "workspaces",
-    title: "Workspaces and threads",
-    body: "Each workspace keeps its own documents, prompt and model. Threads keep lines of work apart.",
-    link: { href: "/download#after-install", label: "Set up your first workspace" },
-    image: { name: "feature-workspaces", alt: "A new thread in the Engineering Specs workspace, with the workspace and thread list in the sidebar." },
-  },
-  {
-    id: "users",
-    title: "Multi-user and roles",
-    body: "In multi-user mode, everyone signs in with their own account and an admin, manager or default role.",
-    link: { href: "/security#controls", label: "See access controls" },
-    image: { name: "feature-users", alt: "The Users admin page in Mission LLM." },
+    id: "organizations",
+    title: "For organizations",
+    body: "Companies get the same workspaces and answers with sources, and agents that use the tools admins turn on.",
+    link: { href: "/editions", label: "Compare editions" },
+    image: { name: "feature-agents", alt: "The Agent Skills settings page with the RAG and long-term memory skill open: switched on, with a note that the agent answers from local documents and can remember content." },
   },
 ];
 ---
 
 <Section id="product" pad="feature" class="section--h800" labelledby="product-title">
   <div data-reveal>
-    <SectionIntro eyebrow="Ready on day one." title="Equipped for the mission." id="product-title" />
+    <SectionIntro eyebrow="Who it is for." title="Built for classrooms. Ready for teams." id="product-title" />
   </div>
   <div data-reveal="2">
-    <FeatureAccordion id="product-acc" label="Product features" items={items} />
+    <FeatureAccordion id="product-acc" label="Who it is for" items={items} />
   </div>
 </Section>

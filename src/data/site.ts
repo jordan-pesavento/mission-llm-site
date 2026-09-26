@@ -9,12 +9,12 @@ export const SITE = {
   name: "Mission LLM",
   // Default meta description (copy.md: Global > Site metadata).
   description:
-    "Mission LLM is a self-hosted AI assistant for documents and agents. Run it on your own infrastructure with local or cloud models, including on disconnected networks.",
+    "Mission LLM is a self-hosted assistant for courses and teams. It answers from your documents with the sources listed, and runs with local or cloud models on hardware you control, including disconnected networks.",
   origin: "https://mission-llm.com" as string | null,
   themeColor: "#f8fafc",
   /** Share card (Open Graph, X/Twitter), emitted with absolute URLs once `origin` is set. */
   shareImage: "/og/mission-llm.png",
-  shareImageAlt: "Mission LLM: private AI, grounded in your own documents.",
+  shareImageAlt: "Mission LLM: Your class, answered. An isometric lecture hall linked to a local server.",
 };
 
 /** Every product screenshot carries this caption (copy.md builder note 1). */
@@ -104,8 +104,11 @@ export const NAV: NavItem[] = [
 /** Every Download button on the site points here. */
 export const DOWNLOAD_HREF = "/download";
 
-/** One line under the footer wordmark (copy.md: Global > Footer). */
-export const FOOTER_DESCRIPTOR = "Self-hosted AI for documents and agents, on infrastructure you control.";
+/**
+ * One line under the footer wordmark (copy.md: Global > Footer). Exported but not rendered anywhere
+ * today (the footer shows the wordmark and fine print only); kept in step with the copy.
+ */
+export const FOOTER_DESCRIPTOR = "Self-hosted AI for classrooms and teams, on hardware you control.";
 
 /**
  * Footer columns, in the reference's four-column structure (Product, Resources, Project, Contact).
@@ -153,26 +156,26 @@ export const FOOTER_LEGAL: NavItem[] = [
 /** Page metadata (copy.md: each page's Meta title and Meta description). */
 export const PAGES = {
   home: {
-    title: "Mission LLM | Private AI for your documents and agents",
+    title: "Mission LLM | A private assistant for courses and teams",
     description:
-      "Self-hosted AI that answers from your documents, shows its sources, and runs with local or cloud models on infrastructure you control.",
+      "A self-hosted assistant that answers from your course documents, lists its sources, and runs with local models on your school's own hardware.",
   },
   download: {
     title: "Download Mission LLM | Install options",
     description:
-      "Install Mission LLM with Docker, Docker Compose, Kubernetes, Helm or OpenShift. System requirements and commands.",
+      "Build Mission LLM from source, then run it with Docker, Docker Compose, Kubernetes, Helm or OpenShift. System requirements and commands.",
   },
   security: {
     title: "Security and deployment | Mission LLM",
     description:
       "Where your data goes in Mission LLM, the controls available today, what is in development, and how to harden an install.",
     // Shown as "Last updated" on the Security page. Change it whenever that page's facts change.
-    lastUpdated: "2026-09-25",
+    lastUpdated: "2026-09-26",
   },
   editions: {
     title: "Editions | Mission LLM",
     description:
-      "Mission LLM Community is free to self-host. Mission LLM Enterprise adds planned support, deployment help and governance features.",
+      "Mission LLM Community is free to self-host for any class, school or team. Mission LLM Enterprise adds planned support, deployment help and governance features.",
   },
   notFound: {
     title: "Page not found | Mission LLM",

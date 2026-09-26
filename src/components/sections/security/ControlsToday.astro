@@ -6,7 +6,14 @@
  * (Clash 24/32) sits in the left column of the page rail (5fr | 12fr, 94px gap) beside its list, on
  * mist-300 hairlines. The telemetry row reuses copy.md Home > Security and control verbatim so this
  * list names DISABLE_TELEMETRY. Only shipped controls belong here; roadmap items live in
- * InDevelopment.astro. Group ids: #controls-access, -oversight, -transport, -integrations.
+ * InDevelopment.astro. Group ids: #controls-access, -oversight, -transport, -integrations (the home
+ * security accordion links to the first two).
+ * Evidence (mission-llm, copy.md evidence table): the manager role is server-wide (Workspace.getWithUser
+ * returns every workspace for admins and managers); admins and managers read and export workspace
+ * chats with the sender (server/endpoints/system.js:1178-1235); DISABLE_VIEW_CHAT_HISTORY hides the
+ * app's history pages and export; the chat widget is admin-only (server/endpoints/embedManagement.js)
+ * with allowed domains and per-day and per-session limits (server/prisma/schema.prisma:235-254), and
+ * its visitors chat without signing in (frontend/public/embed).
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
@@ -26,7 +33,7 @@ const GROUPS: { id: string; title: string; items: { term: string; text: string }
       },
       {
         term: "Roles:",
-        text: "admin, manager and default. Default users chat only in the workspaces they are assigned to.",
+        text: "admin, manager and default. Admins and managers can open every workspace on the server; default users chat only in the workspaces they are assigned to.",
       },
       { term: "Account controls:", text: "invitations, suspension and per-user daily message limits." },
       {
@@ -47,7 +54,10 @@ const GROUPS: { id: string; title: string; items: { term: string; text: string }
         term: "Admin event log:",
         text: "sign-ins, failed sign-ins, attempts on suspended accounts, changes to users, invites and API keys, workspace and document changes, and chat exports.",
       },
-      { term: "Chat history export:", text: "CSV, JSON or JSONL." },
+      {
+        term: "Chat history review and export:",
+        text: "admins and managers can read workspace chats with the user who sent each one, and export them as CSV, JSON or JSONL.",
+      },
       { term: "Hide chat history", text: `from the interface: ${code("DISABLE_VIEW_CHAT_HISTORY")}.` },
       { term: "Workspace deletion protection:", text: `${code("WORKSPACE_DELETION_PROTECTION")}.` },
     ],
@@ -74,6 +84,10 @@ const GROUPS: { id: string; title: string; items: { term: string; text: string }
         text: `admin-issued API keys, OpenAPI documentation at ${code("/api/docs")}, and OpenAI-compatible endpoints.`,
       },
       { term: "Agent tools:", text: "admins turn each agent skill and MCP server on or off." },
+      {
+        term: "Chat widget:",
+        text: "admins can embed a workspace chat on web pages from the domains they allow, with per-day and per-session chat limits. Visitors chat without signing in.",
+      },
     ],
   },
 ];

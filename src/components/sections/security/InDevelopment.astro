@@ -1,6 +1,9 @@
 ---
 /*
  * Security > In development (copy.md): intro plus seven groups, verbatim. Package C.
+ * The intro names the real heading items move to ("Controls available today", #controls), in the
+ * same quote style as the /editions FAQ. Roadmap wording stays education-first: plain "smart card
+ * sign-in" and "a configurable banner", as on /editions.
  * Nothing here ships today, so every group carries the In development badge and the visual
  * language is the site's "not yet" set: dashed mist-400 rules, hollow bullets, muted text.
  * Items stay at the capability level; the precise gaps behind them belong in the hardening guide.
@@ -19,11 +22,11 @@ const GROUPS: { title: string; items: string[] }[] = [
     items: [
       "Single sign-on with OIDC and SAML 2.0, with group-to-role mapping.",
       "SCIM provisioning and deprovisioning.",
-      "Smart card (PIV and CAC) sign-in.",
+      "Smart card sign-in.",
       "Multi-factor authentication (TOTP) and revocable sessions with idle timeout.",
       "Permission-based roles, workspace-level roles and groups.",
       "Sign-in protection and a lockout policy.",
-      "A system use notice at sign-in and a configurable classification banner.",
+      "A system use notice and a configurable banner at sign-in.",
     ],
   },
   {
@@ -72,11 +75,12 @@ const GROUPS: { title: string; items: string[] }[] = [
 
 <Section id="in-development" divider labelledby="in-development-title">
   <div data-reveal>
-    <SectionIntro
-      title="In development"
-      id="in-development-title"
-      lead="These items are not in the current release. They move to ‘Available today’ only when they ship. Dates are not published."
-    />
+    <SectionIntro title="In development" id="in-development-title">
+      <p class="body-relaxed idv__lead">
+        These items are not in the current release. They move to “<a href="#controls">Controls available today</a>” only when they ship.
+        Dates are not published.
+      </p>
+    </SectionIntro>
   </div>
 
   <div class="idv" data-reveal="2">
@@ -104,6 +108,11 @@ const GROUPS: { title: string; items: string[] }[] = [
 </Section>
 
 <style>
+  /* The lead holds a link, so it sits in SectionIntro's slot with the intro lead's spacing. */
+  .idv__lead {
+    margin-top: var(--gap-h2-text);
+    max-width: var(--measure);
+  }
   .idv {
     display: grid;
     grid-template-columns: minmax(0, 1fr);

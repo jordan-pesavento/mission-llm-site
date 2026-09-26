@@ -5,7 +5,13 @@
  * card is a white surface with the site's radius 16 and hairline ring: name (Clash 36/40), price line
  * (no prices: pricing is not decided), summary (18/28), what it includes, then its one action at the
  * bottom so both 44px buttons share a baseline. From 1024 the cards share row tracks (CSS subgrid),
- * so heads, rules and buttons line up. From 1280 the six-item lists run in two columns.
+ * so heads, rules and buttons line up; Community's Support group follows its list at the normal
+ * rhythm and the slack left by the taller Enterprise card sits above the Download button. Support
+ * links the app repository's GitHub issues (public, Issues on); vulnerabilities go through private
+ * reporting (/security#report). From 1280 the lists run in two columns (eight Community
+ * items, six planned items, so both columns stay even). The two chat items are real today: admins
+ * and managers read and export workspace chats (server/endpoints/system.js:1178-1235), and admins
+ * embed a workspace as a chat widget (server/endpoints/embedManagement.js, frontend/public/embed).
  * Enterprise lists its planned features only under the <Badge /> "In development" label, in the
  * dashed, muted style used for every roadmap list on the site, followed by its fine print.
  * Its service offerings (deployment assistance, support by agreement) are not confirmed yet
@@ -26,6 +32,8 @@ const communityIncludes = [
   `${COUNTS.llmProviders} model providers, ${COUNTS.vectorDatabases} vector databases and ${COUNTS.embeddingEngines} embedding engines.`,
   "Agents, custom skills, MCP servers and the agent flow builder.",
   "Multi-user mode with admin, manager and default roles.",
+  "Chat history review and export for admins and managers.",
+  "An embeddable chat widget for any workspace.",
   "Event log, API keys and the developer API.",
   "Docker, Compose, Kubernetes, Helm and OpenShift deployment.",
 ];
@@ -55,7 +63,7 @@ const enterprisePlanned = [
       <header class="edition__head">
         <h3 id="edition-community" class="h2 edition__name">Community</h3>
         <p class="edition__price">Free to self-host</p>
-        <p class="edition__summary">Everything Mission LLM does today, on your infrastructure.</p>
+        <p class="edition__summary">Everything Mission LLM does today, on hardware you control.</p>
       </header>
 
       <div class="edition__body">
@@ -75,10 +83,13 @@ const enterprisePlanned = [
           </ul>
         </div>
 
-        <div class="edition__group edition__group--end">
+        <div class="edition__group">
           <h4 class="edition__group-title">Support</h4>
-          <!-- TODO: link documentation and the project issue tracker once they exist. -->
-          <p class="edition__text">Self-supported. Documentation and an issue tracker will be published with the first release.</p>
+          <!-- TODO: link the documentation once it exists (PLACEHOLDER.docsUrl). -->
+          <p class="edition__text">
+            Self-supported. Report problems in the <a href={`${PLACEHOLDER.repositoryUrl}/issues`}>GitHub repository’s issues</a>. Full
+            documentation will be published with the first release.
+          </p>
         </div>
       </div>
 
@@ -222,9 +233,6 @@ const enterprisePlanned = [
     padding-top: var(--space-5);
     border-top: 1px solid var(--color-line);
   }
-  .edition__group--end {
-    margin-top: auto;
-  }
   .edition__group-title {
     margin-bottom: var(--space-3);
     font-family: var(--font-sans);
@@ -333,7 +341,7 @@ const enterprisePlanned = [
     }
   }
 
-  /* Wide cards (1280 and up): the six-item lists run in two columns. */
+  /* Wide cards (1280 and up): the lists run in two columns. */
   @media (min-width: 1280px) {
     .includes--cols,
     .planned {

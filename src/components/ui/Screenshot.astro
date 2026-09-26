@@ -4,18 +4,19 @@
  * centered navy-tinted shadow and no ring; in dark bands a flat radius-8 window with a 1px edge.
  * The image is ALWAYS shown whole: the frame takes the file's own aspect ratio, so nothing is
  * cropped, bled off an edge or covered.
- * Sources: public/images/product/<name>.png, listed in scripts/image-sources.mjs (placeholders until
- * the real captures replace them under the same names). AVIF and WebP variants are generated at build.
+ * Sources: public/images/product/<name>.png, real captures of the app listed in
+ * scripts/image-sources.mjs. AVIF and WebP variants are generated at build.
  *
  * - name: hero | feature-documents | feature-agents | feature-models | feature-workspaces |
- *         feature-users | grounded | security | deploy
+ *         feature-users | grounded | security | security-offline | security-roles |
+ *         security-history | security-telemetry
  * - alt: what the image shows. Describe the real capture; never describe features the product lacks.
  * - sizes: the rendered width for srcset selection. Defaults to the reference width at 1440.
  * - priority: the hero image only (eager, high fetch priority, preloaded).
  * - caption: optional line under the frame (16px, muted).
  * - label: optional small uppercase label above the frame's right edge (the hero's
  *   "ON-DEVICE AI THAT WORKS" pattern). Rendered as text, 14px uppercase, right-aligned, 20px above.
- * Usage: <Screenshot name="hero" priority label="Private AI that runs on your network" alt="..." />
+ * Usage: <Screenshot name="hero" priority label="Answers with sources, on your server" alt="..." />
  */
 import manifest from "../../data/images.generated.json";
 

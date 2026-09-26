@@ -1,4 +1,6 @@
-# Mission LLM website copy (v1)
+# Mission LLM website copy (v1, with the v2 education pass)
+
+> **Education pass (2026-09-26, branch `JP/site-education`).** Education is the focus of the marketing: course instructors running courses, students in those courses and independent students, with companies and organizations as the secondary audience. The Global, Home, Download, Security (Hero, Controls, Hardening) and Editions text below is the live site copy; evidence rows for the new claims are at the end of the evidence table. Wording limits: never "every answer" (sources appear only when documents were retrieved), never "private from instructors" (admins and managers can read chat history), "private" only in the sense of "runs on the school's own hardware", the manager role is server-wide (never an instructor role scoped to one course), no LMS integration, quizzes, flashcards or grading, no compliance claims, no named schools, courses or programs, no counts beyond `COUNTS`. Builder notes 1, 2 and 8 describe the v1 concept renders; the site now shows real captures of the app (a test instance with fictional sample documents), with alt text that describes those captures.
 
 ## Builder notes (read first)
 
@@ -24,7 +26,8 @@
 
 ### Site metadata
 - Site name: Mission LLM
-- Default meta description: "Mission LLM is a self-hosted AI assistant for documents and agents. Run it on your own infrastructure with local or cloud models, including on disconnected networks."
+- Default meta description: "Mission LLM is a self-hosted assistant for courses and teams. It answers from your documents with the sources listed, and runs with local or cloud models on hardware you control, including disconnected networks."
+- Share image alt: "Mission LLM: Your class, answered. An isometric lecture hall linked to a local server."
 
 ### Header
 - Emblem and wordmark: Mission LLM
@@ -33,7 +36,7 @@
 - Mobile toggle labels: "Menu" / "Close menu"
 
 ### Footer
-- Under the wordmark: "Self-hosted AI for documents and agents, on infrastructure you control."
+- Under the wordmark: "Self-hosted AI for classrooms and teams, on hardware you control." (`FOOTER_DESCRIPTOR` in `src/data/site.ts`; not rendered today)
 - Entries without a destination yet show as text with a "Soon" tag, not as links.
 - **Product:** Overview (`/#product`), Grounded answers (`/#grounded`), Deployment (`/#deploy`), Security (`/security`), Editions (`/editions`), Download (`/download`)
 - **Resources:** Documentation (<!-- TODO -->), Source code (<!-- TODO: repository access not decided -->), Security policy (<!-- TODO: link SECURITY.md -->), AnythingLLM project (https://github.com/Mintplex-Labs/anything-llm), Contact (`mailto:contact@example.com` <!-- TODO: real address -->)
@@ -46,23 +49,18 @@
 
 ## Home (`/`)
 
-Meta title: "Mission LLM | Private AI for your documents and agents"
-Meta description: "Self-hosted AI that answers from your documents, shows its sources, and runs with local or cloud models on infrastructure you control."
+Meta title: "Mission LLM | A private assistant for courses and teams"
+Meta description: "A self-hosted assistant that answers from your course documents, lists its sources, and runs with local models on your school's own hardware."
 
 ### Hero
-- Eyebrow: Self-hosted AI for documents and agents
-- Headline: **Private AI, grounded in your own documents.**
-- Subhead: Mission LLM runs on infrastructure you control, answers from your documents with the sources listed, and works with local models on networks that have no internet connection.
-- Primary action: Download (`/download`)
-- Secondary action: Security overview (`/security`)
-- Supporting line: Free to self-host. Runs in Docker, Kubernetes, Helm and OpenShift.
-- Screenshot: `chat-sources.png` (phones: the Sources panel detail)
-  - Alt: "Mission LLM chat answering a question about a change control process, with a sources panel listing three documents."
-  - Phone alt: "The Sources panel of a Mission LLM answer, listing the three documents it used."
-  - Caption: "Concept of the next Mission LLM interface. Inline citations and page references are in development."
-- Alternate headlines:
-  - "Your documents. Your models. Your network."
-  - "Answers you can trace, on hardware you own."
+- Headline: **Your class, answered.** (each line under 329px of Clash 60/500: "Your class," 298px, "answered." 294px)
+- Subhead: A course assistant that answers from your readings and lists its sources, on your school's own servers.
+- Primary action: Download Free (`/download`)
+- Secondary action: Security (`/security`)
+- Screenshot: `hero` (real capture: a student's thread in a fictional course workspace, two answers about a field lab with the course documents each one drew on listed under it)
+  - Label: "Answers with sources, on your server"
+  - Alt: "A student's thread in an Intro to Ecology course workspace. Mission LLM answers two questions about a field lab and lists the course documents each answer drew on, such as the lab handout, the syllabus and a reading."
+- Why "lists its sources", not "cites": inline citations are in development (Security > In development > Answer quality), and sources appear only when documents were retrieved.
 
 ### Proof strip
 Visually hidden heading: At a glance
@@ -77,11 +75,20 @@ Visually hidden heading: At a glance
 Footnote: "Offline use requires a local model runtime and built-in models staged in advance. See Security for every outbound connection."
 Alternate fact: "14 embedding engines. Including a built-in embedder that runs on the server's CPU."
 
-### Product tour
+### Who it is for (audience accordion)
 Anchor: `#product`
-- Eyebrow: Product
-- Heading: **One workspace for your documents, models and agents.**
-- Intro: Every capability described here ships today. The screens show the next interface, which is in development.
+- Eyebrow: Who it is for.
+- Heading: **Built for classrooms. Ready for teams.**
+- Accordion label: Who it is for
+- Items (title, body, link, screenshot). Bodies hold two lines in the 448px column at 1440.
+  1. **For instructors.** "Build a course workspace from your syllabus and readings, add your students, and see how they use it." Link: Set up a course in four steps (`#steps`). Screenshot: `feature-users` (the Users page as the instructor, a manager, sees it).
+  2. **For students in a course.** "Ask questions about the course. Answers drawn from its readings list the sources they used." Link: See how sources work (`#grounded`). Screenshot: `feature-documents` (a student's answer with the Sources panel open).
+  3. **For independent learners.** "Make a workspace for any subject, add your own notes and readings, and keep each topic in its own thread." Link: See install options (`/download`). Screenshot: `feature-workspaces` (a learner's workspace with a thread per topic).
+  4. **For school IT.** "Run it on school servers with local models and no internet, or set a different provider for each workspace." Link: Read the security overview (`/security`). Screenshot: `feature-models` (a course workspace's Chat Settings with its own provider setting).
+  5. **For organizations.** "Companies get the same workspaces and answers with sources, and agents that use the tools admins turn on." Link: Compare editions (`/editions`). Screenshot: `feature-agents`.
+
+### Product facts (v1 product tour)
+Facts behind the audience items. Not rendered as a tour on the site today.
 
 #### 1. Document knowledge
 - Tab label: Document knowledge
@@ -143,8 +150,10 @@ Anchor: `#product`
 ### Grounded answers (dark band)
 Anchor: `#grounded`
 - Eyebrow: Grounded answers
-- Heading: **See where each answer came from.**
-- Body: When a workspace has documents, Mission LLM searches them before the model answers. Open Sources on an answer to see each document it used, the exact passages it retrieved, and how closely each passage matched the question.
+- Heading: **Answers that show their readings.** (never "cite": inline citations are in development)
+- Body: When a course workspace has documents, Mission LLM searches them before the model answers. Students open Sources to see which readings an answer used, the passages it pulled and how closely each one matched.
+- Bullets (home band): "Sources listed under grounded answers" / "Retrieved passages with match scores" / "Query mode, with a refusal message you write"
+- Link: Learn more (`/security#data-flow`)
 - **Available today**
   - A similarity threshold and passage count for each workspace.
   - Document pinning for material the model must always see.
@@ -161,9 +170,9 @@ Anchor: `#grounded`
 
 ### Deploy anywhere
 Anchor: `#deploy`
-- Eyebrow: Deployment
-- Heading: **Deploy it where your data already lives.**
-- Body: Mission LLM ships as a single container that serves the web app and API on port 3001. Run it on a workstation, a server in your rack, a Kubernetes cluster or a cloud account you control. On a disconnected network, pair it with a local model runtime and stage the built-in models in advance.
+- Eyebrow: Self-hosted
+- Heading: **Run it on a lab workstation or a campus server.**
+- Body: Mission LLM ships as one container that serves the app and API on port 3001. Start it with Docker, Compose, Kubernetes, Helm or OpenShift, on your own hardware or in a cloud account you control.
 - Targets:
 
 | Target | Detail |
@@ -194,8 +203,15 @@ REGISTRY/mission-llm:latest
 
 ### Security and control
 - Eyebrow: Security and control
-- Heading: **Controls that exist today, and the ones we are building.**
-- Intro: "Available today" lists only what ships in the current release. Everything else is labeled "In development".
+- Heading: **Your school sets the boundary.**
+- Home accordion (each item shows its own real capture: LLM Preference on a local model server, a course workspace's Members tab, Workspace Chats, Event Logs, Privacy & Data-Handling; bodies hold two lines at 1440):
+  1. **Runs in an offline lab.** "Pair it with a local model runtime and stage the built-in models. Chat, embeddings and search then run offline." Link: Learn more about offline use (`/security#outbound`).
+  2. **Staff and student roles.** "Instructors get the manager role, which opens every workspace. Students see only the ones they are added to." Link: Learn more about access (`/security#controls-access`). The manager role is server-wide, not scoped to one course, and the body says so.
+  3. **Chat history for review.** "Admins and managers can read every workspace chat, see who sent it, and export it as CSV, JSON or JSONL." Link: Learn more about oversight (`/security#controls-oversight`).
+  4. **Admin event log.** "Sign-ins, failed sign-ins, and changes to users, API keys, invites, workspaces and documents, in one log for admins." Link: Learn more about oversight (`/security#controls-oversight`).
+  5. **Telemetry off switch.** "Set `DISABLE_TELEMETRY="true"` before the first start and no usage events are sent. Or turn it off in Settings." Link: Learn more about telemetry (`/security#outbound`). "Before the first start" stays: the server sends a `server_boot` event at start unless telemetry is disabled.
+- Loopback-only binding (`-p 127.0.0.1:3001:3001`) is not on the home page; it is step 8 of Security > Hardening.
+- Facts (v1 lists):
 - **Available today**
   - **Your data is stored on your server.** Documents, embeddings, chat history and accounts live in the storage volume you mount.
   - **Local models only, if you choose.** No cloud provider is required for chat, embeddings or search.
@@ -206,7 +222,7 @@ REGISTRY/mission-llm:latest
   - **HTTPS and password rules.** Built-in TLS with your certificate, and configurable password complexity.
   - **Your network boundary.** One port, published only where you choose.
 - **In development**
-  - Single sign-on with OIDC and SAML, SCIM provisioning, and smart card (PIV and CAC) sign-in.
+  - Single sign-on with OIDC and SAML, SCIM provisioning, and smart card sign-in.
   - Multi-factor authentication and sessions that can be revoked.
   - Workspace-level roles, custom roles and groups.
   - A complete, tamper-evident audit trail with forwarding to your SIEM.
@@ -217,6 +233,20 @@ REGISTRY/mission-llm:latest
   - Retention rules, legal hold and scoped eDiscovery export.
 - Link: Read the security overview (`/security`)
 
+### Steps
+Anchor: `#steps`. The illustrations (`public/images/steps/*.svg`) do not change.
+- Heading: **Ready for class in four steps.**
+1. **Install on your server.** One container serves the app and API on port 3001, with all course files and chats in one storage folder.
+2. **Connect a local model.** Point it at Ollama, LM Studio or another runtime on your campus network. Cloud providers work too.
+3. **Add the syllabus and readings.** Create a workspace for each course and drop in its files. Mission LLM indexes them on your server.
+4. **Invite your students.** Turn on multi-user mode, invite students, and add each one to the workspaces for their courses.
+
+### Resources
+Anchor: `#resources`. Heading: **Resources**. Three cards, each one link, with isometric line illustrations (`public/images/resources/*.svg`) on the light card tone.
+- **Security overview** (`/security`): "See where student questions go and which controls ship today." / "A plain-language data flow, every outbound connection and how to avoid it, and eight steps to harden an install."
+- **Install guide** (`/download`): "Install it on one lab workstation or a whole campus cluster." / "Build the image from source, then run it with Docker, Docker Compose, Kubernetes, Helm or OpenShift."
+- **Editions** (`/editions`): "Start free with the full application, for one class or a whole school." / "Community is the full application, free to self-host. Enterprise is planned to add support, deployment help and governance features."
+
 ### Open source foundation
 - Eyebrow: Foundation
 - Heading: **Built on AnythingLLM, run for organizations.**
@@ -226,11 +256,12 @@ REGISTRY/mission-llm:latest
   - A documented list of the outbound connections the server can make.
   - Deployment templates that pull only the image you build and host.
 - **What it is building:** the governance work listed under "In development" above.
+- Home lead: "Mission LLM is built on the open-source AnythingLLM project (MIT License) and adds an in-place upgrade, a documented list of outbound connections and deployment templates that pull only your image."
 - Credit line: "Mission LLM is built on the open-source AnythingLLM project (MIT License)."
 
 ### Final CTA
-- Heading: **Stand it up on your own hardware.**
-- Body: Start with one container and a local model. Add users, workspaces and documents when you are ready.
+- Heading: **Bring it to your next course.**
+- Body: Start with one container, a local model and one course. Add students, workspaces and readings when you are ready.
 - Primary action: Download (`/download`)
 - Secondary action: Compare editions (`/editions`)
 
@@ -239,19 +270,19 @@ REGISTRY/mission-llm:latest
 ## Download (`/download`)
 
 Meta title: "Download Mission LLM | Install options"
-Meta description: "Install Mission LLM with Docker, Docker Compose, Kubernetes, Helm or OpenShift. System requirements and commands."
+Meta description: "Build Mission LLM from source, then run it with Docker, Docker Compose, Kubernetes, Helm or OpenShift. System requirements and commands."
 
 ### Hero
 - Eyebrow: Download
 - Heading: **Install Mission LLM on your own infrastructure.**
-- Body: Mission LLM runs as a container. Pick the method that fits your environment. The commands below come from the project's deployment documentation.
+- Body: Mission LLM runs as a container on a lab workstation, a school server or a cluster. Pick the method that fits your environment. The commands below come from the project's deployment documentation.
 - Status callout: "Public release images are not published yet. Build the image from source today, push it to your own registry, and replace REGISTRY in the commands below."
 
 ### Platforms
 Directly under the hero, four equal cards (Download buttons across the site lead here):
-- **Server:** "Docker, build from source". "A workstation, a server in your rack, or Kubernetes, Helm and OpenShift." Label: Available today. Action: Get started (`#p-source`, the Build from source tab).
+- **Server:** "Docker, build from source". "A lab workstation, a server in your rack, or Kubernetes, Helm and OpenShift." Label: Available today. Action: Get started (`#p-source`, the Build from source tab).
 - **Windows**, **macOS**, **Linux:** "Desktop app". Label: Coming soon. No links.
-- Footnote: "Until the desktop apps ship, build and run Mission LLM in Docker on your workstation. Checksums and signatures will be published with the first release." (link: `#p-source`)
+- Footnote: "Until the desktop apps ship, build and run Mission LLM in Docker on your own computer. Checksums and signatures will be published with the first release." (link: `#p-source`)
 
 ### System requirements
 | Item | Requirement |
@@ -413,19 +444,22 @@ oc set env deployment/missionllm \
 - AWS CloudFormation: one EC2 instance running the container.
 - Google Cloud Deployment Manager: one Compute Engine VM.
 - DigitalOcean Terraform: one Droplet.
-- Hugging Face Spaces: a Dockerfile for evaluation in a Space.
 
 Note: Each template pulls the image you name and serves HTTP on port 3001 without TLS. Add TLS and a password before you expose it.
+
+#### For evaluation
+A Hugging Face Spaces Dockerfile runs the image you name in a Space. Keep the Space private until you set a password or turn on multi-user mode.
 
 #### Without containers
 Running directly on Node.js 18 or later with Yarn 1.x is documented for reference only and is not a supported deployment method.
 
 ### After you install
-1. Open http://localhost:3001, or your server's address on port 3001.
+Step titles on the site: Open the app, Choose a model, Set up access, Turn off telemetry, Add course documents. Each step has an isometric line illustration (step 2 reuses the home steps art; step 3 is the home Users panel with its labels drawn as ink bars).
+1. In a browser, open http://localhost:3001 or your server's address on port 3001.
 2. In onboarding, choose your model provider. Documents are embedded with the built-in embedder and stored in the built-in LanceDB store by default. You can change both in Settings.
-3. Choose "Just me" to set a password, or "My team" to turn on multi-user mode, before anyone else can reach the server.
-4. Confirm `DISABLE_TELEMETRY="true"` is set in the server environment.
-5. Create a workspace and add your documents.
+3. Choose "Just me" to set a password, or "My team" to turn on multi-user mode for a class, before anyone else can reach the server.
+4. Confirm `DISABLE_TELEMETRY` is set to `"true"` in the server environment.
+5. Create a workspace for each course and add its syllabus and readings.
 
 ---
 
@@ -437,7 +471,7 @@ Meta description: "Where your data goes in Mission LLM, the controls available t
 ### Hero
 - Eyebrow: Security
 - Heading: **Security and deployment overview.**
-- Body: Mission LLM runs inside your boundary. This page covers where data goes, which controls ship today, which are in development, and how to harden an install.
+- Body: Mission LLM runs inside your school's or organization's boundary. This page covers where data goes, including student questions and course files, which controls ship today, which are in development, and how to harden an install.
 - Callout: "Mission LLM does not hold any government certification or authorization today. Because it runs on your infrastructure, you assess it as part of your own system."
 
 ### Data flow in plain language
@@ -467,7 +501,6 @@ The Privacy and Data page in Settings shows how each configured provider handles
 | Hugging Face | First local audio transcription | A Whisper model download | Stage the model under `storage/models` |
 | OCR language data | First OCR of an image or scanned PDF | A language data download by the OCR library | Stage the data under `storage/models/tesseract` |
 | Community Hub (hub.external.anythingllm.com) | Only when an admin browses or imports items | Browse and import requests | Do not open the Community Hub pages |
-| Onboarding survey (onboarding.anythingllm.com) | Only if someone fills it in and submits it, from their browser | The email, use case and comment entered | Leave the survey blank |
 
 Footnote: "An offline mode switch that turns all of these off at once is in development."
 
@@ -475,14 +508,14 @@ Footnote: "An offline mode switch that turns all of these off at once is in deve
 
 #### Access
 - **Authentication:** a single password, or multi-user mode with individual accounts. You choose during onboarding.
-- **Roles:** admin, manager and default. Default users chat only in the workspaces they are assigned to.
+- **Roles:** admin, manager and default. Admins and managers can open every workspace on the server; default users chat only in the workspaces they are assigned to.
 - **Account controls:** invitations, suspension and per-user daily message limits.
 - **Password complexity:** minimum and maximum length and required character types, set with `PASSWORDMINCHAR`, `PASSWORDREQUIREMENTS` and related variables.
 - **Simple SSO passthrough:** sign users in with temporary tokens issued through your own identity bridge (`SIMPLE_SSO_ENABLED`).
 
 #### Oversight
 - **Admin event log:** sign-ins, failed sign-ins, attempts on suspended accounts, changes to users, invites and API keys, workspace and document changes, and chat exports.
-- **Chat history export:** CSV, JSON or JSONL.
+- **Chat history review and export:** admins and managers can read workspace chats with the user who sent each one, and export them as CSV, JSON or JSONL.
 - **Hide chat history** from the interface: `DISABLE_VIEW_CHAT_HISTORY`.
 - **Workspace deletion protection:** `WORKSPACE_DELETION_PROTECTION`.
 
@@ -494,6 +527,7 @@ Footnote: "An offline mode switch that turns all of these off at once is in deve
 #### Integrations
 - **Developer API:** admin-issued API keys, OpenAPI documentation at `/api/docs`, and OpenAI-compatible endpoints.
 - **Agent tools:** admins turn each agent skill and MCP server on or off.
+- **Chat widget:** admins can embed a workspace chat on web pages from the domains they allow, with per-day and per-session chat limits. Visitors chat without signing in.
 
 ### Hardening an install today
 1. Set `DISABLE_TELEMETRY="true"` before the first start.
@@ -503,18 +537,19 @@ Footnote: "An offline mode switch that turns all of these off at once is in deve
 5. Set password complexity rules.
 6. Keep provider keys and secrets out of shared configuration. In Kubernetes, use Secrets.
 7. Mount storage on a volume that your backup and encryption controls already cover.
+8. To accept connections from the host machine only, bind the published port to loopback in Docker: `-p 127.0.0.1:3001:3001`.
 
 ### In development
-Intro: "These items are not in the current release. They move to 'Available today' only when they ship. Dates are not published."
+Intro: "These items are not in the current release. They move to “Controls available today” only when they ship. Dates are not published." (“Controls available today” links to `#controls`.)
 
 #### Identity and access
 - Single sign-on with OIDC and SAML 2.0, with group-to-role mapping.
 - SCIM provisioning and deprovisioning.
-- Smart card (PIV and CAC) sign-in.
+- Smart card sign-in.
 - Multi-factor authentication (TOTP) and revocable sessions with idle timeout.
 - Permission-based roles, workspace-level roles and groups.
 - Sign-in protection and a lockout policy.
-- A system use notice at sign-in and a configurable classification banner.
+- A system use notice and a configurable banner at sign-in.
 
 #### Audit and oversight
 - An attributable, tamper-evident audit trail with syslog, webhook and file forwarding.
@@ -544,33 +579,41 @@ Intro: "These items are not in the current release. They move to 'Available toda
 #### Accessibility
 - A Section 508 and WCAG 2.2 AA conformance pass.
 
+### What we do not claim
+- **Government certification or authorization:** None held today.
+- **Assessment:** Mission LLM runs on your infrastructure, so you assess it as part of your own system.
+- **Student privacy compliance:** None claimed. Mission LLM runs on your school's own hardware, so you review it against your own student privacy obligations.
+
 ### Reporting a vulnerability
-Body: Report suspected vulnerabilities privately to the Mission LLM maintainers at `mailto:security@example.com` <!-- TODO: real security contact -->. Please do not open a public issue.
+Body: Report suspected vulnerabilities privately through GitHub private vulnerability reporting on the Mission LLM repository. The report stays private until a fix is released. Please do not open a public issue.
 
 ---
 
 ## Editions (`/editions`)
 
 Meta title: "Editions | Mission LLM"
-Meta description: "Mission LLM Community is free to self-host. Mission LLM Enterprise adds support, deployment help and planned governance features."
+Meta description: "Mission LLM Community is free to self-host for any class, school or team. Mission LLM Enterprise adds planned support, deployment help and governance features."
 
 ### Hero
 - Eyebrow: Editions
-- Heading: **Start free. Add governance and support when you need them.**
-- Body: Mission LLM Community is the full application you can run today. Mission LLM Enterprise is for organizations that need support, help deploying on their networks, and the governance features on our roadmap. Pricing is not published yet.
+- Heading: **Free for every class and team.**
+- Body: Mission LLM Community is the full application, free to self-host for one course, a department or a whole school. Mission LLM Enterprise is for schools and organizations that need support, help deploying on their networks, and the governance features on our roadmap. Pricing is not published yet.
+- Illustration (from 1024): an isometric lecture hall linked to a local server (`public/images/scenes/lecture-hall.svg`), decorative.
 
 ### Community
 - Label: Community
 - Price line: Free to self-host
-- Summary: Everything Mission LLM does today, on your infrastructure.
+- Summary: Everything Mission LLM does today, on hardware you control.
 - Includes:
   - Workspaces, threads and document retrieval with sources.
   - 38 model providers, 10 vector databases and 14 embedding engines.
   - Agents, custom skills, MCP servers and the agent flow builder.
   - Multi-user mode with admin, manager and default roles.
+  - Chat history review and export for admins and managers.
+  - An embeddable chat widget for any workspace.
   - Event log, API keys and the developer API.
   - Docker, Compose, Kubernetes, Helm and OpenShift deployment.
-- Support: Self-supported. Documentation and an issue tracker will be published with the first release. <!-- TODO: links -->
+- Support: Self-supported. Report problems in the GitHub repository's issues (link: https://github.com/jordan-pesavento/mission-llm/issues). Full documentation will be published with the first release. <!-- TODO: docs link -->
 - Action: Download (`/download`)
 
 ### Enterprise
@@ -599,6 +642,8 @@ Meta description: "Mission LLM Community is free to self-host. Mission LLM Enter
 | Document retrieval with sources | Included | Included |
 | Agents, skills, MCP and flows | Included | Included |
 | Multi-user roles and event log | Included | Included |
+| Chat history review and export | Included | Included |
+| Embeddable chat widget | Included | Included |
 | Developer API and API keys | Included | Included |
 | Support | Self-supported | By agreement |
 | Deployment assistance | Not included | Included |
@@ -609,11 +654,14 @@ Meta description: "Mission LLM Community is free to self-host. Mission LLM Enter
 | Retention and legal hold | Not included | In development |
 
 ### Questions
-- **Is Community free?** Yes. You can self-host it at no cost.
-- **Do I need an internet connection?** No. Use a local model runtime and stage the built-in models in advance. The Security page lists every outbound connection.
-- **Where is my data stored?** In the storage volume you mount on your own server.
-- **Can I move from AnythingLLM?** Yes. Mission LLM upgrades an existing AnythingLLM install in place, including its database and settings.
-- **When will the Enterprise features ship?** Dates are not published. A feature moves to "Available today" only when it ships.
+Questions are worded without a standalone "I" (Clash Display draws capital I and lowercase l as one glyph).
+- **Is Community free?** Yes. You can self-host it at no cost, for one class or a whole school.
+- **Do students see each other's chats?** No. In multi-user mode, each person's chats and threads in a workspace are their own. Admins and managers can read chat history in every workspace on the server, and `DISABLE_VIEW_CHAT_HISTORY` hides it from the interface.
+- **Does it need an internet connection?** No. Use a local model runtime and stage the built-in models in advance. The Security page lists every outbound connection.
+- **Where is my data stored?** In the storage volume you mount on your own server: course files, chat history and, with the built-in vector store, embeddings.
+- **Can a course assistant go on a class web page?** Yes. Admins can turn a workspace into a chat widget for web pages on the domains they allow, with limits on chats per day and per session. Visitors chat without signing in, so use it with course material you are happy to share.
+- **Can we move from AnythingLLM?** Yes. Mission LLM upgrades an existing AnythingLLM install in place, including its database and settings.
+- **When will the Enterprise features ship?** Dates are not published. A feature moves to “Controls available today” on the Security page only when it ships. (Link: `/security#controls`.)
 
 ---
 
@@ -624,6 +672,7 @@ Meta description: "Mission LLM Community is free to self-host. Mission LLM Enter
 - Heading: **Page not found.**
 - Body: The page you asked for does not exist or has moved.
 - Links: Home (`/`), Download (`/download`), Security overview (`/security`)
+- Illustration above the code: a course binder with a missing page (`public/images/scenes/not-found.svg`), decorative.
 
 ---
 
@@ -651,7 +700,7 @@ All paths are relative to `D:/OB Vault/mission-llm` unless marked otherwise.
 | Outbound: Whisper model from Hugging Face | `collector/utils/WhisperProviders/localWhisper.js:4` |
 | Outbound: OCR language data | `collector/utils/OCRLoader/index.js:24-28, 111-121` (cachePath under storage/models/tesseract). `collector/package.json:49` (tesseract.js ^6). The download on first use is the library's default behavior (inferred, not traced in repo code) |
 | Outbound: Community Hub only when browsed | `server/models/communityHub.js:8-11`. `server/endpoints/communityHub.js:54`. `README.md:119` |
-| Outbound: onboarding survey, from the browser, only if filled in | `frontend/src/utils/constants.js:2`. `frontend/src/pages/OnboardingFlow/Steps/Survey/index.jsx:15-40, 55-79` |
+| No onboarding survey connection: the survey step only records locally that it was completed (not listed under outbound connections) | JP/local-stack `0b4edb75`: `ONBOARDING_SURVEY_URL` removed from `frontend/src/utils/constants.js`; `frontend/src/pages/OnboardingFlow/Steps/Survey/index.jsx:9-16` (`sendQuestionnaire` writes localStorage only) |
 | Pre-stage models for air-gapped use | `README.md:122`. `server/storage/models/README.md` |
 | No offline switch yet (roadmap) | `scratchpad/branding-run/verified-top.json` item 3 verdict |
 | Docker run commands (Linux/macOS, Windows) | `docker/HOW_TO_USE_DOCKER.md:54-85` (image name swapped for the REGISTRY placeholder) |
@@ -667,7 +716,7 @@ All paths are relative to `D:/OB Vault/mission-llm` unless marked otherwise.
 | Kubernetes manifest with image placeholder and EBS volume | `cloud-deployments/k8/manifest.yaml:13-51, 104-106, 183, 210` |
 | Helm chart: no default image, ConfigMap vs Secrets, install command, Helm 3 | `cloud-deployments/helm/charts/missionllm/README.md:9-82`. `.../values.yaml:8-12, 44-46, 121, 147-149`. `.../templates/` (configmap, ingress, httproute, pvc). `.../Chart.yaml` (apiVersion v2) |
 | OpenShift image for restricted SCCs; community-maintained; commands | `cloud-deployments/openshift/README.md` (notice, key differences, build and `oc` commands) |
-| Cloud templates: AWS, GCP, DigitalOcean, HF Spaces; image placeholder; HTTP only | `cloud-deployments/aws/cloudformation/DEPLOY.md:1-5`. `.../cloudformation_create_missionllm.json:92-94`. `cloud-deployments/gcp/deployment/DEPLOY.md:1-12`. `cloud-deployments/digitalocean/terraform/DEPLOY.md:1-8`. `.../user_data.tp1:16-18`. `cloud-deployments/huggingface-spaces/Dockerfile:1-6` |
+| Cloud templates: AWS, GCP, DigitalOcean (three, `COUNTS.cloudTemplates`); image placeholder; HTTP only. HF Spaces listed separately, for evaluation (keep the Space private until a password is set: Dockerfile header) | `cloud-deployments/aws/cloudformation/DEPLOY.md:1-5`. `.../cloudformation_create_missionllm.json:92-94`. `cloud-deployments/gcp/deployment/DEPLOY.md:1-12`. `cloud-deployments/digitalocean/terraform/DEPLOY.md:1-8`. `.../user_data.tp1:16-18`. `cloud-deployments/huggingface-spaces/Dockerfile:1-6` |
 | Bare metal is reference only; Node 18+, Yarn 1.x | `BARE_METAL.md:3-16` |
 | Supported file types | `collector/utils/constants.js:45-86` |
 | OCR for scanned PDFs and images; local transcription is the default | `collector/processSingleFile/convert/asPDF/index.js:24-33`. `collector/processSingleFile/convert/asImage.js`. `collector/processSingleFile/convert/asAudio.js:15-31` |
@@ -705,5 +754,13 @@ All paths are relative to `D:/OB Vault/mission-llm` unless marked otherwise.
 | Upstream credit, MIT License | `LICENSE`. `NOTICE`. `README.md:168-174` |
 | Vulnerability reporting stays private | `SECURITY.md` ("Reporting a Vulnerability") |
 | In-development items | `scratchpad/branding-run/roadmap.json` (quick_wins, core, big_bets, new_products). `scratchpad/branding-run/verified-top.json` |
+| Admins and managers review workspace chat history with the sender, and export it (education pass) | `server/endpoints/system.js:1178-1235` (`/system/workspace-chats` and `/system/export-chats`, admin and manager; `whereWithData` includes the user). `frontend/src/main.jsx:313` (ManagerRoute for GeneralChats) |
+| Each person's chats and threads in a workspace are their own, in multi-user mode only | `server/endpoints/workspaces.js:430` (`forWorkspaceByUser` when multi-user, `forWorkspace` otherwise). `server/endpoints/workspaceThreads.js:66-75` (threads filtered by `user_id`) |
+| The manager role is server-wide, not scoped to one course | `server/models/workspace.js:298-300` (`getWithUser` returns every workspace for admins and managers). `/system/workspace-chats` has no workspace filter (`server/endpoints/system.js:1178-1200`). Per-workspace roles are "In development" |
+| `DISABLE_VIEW_CHAT_HISTORY` hides chat history from the interface, not from the developer API | `chatHistoryViewable` on `/system/workspace-chats` and `/system/export-chats` (`server/endpoints/system.js:1180, 1224`). `/v1/admin/workspace-chats` (`server/endpoints/api/admin/index.js:679-680`) checks only the API key |
+| Embeddable chat widget: admin-only, allowed domains, per-day and per-session limits; visitors do not sign in | `server/prisma/schema.prisma:235-254` (`embed_configs`: `allowlist_domains`, `max_chats_per_day`, `max_chats_per_session`). `server/endpoints/embedManagement.js:18-75` (admin role). `server/endpoints/embed/index.js:19-21` (embed chat checks the embed config, not a user session). `frontend/public/embed/missionllm-chat-widget.min.js` |
+| Telemetry sends a boot event unless disabled before start | `server/utils/database/index.js:104` (`server_boot` sent at start unless `DISABLE_TELEMETRY` is "true") |
+| Invites carry workspaces (students are added to their course workspaces) | `server/models/invite.js:10-16` (`workspaceIds`) |
+| "Just me" and "My team" are the onboarding labels | `frontend/src/locales/en/common.js:16-17` |
 
 Spec: `C:/Users/jorda/AppData/Local/Temp/claude/D--OB-Vault/3521ce5e-2448-4950-b754-ab35fb4b4f80/scratchpad/site/SITE-SPEC.md`. Screenshots checked: `.../scratchpad/concept/dir-c/shots/default/1920x1080.png`, `.../dir-c/shots/cite/1920x1080-state_cite.png`, `.../dir-a/shots/empty/1920x1080-state_empty.png`, `.../dir-b/shots/default/1920x1080.png`.

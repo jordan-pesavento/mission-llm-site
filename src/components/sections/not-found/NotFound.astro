@@ -4,7 +4,10 @@
  * Copy: src/content/copy.md > 404 (display code, heading, body, links verbatim).
  * Visual system: the reference's final CTA composition on the hero's mist wash. Centered: the code
  * as the eyebrow line, a 60/63 H1, an 18/28 line, and the three links as 44px, radius-8 buttons in
- * one row (Home is the primary action). The block fills most of the first screen so the footer
+ * one row (Home is the primary action). Above the code, centered, a small isometric line
+ * illustration in the steps style (public/images/scenes/not-found.svg: a course binder with a
+ * missing page), decorative, 24px above the "404" line, 200px from 640 and 160px below. It is
+ * above the fold, so it loads eagerly. The block fills most of the first screen so the footer
  * does not float mid-page (width-based on purpose: a height-based minimum grows with full-page
  * captures).
  */
@@ -16,6 +19,7 @@ import { DOWNLOAD_HREF } from "../../../data/site";
 
 <Section pad="cta" wash labelledby="not-found-title" class="nf-section">
   <div class="nf" data-reveal>
+    <img class="nf__art" src="/images/scenes/not-found.svg" width="250" height="250" alt="" decoding="async" />
     <SectionIntro level={1} align="center" eyebrow="404" title="Page not found." id="not-found-title" />
     <p class="lead nf__lead">The page you asked for does not exist or has moved.</p>
     <nav class="nf__nav" aria-label="Suggested pages" data-row="nf-actions">
@@ -37,6 +41,20 @@ import { DOWNLOAD_HREF } from "../../../data/site";
   @media (min-width: 1024px) {
     .nf {
       min-height: min(28rem, 34vw);
+    }
+  }
+  .nf__art {
+    display: block;
+    width: 160px;
+    height: auto;
+    aspect-ratio: 1;
+    /* The binder is centred in its square (about 38/250 empty below it), so 12px reads as the
+       intended gap to the 404 code. */
+    margin-bottom: var(--space-3);
+  }
+  @media (min-width: 640px) {
+    .nf__art {
+      width: 200px;
     }
   }
   .nf__lead {

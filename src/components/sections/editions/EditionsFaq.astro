@@ -3,6 +3,12 @@
  * Editions > Questions (copy.md, verbatim except two questions reworded without a standalone "I":
  * Clash Display draws capital I and lowercase l as one glyph, so "Do I" reads "Do l"). Package C.
  * The last section before the dark footer.
+ * Honesty (mission-llm evidence): chats and threads are per user only in multi-user mode
+ * (server/endpoints/workspaces.js:430, workspaceThreads.js:66-75); admins and managers can read chat
+ * history in every workspace (system.js:1178-1235); DISABLE_VIEW_CHAT_HISTORY blocks the app's
+ * history pages and export but not the developer API, so the answer says "hides it from the
+ * interface"; embeddings sit in the storage volume only with the built-in vector store; widget
+ * visitors chat without signing in.
  * Every answer is visible (no accordion, nothing depends on JS), but the rows read like the
  * reference's accordion: Clash Display 400 18/24 questions on mist-300 hairlines, 16/24 answers.
  * Heading rail (../download/_Rail.astro): from 1024 the title sits in the left column
@@ -12,19 +18,30 @@ import Section from "../../ui/Section.astro";
 import Rail from "../download/_Rail.astro";
 
 const faqs: { q: string; a?: string; html?: string }[] = [
-  { q: "Is Community free?", a: "Yes. You can self-host it at no cost." },
+  { q: "Is Community free?", a: "Yes. You can self-host it at no cost, for one class or a whole school." },
+  {
+    q: "Do students see each other's chats?",
+    html: "No. In multi-user mode, each person's chats and threads in a workspace are their own. Admins and managers can read chat history in every workspace on the server, and <code>DISABLE_VIEW_CHAT_HISTORY</code> hides it from the interface.",
+  },
   {
     q: "Does it need an internet connection?",
     html: 'No. Use a local model runtime and stage the built-in models in advance. The <a href="/security">Security page</a> lists every outbound connection.',
   },
-  { q: "Where is my data stored?", a: "In the storage volume you mount on your own server." },
+  {
+    q: "Where is my data stored?",
+    a: "In the storage volume you mount on your own server: course files, chat history and, with the built-in vector store, embeddings.",
+  },
+  {
+    q: "Can a course assistant go on a class web page?",
+    a: "Yes. Admins can turn a workspace into a chat widget for web pages on the domains they allow, with limits on chats per day and per session. Visitors chat without signing in, so use it with course material you are happy to share.",
+  },
   {
     q: "Can we move from AnythingLLM?",
     a: "Yes. Mission LLM upgrades an existing AnythingLLM install in place, including its database and settings.",
   },
   {
     q: "When will the Enterprise features ship?",
-    a: "Dates are not published. A feature moves to “Available today” only when it ships.",
+    html: 'Dates are not published. A feature moves to “<a href="/security#controls">Controls available today</a>” on the Security page only when it ships.',
   },
 ];
 ---
