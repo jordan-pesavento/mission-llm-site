@@ -125,10 +125,18 @@ const RUNS_WITH = ["Ollama", "LM Studio", "LocalAI", "KoboldCPP", "Docker", "Kub
     .hero__inner {
       grid-template-rows: 1fr auto;
     }
+    /* The text column's floor is its own min-content, which includes the actions row kept on one line
+       (owner rule: a row of buttons never wraps). So at any width AND height the scene yields to the
+       buttons, never the other way round: when space is short the scene's column narrows and the drawing
+       scales down inside its box (the svg keeps its aspect). A fixed 20rem floor let a tall window's
+       44vw scene squeeze the text column below the buttons (seen at 1444x1030). */
     .hero__grid {
-      grid-template-columns: minmax(20rem, 1fr) auto;
+      grid-template-columns: 1fr auto;
       align-items: center;
       column-gap: clamp(2rem, 0.5rem + 2.5vw, 5rem);
+    }
+    .hero__actions {
+      flex-wrap: nowrap;
     }
     .hero__text {
       grid-column: 1;
@@ -155,16 +163,9 @@ const RUNS_WITH = ["Ollama", "LM Studio", "LocalAI", "KoboldCPP", "Docker", "Kub
       max-width: 100%;
     }
   }
-  /* Small laptops (1024 to 1279): the three actions must stay on ONE row (owner rule: a row of buttons
-     never wraps). The text column is what the scene leaves, so here the scene's width cap drops from 44vw
-     to 35vw and the buttons tighten their inline padding; from 1280 the normal sizes return. */
+  /* Small laptops (1024 to 1279): the three buttons tighten their inline padding together (same size
+     as each other), so the one-row actions take less of the width and the scene keeps more of it. */
   @media (min-width: 1024px) and (max-width: 1279.98px) {
-    .hero__scene {
-      height: clamp(320px, min(calc(var(--view-h) - 13rem), 35vw), 1000px);
-    }
-    .hero__actions {
-      flex-wrap: nowrap;
-    }
     .hero__actions :global(.btn) {
       padding-inline: 16px;
     }
