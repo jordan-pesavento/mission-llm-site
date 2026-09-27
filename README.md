@@ -1,6 +1,6 @@
 # Mission LLM website
 
-Standalone public product site for Mission LLM (home, download, security, editions, contact, 404). It is not part of the Mission LLM application and shares no code with it. Static Astro output, no UI framework, minimal vanilla JS, plus one Vercel Function for the contact form (`api/contact.js`, see [Contact form](#contact-form)).
+Standalone public product site for Mission LLM (home, the five "What it's for" pages under `/for/<id>`, download, security, editions, contact, 404). It is not part of the Mission LLM application and shares no code with it. Static Astro output, no UI framework, minimal vanilla JS, plus one Vercel Function for the contact form (`api/contact.js`, see [Contact form](#contact-form)).
 
 Positioning (owner, 2026-09-26): Mission LLM is a private, offline, in-house AI system that schools and teams run on their own hardware. Every page leads with the system, then its uses: classrooms, students, teaching a course, training instructors (agentic coding taught on a local model) and teams and labs. The copy rules and the evidence for every claim live in `src/content/copy.md`; `npm run check:copy` enforces them.
 
@@ -40,6 +40,8 @@ The site is a one-to-one layout match of anythingllm.com (reference captures and
 - `src/layouts/Base.astro`: head, fonts, icons, skip link, header, footer, reveal script.
 - `src/components/Header.astro` and `Footer.astro`: the reference's header (full-height dark Download block, mobile menu panel) and footer (four columns, fine print, full-width wordmark).
 - `src/components/ui/`: `Container`, `Section` (pads: hero, stats, feature, band, band-sm, section, cta), `DarkBand`, `SectionIntro`, `Eyebrow`, `Button` (primary, secondary, quiet), `ArrowLink` (strong, underline), `Screenshot` (radius 16, always shown whole), `FeatureAccordion` (accordion that swaps the screenshot), `Badge`, `CodeBlock` (scrolls from 640, wraps with a hanging indent on phones, copies the exact source), `Icon` (regular, bold or fill). Each file's header comment is its API.
+- `src/pages/for/[use].astro` and `src/data/uses.ts`: the five use pages (classrooms, students, courses, instructors, teams), one template, content in `uses.ts`. The nav menu, phone sheet, footer and home accordion link to them.
+- `src/components/ui/StatusMark.astro`: the one status mark (green check, red X, amber in development, blue planned, slate self-supported), used by the Editions table and cards and by `Badge`. Pages have no sticky rails or sticky table headers.
 - `src/components/sections/home/`: one component per home section, in the reference order (see `src/pages/index.astro`). `Works` stands in for the reference's partner-logo strip: plain-type names of the local runtimes and deployment targets it works with, never logos. From 1024 the two feature sections and the grounded band are 800px tall (`.section--h800`), as the reference's.
 - `src/data/site.ts`: nav, footer, verified counts, placeholders, page meta. `src/content/copy.md`: the site copy (v1 plus the v2 education pass) and the evidence table, with a path in the Mission LLM repo for every claim.
 - `public/images/product/*.png`: real captures of the app at 2880 x 1680 (shown at the reference widths: `hero` 867, the others 714). `scripts/image-sources.mjs` lists them; `npm run images` makes the AVIF and WebP variants and removes variants no longer listed. The PNGs never ship. No placeholder frames: every listed image is shown on a page.
@@ -52,7 +54,7 @@ Every image slot that is not a product screenshot is a hand-authored isometric l
 | Files | Slot |
 | --- | --- |
 | `public/images/steps/install.svg`, `model.svg`, `documents.svg`, `team.svg` | Home steps 1 to 4 (the style source; keep them byte-identical). `model.svg` is reused on /download |
-| `public/images/resources/security-overview.svg`, `install-guide.svg`, `editions.svg` | Home Resources cards (light tone), inlined at build by `Resources.astro` |
+| `public/images/resources/security-overview.svg`, `install-guide.svg`, `editions.svg` | Home Resources cards, inlined at build by `Resources.astro`; `security-overview.svg` is also the /security hero drawing from 1024 |
 | `public/images/scenes/lecture-hall.svg` | /editions hero, right column from 1024 (hidden below); also the art on the share card |
 | `public/images/scenes/not-found.svg` | 404, above the code |
 | `public/images/install/open-app.svg`, `access.svg`, `telemetry-off.svg`, `course-documents.svg` | /download "After you install" steps 1, 3, 4 and 5 (`access.svg` is the `team.svg` Users panel with its words drawn as ink bars and a padlock in the header, since the labels are illegible at 160 to 200px) |
