@@ -12,9 +12,10 @@
  *   1024 to 1440 and 40px at 1920+, so the logo keeps its clear space of half the mark height above and
  *   below), then from 1024 the "Who it's for" menu,
  *   Security, Editions, Contact and Download; below 1024 the lockup, Download and the menu
- *   button. Links, the menu trigger, Download and the menu button are all 44px and centered on the logo.
- *   The Download button is a big, solid accent-blue button on every skin, the most prominent control in
- *   the bar; it shows at every width, including phones (HERO-REVISION.md, F1).
+ *   button. The nav links, the menu trigger and the menu button are all 44px and centered on the logo.
+ *   The Download button matches AnythingLLM's: a big, flat, accent-blue block welded to the top-right
+ *   corner, the full nav height with square corners, wide padding and a plain "Download" label (no icon),
+ *   the most prominent control in the bar; it shows at every width (HERO-REVISION.md, F1).
  * - ONE constant color: the bar is a single solid near-white band (mist-50) at every scroll position and
  *   over every section (owner rule: the nav must not change color from section to section). It has a
  *   permanent bottom hairline and the constant nav shadow, so it stands apart over the dark navy hero
@@ -96,8 +97,8 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
       }
     </nav>
 
-    <a class="btn btn--nav nav__cta" href={DOWNLOAD_HREF} aria-current={current(DOWNLOAD_HREF)}>
-      <Icon set="line" name="download" size={18} />Download
+    <a class="btn nav__cta" href={DOWNLOAD_HREF} aria-current={current(DOWNLOAD_HREF)}>
+      Download
     </a>
     <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="sheet" aria-label="Open menu" data-sheet-toggle>
       <Icon set="line" name="menu" size={22} class="i-open" />
@@ -280,28 +281,23 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
   .nav[data-sheet-open] .nav__cta {
     visibility: hidden;
   }
-  /* The Download control: the single most prominent control in the bar (HERO-REVISION.md, F1). A big,
-     confident, solid ACCENT-BLUE button (--cta-* above), sized to the nav control height (44px, btn--nav)
-     with generous horizontal padding (24px, 26px from 1024), weight 600, the download glyph plus the word
-     "Download", the control radius and a subtle raised finish (a 1px top inset highlight and a soft
-     accent-tinted shadow). Its fill stays the same on every skin; only the surrounding skin tone
-     cross-fades. It never changes size or shape with scroll, and it is never navy or translucent. */
+  /* The Download control, matched to AnythingLLM's header Download button: a big, flat, solid block that
+     fills the FULL nav height, welded to the top-right corner, with square corners (no radius), wide side
+     padding and a plain "Download" label (no icon). Ours keeps the accent blue (--cta-*) so it pops on the
+     light bar without reading as the navy hero color (AnythingLLM's is near-black on their light nav - the
+     same dark-on-light contrast). Flat: no shadow, no raised finish. It never changes size or shape with
+     scroll. */
   .nav__cta {
-    gap: 8px;
-    padding-inline: 24px;
-    font-weight: var(--fw-semibold);
+    align-self: stretch;
+    min-height: var(--nav-h);
+    padding-inline: clamp(22px, 2.2vw, 40px);
+    border-radius: 0;
+    font-size: 16px;
+    font-weight: var(--fw-medium);
     background: var(--cta-bg);
     color: var(--cta-fg);
-    box-shadow: var(--cta-shadow);
-    transition:
-      background-color var(--t-fast) var(--ease),
-      color var(--t-tone) var(--ease),
-      box-shadow var(--t-tone) var(--ease),
-      transform var(--t-fast) var(--ease);
-  }
-  .nav__cta :global(svg) {
-    width: 18px;
-    height: 18px;
+    box-shadow: none;
+    transition: background-color var(--t-fast) var(--ease);
   }
   @media (hover: hover) {
     .nav__cta:hover {
@@ -325,14 +321,12 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
       align-items: center;
       gap: clamp(0rem, -0.5rem + 1vw, 0.75rem);
     }
-    /* Desktop Download: the single primary control at the nav's control height (44px, btn--nav), the
-       same height as the nav links and the menu trigger (owner rule: adjacent controls identical in
-       size). A big, solid accent-blue button with generous padding, clearly the most prominent control in
-       the bar; its surface sits on the opaque bar and pops against the navy hero below it (F1). It never
-       changes size or shape with scroll; only the surrounding skin tone cross-fades. */
+    /* Desktop Download: welded to the top-right corner of the bar, spanning the full nav height with
+       square corners and wide padding, exactly like AnythingLLM's header Download button. It is the last
+       item in the row, so it sits flush to the wrap's right edge (a gutter from the window edge). */
     .nav__cta {
-      margin-left: clamp(0.5rem, -0.75rem + 1.6vw, 1.25rem);
-      padding-inline: 26px;
+      margin-left: clamp(0.75rem, -0.5rem + 1.8vw, 1.5rem);
+      padding-inline: clamp(32px, 2.6vw, 50px);
     }
     :global(.js) .nav__toggle {
       display: none;
