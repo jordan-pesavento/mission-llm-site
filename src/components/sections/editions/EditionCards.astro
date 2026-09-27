@@ -12,11 +12,11 @@
  * items, six planned items, so both columns stay even). The two chat items are real today: admins
  * and managers read and export workspace chats (server/endpoints/system.js:1178-1235), and admins
  * embed a workspace as a chat widget (server/endpoints/embedManagement.js, frontend/public/embed).
- * Enterprise lists its planned features only under the <Badge /> "In development" label, in the
- * dashed, muted style used for every roadmap list on the site, followed by its fine print.
+ * Enterprise lists its planned features only under the <Badge /> "In development" label, each with the
+ * amber in-development mark (StatusMark), followed by its fine print.
  * Its service offerings (deployment assistance, support by agreement) are not confirmed yet
- * (copy.md: TODO confirm offering), so they sit under a "Planned" label in the same muted style
- * instead of carrying a check. The action is "Contact us", a secondary button to the contact form
+ * (copy.md: TODO confirm offering), so they sit under a "Planned" label with the blue planned mark
+ * instead of a check. The action is "Contact us", a secondary button to the contact form
  * (CONTACT_HREF, /contact). The price line says pricing is not published yet (copy.md has "Contact
  * us" there; the button already says it, so the line states the fact instead).
  */
@@ -24,7 +24,7 @@ import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 import Button from "../../ui/Button.astro";
 import Badge from "../../ui/Badge.astro";
-import Icon from "../../ui/Icon.astro";
+import StatusMark from "../../ui/StatusMark.astro";
 import { CONTACT_HREF, COUNTS, DOWNLOAD_HREF, PLACEHOLDER } from "../../../data/site";
 
 const communityIncludes = [
@@ -73,9 +73,7 @@ const enterprisePlanned = [
             {
               communityIncludes.map((text) => (
                 <li>
-                  <span class="includes__mark" aria-hidden="true">
-                    <Icon name="check" size={14} />
-                  </span>
+                  <StatusMark kind="yes" label={false} size="sm" class="includes__mark" />
                   <span>{text}</span>
                 </li>
               ))
@@ -114,9 +112,7 @@ const enterprisePlanned = [
             {
               enterpriseIncludes.map((text) => (
                 <li>
-                  <span class="includes__mark" aria-hidden="true">
-                    <Icon name="check" size={14} />
-                  </span>
+                  <StatusMark kind="yes" label={false} size="sm" class="includes__mark" />
                   <span>{text}</span>
                 </li>
               ))
@@ -128,13 +124,13 @@ const enterprisePlanned = [
           <!-- TODO: confirm offering for "Deployment assistance" and "Support on terms set in your agreement". -->
           <h4 class="edition__group-title edition__group-title--planned">
             <span>Services</span>
-            <Badge>Planned</Badge>
+            <Badge kind="planned" />
           </h4>
           <ul class="planned" role="list">
             {
               enterpriseServices.map((text) => (
                 <li>
-                  <span class="planned__mark" aria-hidden="true" />
+                  <StatusMark kind="planned" label={false} size="sm" class="planned__mark" />
                   <span>{text}</span>
                 </li>
               ))
@@ -151,7 +147,7 @@ const enterprisePlanned = [
             {
               enterprisePlanned.map((text) => (
                 <li>
-                  <span class="planned__mark" aria-hidden="true" />
+                  <StatusMark kind="dev" label={false} size="sm" class="planned__mark" />
                   <span>{text}</span>
                 </li>
               ))
@@ -256,6 +252,21 @@ const enterprisePlanned = [
     line-height: var(--lh-body);
     color: var(--mist-700);
   }
+  .includes li :global(.includes__mark),
+  .planned li :global(.planned__mark) {
+    min-height: 0;
+    margin-top: 2px;
+  }
+  .planned li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+    break-inside: avoid;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--mist-700);
+  }
   .includes__mark {
     flex: none;
     display: inline-grid;
@@ -269,14 +280,6 @@ const enterprisePlanned = [
   }
   .planned li {
     color: var(--color-text-muted);
-  }
-  .planned__mark {
-    flex: none;
-    width: 14px;
-    height: 14px;
-    margin: 5px 3px 0;
-    border-radius: var(--radius-full);
-    border: 1.5px dashed var(--mist-500);
   }
   .edition__group--planned {
     border-top-style: dashed;

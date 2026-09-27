@@ -5,7 +5,7 @@
  * same quote style as the /editions FAQ. Roadmap wording stays education-first: plain "smart card
  * sign-in" and "a configurable banner", as on /editions.
  * Nothing here ships today, so every group carries the In development badge and the visual
- * language is the site's "not yet" set: dashed mist-400 rules, hollow bullets, muted text.
+ * language is the site's "not yet" set: dashed mist-400 rules, amber bullets, muted text.
  * Items stay at the capability level; the precise gaps behind them belong in the hardening guide.
  * Layout keeps the copy order and balances the uneven groups without boxes: from 640, the first four
  * groups share one grid (two columns, two rows, filled column by column: Identity and access, Audit
@@ -201,7 +201,7 @@ const GROUPS: { title: string; items: string[] }[] = [
   .idv-group__items li + li {
     margin-top: var(--space-2);
   }
-  /* Hollow bullet: not shipped yet (the Available-today lists use solid rules and dots). */
+  /* An amber bullet: not shipped yet, the color of the In development mark (StatusMark) on the badge. */
   .idv-group__items li::before {
     content: "";
     position: absolute;
@@ -210,6 +210,6 @@ const GROUPS: { title: string; items: string[] }[] = [
     width: 9px;
     height: 9px;
     border-radius: var(--radius-full);
-    box-shadow: inset 0 0 0 1.5px var(--mist-500);
+    background: var(--status-dev);
   }
 </style>

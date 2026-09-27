@@ -2,21 +2,24 @@
 /*
  * Badge: a status label. Honesty rule: anything on the roadmap sits under an "In development" label,
  * never mixed into current features; unconfirmed Enterprise services under "Planned" (slot text).
- * - kind "dev": "In development" (dashed ring, muted). Default.
+ * - kind "dev": "In development" with the amber wrench mark (StatusMark). Default.
+ * - kind "planned": "Planned" with the blue clock mark.
  * - kind "soon": "Coming soon" (dashed ring, muted).
- * - kind "today": "Available today" (solid ring, a small accent rhombus).
+ * - kind "today": "Available today" with the green check mark.
  * - kind "pending": "Published with first release" (dashed ring).
  * The slot overrides the default text. 15px 500 label on one line, 30px tall, 8px radius.
  * Usage: <Badge /> , <Badge kind="today" /> , <Badge kind="soon" />
  */
 interface Props {
-  kind?: "dev" | "soon" | "today" | "pending";
+  kind?: "dev" | "planned" | "soon" | "today" | "pending";
   class?: string;
   [key: string]: unknown;
 }
+import StatusMark from "./StatusMark.astro";
 const { kind = "dev", class: className, ...rest } = Astro.props;
 const TEXT = {
   dev: "In development",
+  planned: "Planned",
   soon: "Coming soon",
   today: "Available today",
   pending: "Published with first release",
@@ -25,7 +28,9 @@ const hasSlot = Astro.slots.has("default");
 ---
 
 <span class:list={["badge", `badge--${kind}`, className]} {...rest}>
-  {kind === "today" && <span class="badge__dot" aria-hidden="true" />}
+  {kind === "today" && <StatusMark kind="yes" label={false} size="sm" />}
+  {kind === "dev" && <StatusMark kind="dev" label={false} size="sm" />}
+  {kind === "planned" && <StatusMark kind="planned" label={false} size="sm" />}
   {hasSlot ? <slot /> : TEXT[kind]}
 </span>
 
@@ -47,6 +52,11 @@ const hasSlot = Astro.slots.has("default");
     box-shadow: inset 0 0 0 1px var(--color-line-strong);
   }
   .badge--dev,
+  .badge--planned,
+  .badge--today {
+    padding-left: 5px;
+    color: var(--color-heading);
+  }
   .badge--soon,
   .badge--pending {
     box-shadow: none;

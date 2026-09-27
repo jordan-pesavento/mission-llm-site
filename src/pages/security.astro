@@ -1,21 +1,13 @@
 ---
 /*
- * Security. Owned by package C.
- * A dark hero, then light and dark sections that alternate (HERO-REVISION.md whole-page rule).
- * Section ids (the contents list and other pages link to them): #data-flow, #outbound, #controls
- * (#controls-access, -oversight, -transport, -integrations), #hardening, #in-development,
- * #not-claimed, #report.
- *
- * "On this page" (F3): the table of contents lives here at the page level, not inside the hero, so it can
- * stay sticky under the fixed nav for the WHOLE page as the reader scrolls, and never scroll away or get
- * covered. From 1024 it is a sticky card inside .sec-toc-layer, an absolutely positioned, full-page-height
- * layer (its containing block is main.sec-page); the sticky card therefore sticks across every section,
- * not just the hero. The content sections stay full-bleed (their tone bands still span edge to edge) and
- * reserve room on the right so the card never overlaps them. Below 1024 the layer is a normal block that
- * follows the hero text, and there is no reserve.
+ * Security. A dark hero, then light and dark sections that alternate (HERO-REVISION.md whole-page rule).
+ * Section ids (other pages link to them): #data-flow, #outbound, #controls (#controls-access,
+ * -oversight, -transport, -integrations), #hardening, #in-development, #not-claimed, #report.
+ * No "On this page" rail or sticky table of contents (owner, 2026-09-27: it overlapped the sections).
+ * Every section uses the full content width on the one site gutter, so the page reads as one column
+ * structure with even padding.
  */
 import Base from "../layouts/Base.astro";
-import Icon from "../components/ui/Icon.astro";
 import { PAGES } from "../data/site";
 import SecurityHero from "../components/sections/security/SecurityHero.astro";
 import DataFlow from "../components/sections/security/DataFlow.astro";
@@ -25,40 +17,10 @@ import Hardening from "../components/sections/security/Hardening.astro";
 import InDevelopment from "../components/sections/security/InDevelopment.astro";
 import NotClaimed from "../components/sections/security/NotClaimed.astro";
 import ReportVulnerability from "../components/sections/security/ReportVulnerability.astro";
-
-// Section ids are set by each section component on this page. Labels are the section headings.
-const TOC = [
-  { id: "data-flow", label: "Data flow in plain language" },
-  { id: "outbound", label: "Other outbound connections" },
-  { id: "controls", label: "Controls available today" },
-  { id: "hardening", label: "Hardening an install today" },
-  { id: "in-development", label: "In development" },
-  { id: "not-claimed", label: "What we do not claim" },
-  { id: "report", label: "Reporting a vulnerability" },
-];
 ---
 
-<Base title={PAGES.security.title} description={PAGES.security.description} mainClass="sec-page">
+<Base title={PAGES.security.title} description={PAGES.security.description}>
   <SecurityHero />
-
-  <div class="sec-toc-layer">
-    <nav class="sec-toc" aria-labelledby="sec-toc-title">
-      <p class="label sec-toc__title" id="sec-toc-title">On this page</p>
-      <ol class="sec-toc__list" role="list">
-        {
-          TOC.map((item) => (
-            <li>
-              <a class="sec-toc__link" href={`#${item.id}`}>
-                <span class="sec-toc__text">{item.label}</span>
-                <Icon set="line" name="arrow-down" size={18} class="sec-toc__icon" />
-              </a>
-            </li>
-          ))
-        }
-      </ol>
-    </nav>
-  </div>
-
   <DataFlow />
   <OutboundConnections />
   <ControlsToday />
@@ -67,140 +29,3 @@ const TOC = [
   <NotClaimed />
   <ReportVulnerability />
 </Base>
-
-<style>
-  /* ---------- "On this page": sticky for the whole page (F3) ---------- */
-  /* The width of the sticky card and the room reserved for it on the right of the content. */
-  :global(main.sec-page) {
-    position: relative;
-    --toc-w: 16rem;
-  }
-
-  /* The sticky-TOC reserve narrows the content column, so the Hardening steps keep two columns (their
-     inline code does not wrap) until the reserved content is wide enough for four. */
-  @media (min-width: 1280px) and (max-width: 1919.98px) {
-    :global(main.sec-page .hd) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  /* Below 1280 the layer flows inline right after the hero, on the SAME navy tone as the hero (so there
-     is no light-on-light seam with the light DataFlow section below): hero and TOC read as one dark
-     region, then a clean dark-to-light edge at DataFlow. The list is the accordion row style. */
-  .sec-toc-layer {
-    width: auto;
-    background: var(--navy-950);
-  }
-  .sec-toc {
-    display: block;
-    width: var(--wrap);
-    margin-inline: auto;
-    padding-bottom: var(--pad-y);
-  }
-  .sec-toc__title {
-    padding-bottom: var(--space-2);
-    border-bottom: 1px solid var(--band-line);
-    color: var(--band-text-muted);
-  }
-  .sec-toc__list {
-    display: block;
-  }
-  .sec-toc__link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-    min-height: 52px;
-    padding-block: 14px;
-    border-bottom: 1px solid var(--band-line);
-    font-family: var(--font-display);
-    font-size: var(--fs-h4);
-    line-height: var(--lh-h4);
-    font-weight: var(--fw-regular);
-    color: var(--band-heading);
-    text-decoration: none;
-  }
-  .sec-toc__link:hover .sec-toc__text {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 5px;
-  }
-  .sec-toc__link :global(.sec-toc__icon) {
-    flex: none;
-    color: var(--accent-on-dark);
-    transition: transform var(--t-fast) var(--ease);
-  }
-  .sec-toc__link:hover :global(.sec-toc__icon) {
-    transform: translateY(2px);
-  }
-  .sec-toc__link:focus-visible {
-    outline-offset: 4px;
-  }
-
-  /* From 1280 the TOC is a sticky overlay card and the content reserves room for it. Below 1280 (narrow
-     laptops and phones) there is not enough width to reserve a rail without squeezing the data-flow
-     diagram and the code steps, so the TOC flows inline after the hero instead (still usable). */
-  @media (min-width: 1280px) {
-    /* The layer spans the whole page height (its containing block is main.sec-page) and matches the
-       content wrap, centered. It does not take layout space or block clicks; only the card inside does. */
-    .sec-toc-layer {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: var(--wrap);
-      background: transparent;
-      pointer-events: none;
-      z-index: 4;
-    }
-    /* The card sticks under the fixed nav for the whole page. It has its own surface, so it is readable
-       over every section tone (dark hero and dark bands, and light bands). It sits at the right of the
-       wrap; the content reserves that width so the card never covers it. */
-    .sec-toc {
-      position: sticky;
-      top: calc(var(--nav-h) + var(--space-5));
-      margin-top: 0;
-      margin-left: auto;
-      margin-right: 0;
-      width: var(--toc-w);
-      max-height: calc(100svh - var(--nav-h) - 2 * var(--space-5));
-      padding: var(--space-4) var(--space-5) var(--space-2);
-      overflow: auto;
-      overscroll-behavior: contain;
-      background: var(--color-surface);
-      border: 1px solid var(--color-line);
-      border-radius: var(--r-card);
-      box-shadow: var(--shadow-card);
-      pointer-events: auto;
-    }
-    /* The card is on its own light surface, so reset the text, borders and accent from the dark-band
-       (inline) styles back to the light-tone tokens. */
-    .sec-toc__title {
-      color: var(--color-text-quiet);
-      border-bottom-color: var(--color-line);
-    }
-    .sec-toc__link {
-      min-height: 0;
-      padding-block: 11px;
-      font-family: var(--font-sans);
-      font-size: var(--fs-body);
-      line-height: var(--lh-body);
-      font-weight: var(--fw-medium);
-      color: var(--color-heading);
-      border-bottom-color: var(--color-line);
-    }
-    .sec-toc__link :global(.sec-toc__icon) {
-      color: var(--color-accent);
-    }
-    .sec-toc__list li:last-child .sec-toc__link {
-      border-bottom: 0;
-    }
-
-    /* Reserve room on the right of every section's content for the sticky card, so full-bleed tone bands
-       still span the viewport but their content never runs under the card. */
-    :global(main.sec-page .wrap) {
-      padding-right: calc(var(--toc-w) + var(--col-gap));
-    }
-  }
-</style>

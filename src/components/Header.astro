@@ -43,6 +43,8 @@ import { NAV, AUDIENCE_MENU, AUDIENCES, SHEET_MORE, MENU_FOOT, DOWNLOAD_HREF, CO
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 const isCurrent = (href: string) => !href.includes("#") && href !== "/" && path === href.replace(/\/$/, "");
 const current = (href: string) => (isCurrent(href) ? "page" : undefined);
+// On a "What it's for" page (/for/<id>) the menu trigger shows as the current section.
+const onUsePage = path.startsWith("/for/");
 ---
 
 <header class="nav" data-nav>
@@ -54,7 +56,7 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
     <nav class="nav__links" aria-label="Primary" data-links>
       <div class="menu-wrap" data-menu-wrap>
         <a class="nav__link nav__menu-link" href={AUDIENCE_MENU.href}>{AUDIENCE_MENU.label}</a>
-        <button class="nav__link nav__menu-btn" type="button" aria-expanded="false" aria-controls="aud-menu" data-menu-trigger>
+        <button class="nav__link nav__menu-btn" type="button" aria-expanded="false" aria-controls="aud-menu" data-menu-trigger data-current={onUsePage ? "true" : undefined}>
           {AUDIENCE_MENU.label}<Icon set="line" name="caret" size={16} />
         </button>
         <div class="menu" id="aud-menu" data-menu hidden>
@@ -62,7 +64,7 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
             {
               AUDIENCES.map((a) => (
                 <li>
-                  <a class="menu__item" href={a.href}>
+                  <a class="menu__item" href={a.href} aria-current={current(a.href)}>
                     <span class="menu__thumb">
                       <img src={a.thumb} width="100" height="75" alt="" loading="lazy" decoding="async" />
                     </span>
@@ -112,7 +114,7 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
       {
         AUDIENCES.map((a) => (
           <li>
-            <a class="menu__item" href={a.href}>
+            <a class="menu__item" href={a.href} aria-current={current(a.href)}>
               <span class="menu__thumb">
                 <img src={a.thumb} width="100" height="75" alt="" loading="lazy" decoding="async" />
               </span>
@@ -358,6 +360,7 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
     transform: rotate(180deg);
   }
   .nav__link[aria-current="page"],
+  .nav__link[data-current="true"],
   .nav__link[aria-expanded="true"] {
     color: var(--nav-fg-strong);
   }

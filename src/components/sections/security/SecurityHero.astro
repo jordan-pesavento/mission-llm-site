@@ -4,11 +4,12 @@
  * no-certification callout. Package C.
  * The page's top section, so it is DARK (HERO-REVISION.md: each inner page's hero-equivalent top
  * section is navy, and the sections alternate below it).
- * The page's "On this page" table of contents lives in the page (security.astro), not in this hero, so
- * it can stay sticky under the nav for the WHOLE page rather than only while the hero is in view (F3).
+ * From 1024 the text sits beside the security-overview drawing (the same 7fr | 5fr hero grid as
+ * /editions), inlined with <Art> so it recolors to the dark tone; below 1024 the hero is text only.
  */
 import Section from "../../ui/Section.astro";
 import Icon from "../../ui/Icon.astro";
+import Art from "../../ui/Art.astro";
 import { PAGES } from "../../../data/site";
 
 const updated = PAGES.security.lastUpdated;
@@ -21,6 +22,7 @@ const updatedLabel = new Date(`${updated}T00:00:00Z`).toLocaleDateString("en-US"
 ---
 
 <Section tone="dark" pad="hero" labelledby="security-title" class="sec-hero">
+  <div class="sec-hero__grid">
   <div class="sec-hero__main" data-reveal>
     <p class="eyebrow">Security</p>
     <h1 id="security-title" class="h1-page sec-hero__title">Security and deployment overview.</h1>
@@ -38,11 +40,36 @@ const updatedLabel = new Date(`${updated}T00:00:00Z`).toLocaleDateString("en-US"
       </p>
     </div>
   </div>
+  <div class="sec-hero__art" data-reveal="2">
+    <Art src="images/resources/security-overview.svg" draw />
+  </div>
+  </div>
 </Section>
 
 <style>
+  .sec-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+  }
   .sec-hero__main {
     min-width: 0;
+  }
+  .sec-hero__art {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .sec-hero__grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      column-gap: var(--split-gap);
+    }
+    .sec-hero__art {
+      display: block;
+      min-width: 0;
+      width: 100%;
+      max-width: 520px;
+      margin-inline: auto;
+    }
   }
   .sec-hero__lead {
     max-width: var(--measure);

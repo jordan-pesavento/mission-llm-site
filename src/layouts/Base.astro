@@ -35,8 +35,7 @@ interface Props {
   // download, contact) keep the default DARK footer; pages that close on a DARK section (home's Final
   // CTA, the 404) pass footerTone="light" so the seam is a clean dark-to-light edge, not two darks.
   footerTone?: "light" | "dark";
-  // An optional class on <main>, so a page can make its content the positioning context (the security
-  // page uses this for its whole-page sticky "On this page" table of contents; F3).
+  // An optional class on <main>, so a page can make its content the positioning context.
   mainClass?: string;
 }
 

@@ -1,0 +1,369 @@
+---
+/*
+ * "What it's for" pages: /for/classrooms, /for/students, /for/courses, /for/instructors, /for/teams.
+ * One page per use (owner, 2026-09-27: the menu items should be their own pages, not jumps to one
+ * home section). Every page is the same template, so the five read as one set:
+ *   Hero DARK: eyebrow, H1, lead, Download and Talk to us, and the use's real app capture shown whole.
+ *   How it works LIGHT: three numbered steps in equal cards.
+ *   Available today DARK: six capabilities in equal cards (3, 2, then 1 across).
+ *   Good to know LIGHT: the plain facts to know before relying on it, beside its heading (Rail).
+ *   More uses LIGHT (hairline above): the other four pages as equal cards.
+ *   Footer DARK (the page closes on a light band).
+ * One column structure, one gutter, no side rails or sticky page chrome. Content: src/data/uses.ts.
+ */
+import Base from "../../layouts/Base.astro";
+import Section from "../../components/ui/Section.astro";
+import SectionIntro from "../../components/ui/SectionIntro.astro";
+import Button from "../../components/ui/Button.astro";
+import ArrowLink from "../../components/ui/ArrowLink.astro";
+import Icon from "../../components/ui/Icon.astro";
+import Screenshot from "../../components/ui/Screenshot.astro";
+import Rail from "../../components/sections/download/_Rail.astro";
+import { USES, useHref, type Use } from "../../data/uses";
+import { AUDIENCES, CONTACT_HREF, DOWNLOAD_HREF } from "../../data/site";
+
+export function getStaticPaths() {
+  return USES.map((use) => ({ params: { use: use.id }, props: { use } }));
+}
+
+const { use } = Astro.props as { use: Use };
+const others = USES.filter((u) => u.id !== use.id).map((u) => ({
+  ...u,
+  desc: AUDIENCES.find((a) => a.id === u.id)?.desc ?? u.lead,
+  thumb: AUDIENCES.find((a) => a.id === u.id)?.thumb,
+}));
+---
+
+<Base title={use.meta.title} description={use.meta.description}>
+  <Section tone="dark" pad="hero" labelledby="use-title" class="use-hero">
+    <div class="use-hero__grid">
+      <div class="use-hero__text">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/#product">What it's for</a>
+          <Icon set="line" name="arrow" size={16} />
+          <span aria-current="page">{use.title}</span>
+        </nav>
+        <h1 id="use-title" class="h1-page use-hero__title">{use.heading}</h1>
+        <p class="lead use-hero__lead">{use.lead}</p>
+        <div class="actions use-hero__actions">
+          <Button href={DOWNLOAD_HREF}>Download</Button>
+          <Button href={CONTACT_HREF} variant="secondary">Talk to us</Button>
+        </div>
+      </div>
+      <Screenshot name={use.image.name} alt={use.image.alt} priority frame="55vw" class="use-hero__shot" />
+    </div>
+  </Section>
+
+  <Section labelledby="how-title">
+    <SectionIntro eyebrow={use.eyebrow} title="How it works" id="how-title" />
+    <ol class="use-steps" role="list">
+      {
+        use.steps.map((s, i) => (
+          <li class="use-step card">
+            <span class="num">{i + 1}</span>
+            <h3 class="h4 use-step__title">{s.title}</h3>
+            <p class="use-step__body">{s.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section tone="dark" labelledby="today-title">
+    <SectionIntro eyebrow="Available today" title="What it gives you" id="today-title" />
+    <ul class="use-feats" role="list">
+      {
+        use.features.map((f) => (
+          <li class="use-feat card">
+            <span class="use-feat__icon">
+              <Icon name={f.icon} size={24} />
+            </span>
+            <h3 class="h4 use-feat__title">{f.title}</h3>
+            <p class="use-feat__body">{f.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <Section labelledby="know-title">
+    <Rail title="Good to know" id="know-title">
+      <ul class="use-notes" role="list">
+        {
+          use.notes.map((n) => (
+            <li class="use-note">
+              <Icon name="info" size={22} />
+              <span>{n}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="use-more"><ArrowLink href={use.more.href}>{use.more.label}</ArrowLink></p>
+    </Rail>
+  </Section>
+
+  <Section rule labelledby="others-title">
+    <SectionIntro eyebrow="What it's for" title="More ways to use it" id="others-title" />
+    <ul class="use-others" role="list">
+      {
+        others.map((o) => (
+          <li class="use-other card">
+            <span class="use-other__thumb">
+              <img src={o.thumb} width="100" height="75" alt="" loading="lazy" decoding="async" />
+            </span>
+            <h3 class="h4 use-other__title">
+              <a class="use-other__link" href={useHref(o.id)}>
+                {o.title}
+              </a>
+            </h3>
+            <p class="use-other__body">{o.desc}</p>
+            <span class="use-other__go" aria-hidden="true">
+              <Icon set="line" name="arrow" size={18} />
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+</Base>
+
+<style>
+  /* ---------- Hero: text beside the capture from 1024, stacked below ---------- */
+  .use-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: clamp(2rem, 1rem + 3vw, 3.5rem);
+    align-items: center;
+  }
+  .use-hero__text {
+    min-width: 0;
+    max-width: 40rem;
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--fs-eyebrow);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-quiet);
+  }
+  .crumbs a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .crumbs span {
+    color: var(--color-text-muted);
+  }
+  .use-hero__title {
+    margin-top: var(--gap-eyebrow);
+  }
+  .use-hero__lead {
+    margin-top: var(--space-6);
+    color: var(--color-text-muted);
+  }
+  .use-hero__actions {
+    margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
+  }
+  @media (max-width: 479.98px) {
+    .use-hero__actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 1024px) {
+    .use-hero__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      column-gap: var(--split-gap);
+    }
+  }
+
+  /* ---------- Shared card rhythm: every card on these pages uses the same padding and gaps ---------- */
+  /* Cards in one row share their row tracks (subgrid): the marks, titles and text line up across the
+     row even when one title wraps. Without subgrid the flex column below still works. */
+  @supports (grid-template-rows: subgrid) {
+    /* The card's own gap overrides the outer row gap between its three tracks, so cards sit
+       --col-gap apart and their parts --space-3 apart, as in the flex version. */
+    .use-step,
+    .use-feat {
+      display: grid;
+      grid-row: span 3;
+      grid-template-rows: subgrid;
+      row-gap: var(--space-3);
+    }
+  }
+  .use-step,
+  .use-feat,
+  .use-other {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: clamp(1.25rem, 0.8rem + 1.2vw, 2rem);
+  }
+
+  /* ---------- How it works: 3 across from 1024, 1 column below ---------- */
+  .use-steps {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--col-gap);
+  }
+  .use-step .num {
+    margin-bottom: var(--space-2);
+  }
+  .use-step__body,
+  .use-feat__body,
+  .use-other__body {
+    color: var(--color-text-muted);
+  }
+  @media (min-width: 1024px) {
+    .use-steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* ---------- Available today: 3, 2, then 1 across ---------- */
+  .use-feats {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--col-gap);
+  }
+  .use-feat__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--space-2);
+    border-radius: var(--r-control);
+    color: var(--color-accent);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+  }
+  @media (min-width: 640px) {
+    .use-feats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .use-feats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* ---------- Good to know ---------- */
+  .use-notes {
+    display: grid;
+    border-top: 1px solid var(--color-line);
+  }
+  .use-note {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--color-line);
+    font-size: var(--fs-lead, 1.125rem);
+    color: var(--color-text);
+  }
+  .use-note :global(svg) {
+    margin-top: 0.2em;
+    color: var(--color-accent);
+  }
+  .use-more {
+    margin-top: var(--space-8);
+  }
+
+  /* ---------- More ways to use it: 4, 2, then 1 across ---------- */
+  .use-others {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--col-gap);
+  }
+  .use-other {
+    position: relative;
+    transition: box-shadow var(--t-fast) var(--ease);
+  }
+  .use-other__thumb {
+    display: block;
+    width: 100px;
+    height: 75px;
+    margin-bottom: var(--space-2);
+  }
+  .use-other__thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .use-other__link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .use-other__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--r-card);
+  }
+  .use-other__link:focus-visible {
+    outline: none;
+  }
+  .use-other__link:focus-visible::after {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+  .use-other__go {
+    margin-top: auto;
+    padding-top: var(--space-2);
+    color: var(--color-heading);
+  }
+  .use-other__go :global(svg) {
+    transition: transform var(--t-fast) var(--ease);
+  }
+  @media (hover: hover) {
+    .use-other:hover {
+      box-shadow: 0 0 0 1px var(--color-line-strong), var(--shadow-card);
+    }
+    .use-other:hover .use-other__go :global(svg) {
+      transform: translateX(3px);
+    }
+    .use-other:hover .use-other__link {
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.2em;
+    }
+  }
+  /* Phones: each card is a row (thumbnail, then the text), so the list stays short. */
+  @media (max-width: 639.98px) {
+    .use-other {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) auto;
+      column-gap: var(--space-4);
+      row-gap: var(--space-1);
+      align-items: center;
+    }
+    .use-other__thumb {
+      grid-row: 1 / span 2;
+      width: 72px;
+      height: 54px;
+      margin: 0;
+    }
+    .use-other__go {
+      grid-column: 3;
+      grid-row: 1 / span 2;
+      margin: 0;
+      padding: 0;
+    }
+  }
+  @media (min-width: 640px) {
+    .use-others {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1280px) {
+    .use-others {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

@@ -9,8 +9,9 @@
  * step as on the home steps row. H2 48/48 (SectionIntro size="lg"), 56 to 96px, then one column per
  * step with a 1px mist-300 left rule and a 25px inset: the number (Jakarta 36/40, mist-500), a
  * Jakarta 600 20/28 title 32px below, the illustration 20px below that, and 16/24 text 20px below it.
- * Five columns from 1280 (never a lone last step), stacked below 1280: at 1024 five columns would
- * break the inline commands (http://localhost:3001, DISABLE_TELEMETRY="true") mid-token.
+ * Five columns from 1440 (never a lone last step); from 640 to 1439 one step per row with the drawing
+ * on the right; stacked on phones. Inline commands (http://localhost:3001, DISABLE_TELEMETRY="true")
+ * never break mid-token at any width.
  * Illustrations: isometric line art in the language of public/images/steps/*.svg. Step 2 reuses the
  * home steps art (model.svg); steps 1, 3, 4 and 5 are public/images/install/*.svg (access.svg is the
  * Users panel of team.svg with its labels drawn as ink bars, since the words are illegible at these sizes).
@@ -79,16 +80,15 @@ const STEPS = [
 </Section>
 
 <style>
+  /* Phones: one step per block, the drawing under the title. 640 to 1439: one step per ROW (number,
+     title and text on the left, the drawing on the right), so five steps never leave an orphan and no
+     inline command is squeezed. From 1440: five equal columns, titles on a two-line slot so the five
+     drawings start on one line, and every inline command fits its column without breaking. */
   .steps {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-10) 0;
     margin-top: var(--gap-h2-grid);
-  }
-  @media (min-width: 1280px) {
-    .steps {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
   }
   .step {
     min-width: 0;
@@ -100,7 +100,7 @@ const STEPS = [
   }
   .step__visual {
     display: block;
-    width: 250px;
+    width: 200px;
     max-width: 100%;
     height: auto;
     aspect-ratio: 1;
@@ -113,15 +113,41 @@ const STEPS = [
     line-height: var(--lh-body);
     color: var(--color-text-muted);
   }
-  /* In the narrow five-column layout a URL chip can be wider than its column; let it wrap there
-     (these are references in prose, not copy-paste command blocks, which stay in CodeBlock). */
-  @media (min-width: 1280px) {
-    .step__text :global(code) {
-      white-space: normal;
-      overflow-wrap: anywhere;
+  @media (min-width: 640px) and (max-width: 1439.98px) {
+    .steps {
+      gap: 0;
+      border-top: 1px solid var(--color-line);
+    }
+    .step {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) clamp(120px, 14vw, 170px);
+      grid-template-rows: auto 1fr;
+      column-gap: var(--space-6);
+      align-items: start;
+      padding: var(--space-6) 0;
+      border-left: 0;
+      border-bottom: 1px solid var(--color-line);
+    }
+    .step > .num {
+      grid-row: 1 / span 2;
+    }
+    .step__title {
+      margin-top: 4px;
+    }
+    .step__text {
+      margin-top: var(--space-2);
+    }
+    .step__visual {
+      grid-column: 3;
+      grid-row: 1 / span 2;
+      width: 100%;
+      margin: 0;
     }
   }
-  @media (min-width: 1280px) {
+  @media (min-width: 1440px) {
+    .steps {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
     .step__title {
       min-height: 3.5rem; /* 56: two title lines, so every illustration starts on one line */
     }

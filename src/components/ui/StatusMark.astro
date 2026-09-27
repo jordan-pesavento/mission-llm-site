@@ -1,0 +1,81 @@
+---
+/*
+ * StatusMark: one status as a filled disc with a white glyph, optionally followed by its label. Every
+ * status on the site uses it, so the meaning reads at a glance and never as an empty circle (owner,
+ * 2026-09-27: planned and in-development rows showed "just empty circles"):
+ *   yes      Included         green disc, check
+ *   no       Not included     red disc, X
+ *   dev      In development   amber disc, wrench
+ *   planned  Planned          blue disc, clock
+ *   self     Self-supported   slate disc, person
+ * The label is the text beside the mark (default: the kind's word); pass label={false} for the mark
+ * alone (decorative, aria-hidden) next to text that already says it.
+ * Usage: <StatusMark kind="no" />   <StatusMark kind="dev" label={false} />
+ */
+import Icon from "./Icon.astro";
+
+type Kind = "yes" | "no" | "dev" | "planned" | "self";
+interface Props {
+  kind: Kind;
+  label?: string | false;
+  size?: "sm" | "md";
+  class?: string;
+}
+const { kind, label, size = "md", class: className } = Astro.props;
+const WORD: Record<Kind, string> = {
+  yes: "Included",
+  no: "Not included",
+  dev: "In development",
+  planned: "Planned",
+  self: "Self-supported",
+};
+const GLYPH: Record<Kind, string> = { yes: "check", no: "x", dev: "wrench", planned: "clock", self: "user" };
+const text = label === false ? null : (label ?? WORD[kind]);
+const px = size === "sm" ? 12 : 13;
+---
+
+<span class:list={["status", `status--${kind}`, `status--${size}`, className]}>
+  <span class="status__disc" aria-hidden="true"><Icon name={GLYPH[kind]} size={px} weight="bold" /></span>
+  {text && <span class="status__text">{text}</span>}
+</span>
+
+<style>
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 28px;
+    white-space: nowrap;
+    font-weight: var(--fw-medium);
+    color: var(--color-heading);
+  }
+  .status__disc {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-full);
+    color: #ffffff;
+    background: var(--status-yes);
+  }
+  .status--sm .status__disc {
+    width: 20px;
+    height: 20px;
+  }
+  .status--no .status__disc {
+    background: var(--status-no);
+  }
+  .status--dev .status__disc {
+    background: var(--status-dev);
+  }
+  .status--planned .status__disc {
+    background: var(--status-planned);
+  }
+  .status--self .status__disc {
+    background: var(--status-self);
+  }
+  .status--no .status__text {
+    color: var(--color-text-muted);
+  }
+</style>

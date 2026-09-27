@@ -103,6 +103,9 @@ Anchor: `#product`. Positioning pass: the five uses of the one system, in the or
   5. `teams` **For teams and labs.** "Put policies, manuals and research in workspaces, decide who sees which, and get answers with the sources listed. Each workspace picks its own model." Link: Compare editions (`/editions`). Screenshot: `feature-models` (a workspace's Chat Settings with its own provider setting).
 - Previous items, kept for the record: For instructors / For students in a course / For independent learners / For school IT / For organizations (ids `instructors`, `students`, `learners`, `school-it`, `organizations`; the thumbnail files keep those names).
 
+### What it's for pages (`/for/<id>`)
+Added 2026-09-27 (owner: the menu items must be their own pages, not jumps into the home accordion). Five pages, one per use, rendered from `src/data/uses.ts` by `src/pages/for/[use].astro`: `/for/classrooms`, `/for/students`, `/for/courses`, `/for/instructors`, `/for/teams`. The header menu, the phone sheet, the footer's "What it's for" column and each home accordion item ("More about ...") link to them. Every page: dark hero (breadcrumb, H1, lead, Download and Talk to us, the use's real capture shown whole), "How it works" (three steps), "What it gives you" (six capabilities available today), "Good to know" (the limits to know before relying on it) and "More ways to use it" (the other four pages). The copy lives in `uses.ts` and follows the wording limits above; every capability is backed by an existing evidence row below (file types, connectors, modes, pinning, prompts, suggested messages, limits, roles, invites, chat review and export, retrieval settings, agents, MCP, custom skills, flows, the filesystem skill, the developer API, the embed widget, the event log, deployment methods).
+
 ### Product facts (v1 product tour)
 Facts behind the audience items. Not rendered as a tour on the site today.
 

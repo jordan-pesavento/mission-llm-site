@@ -9,7 +9,7 @@
  * and 25px inset, a 36px glyph, a title and one line of text.
  * - Server (Docker, build from source): available today; "Get started" opens the Build from source
  *   tab (#p-source), the one method that works before public images exist.
- * - Windows, macOS, Linux desktop apps: "Coming soon", no links (installers do not exist).
+ * - Windows, macOS, Linux desktop apps: "In development" (amber mark), no links (installers do not exist).
  * The status note says public images are not published yet (REGISTRY stays a TODO placeholder).
  * Columns: 4 from 1024, 2 from 640; phones stack them and the desktop apps drop their one-line blurb.
  */
@@ -53,7 +53,7 @@ const DESKTOP = [
           <Badge kind="today" />
         </div>
         <h3 class="h4 platform__name">Server</h3>
-        <p class="platform__meta">Docker, build from source</p>
+        <p class="platform__meta">Docker container</p>
         <p class="platform__text">A lab workstation, a server in your rack, or Kubernetes, Helm and OpenShift.</p>
         <div class="platform__foot">
           <Button href="#p-source" iconEnd="arrow-down">Get started</Button>
@@ -64,7 +64,7 @@ const DESKTOP = [
           <li class="platform platform--soon">
             <div class="platform__top">
               <Icon name={d.icon} size={36} class="platform__glyph" />
-              <Badge kind="soon" />
+              <Badge kind="dev" />
             </div>
             <h3 class="h4 platform__name">{d.name}</h3>
             <p class="platform__meta">Desktop app</p>
@@ -132,19 +132,18 @@ const DESKTOP = [
     padding: var(--space-3) var(--space-6) 0 25px;
     border-left: 1px solid var(--color-line);
   }
+  /* The glyph, then its status badge under it, the same way in every column at every width. */
   .platform__top {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2) var(--space-3);
-    min-height: 40px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
   }
   .platform__top :global(.platform__glyph) {
     color: var(--color-text-muted);
   }
   .platform__name {
-    margin-top: var(--space-8);
+    margin-top: var(--space-6);
   }
   .platform__meta {
     margin-top: var(--space-1);

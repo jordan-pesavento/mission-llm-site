@@ -3,10 +3,9 @@
  * "What it's for" (#product), a LIGHT section (redesign, DESIGN-SPEC 11). Product frames beside an
  * accordion: the five uses of the one in-house system (positioning pass, copy.md: Home > What it is
  * for): classrooms, students, teaching a course, training instructors, teams and labs. The hero sells
- * the system; this section shows what people run on it. The menu and the phone sheet link to #for-<id>
- * anchors at the top of the accordion block (anchors="for-"), so the landing shows the whole pair
- * under the nav and opens that item (FeatureAccordion + accordion.ts). The ids match AUDIENCES in
- * src/data/site.ts.
+ * the system; this section shows what people run on it. Each item links to its own page, /for/<id>
+ * (src/pages/for/[use].astro), which the menu, the phone sheet and the footer also link to. The ids
+ * match AUDIENCES in src/data/site.ts and USES in src/data/uses.ts.
  * Crops (DESIGN-SPEC section 7): each item shows its own real capture. All five main crops share the
  * 1.9 aspect and all five phone crops 4:3, so the frame box never changes height when the open item
  * changes. Honesty (copy.md evidence): answers list sources only when documents were retrieved;
@@ -26,7 +25,7 @@ const items: AccordionItem[] = [
     id: "classrooms",
     title: "For classrooms",
     body: "A course assistant for the whole class. It answers from the course's own readings and lists the sources under each answer.",
-    link: { href: "#grounded", label: "See how sources work" },
+    link: { href: "/for/classrooms", label: "More about classrooms" },
     image: {
       name: "feature-documents",
       alt: "A student's question about carrying capacity in a course workspace, answered from the readings, with each reading listed under the answer.",
@@ -38,7 +37,7 @@ const items: AccordionItem[] = [
     id: "students",
     title: "For students",
     body: "Study help drawn from the assigned material. Ask for an explanation, a summary or practice questions, and keep each topic in its own thread.",
-    link: { href: "/download", label: "Run it on your own computer" },
+    link: { href: "/for/students", label: "More about study help" },
     image: {
       name: "feature-workspaces",
       alt: "A learner's Spanish Practice workspace with one thread per topic, and two answers drawn from the learner's own grammar notes.",
@@ -50,7 +49,7 @@ const items: AccordionItem[] = [
     id: "courses",
     title: "For teaching a course",
     body: "Build a workspace for each course from the syllabus, readings and handouts, add your students, and see how they use it.",
-    link: { href: "#steps", label: "Set up a course in four steps" },
+    link: { href: "/for/courses", label: "More about teaching a course" },
     image: {
       name: "feature-users",
       alt: "The Users page as an instructor with the manager role sees it: the admin, the instructor and the student accounts, each with its role.",
@@ -62,7 +61,7 @@ const items: AccordionItem[] = [
     id: "instructors",
     title: "For training instructors",
     body: "Teach faculty modern AI workflows, agentic coding included, on a local model: agents, the skills you turn on and MCP servers, all running on your own hardware.",
-    link: { href: "/security#controls-integrations", label: "See the agent controls" },
+    link: { href: "/for/instructors", label: "More about instructor training" },
     image: {
       name: "feature-agents",
       alt: "The Agent Skills settings: skills an admin switches on or off, such as document creation, charts and a SQL connector, plus custom skills, agent flows and MCP servers.",
@@ -74,7 +73,7 @@ const items: AccordionItem[] = [
     id: "teams",
     title: "For teams and labs",
     body: "Put policies, manuals and research in workspaces, decide who sees which, and get answers with the sources listed. Each workspace picks its own model.",
-    link: { href: "/editions", label: "Compare editions" },
+    link: { href: "/for/teams", label: "More about teams and labs" },
     image: {
       name: "feature-models",
       alt: "The Chat Settings of a workspace: its own LLM provider setting and its chat mode.",
@@ -87,5 +86,5 @@ const items: AccordionItem[] = [
 
 <Section id="product" labelledby="product-title">
   <SectionIntro eyebrow="What it's for" title="One system for classrooms, students, courses, instructors and teams." id="product-title" />
-  <FeatureAccordion id="product-acc" label="What it's for" anchors="for-" items={items} frame="45vw" />
+  <FeatureAccordion id="product-acc" label="What it's for" items={items} frame="45vw" />
 </Section>

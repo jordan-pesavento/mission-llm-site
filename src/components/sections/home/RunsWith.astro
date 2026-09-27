@@ -99,6 +99,17 @@ const COPIES = 4;
       animation: none;
     }
   }
+  /* Phones: the label sits centered above a full-width marquee, so the moving names get the whole row. */
+  @media (max-width: 639.98px) {
+    .runs {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--space-3);
+      justify-items: center;
+    }
+    .runs__mask {
+      width: 100%;
+    }
+  }
   /* Short-and-wide screens: drop the band so the headline and scene still fit one screen. */
   @media (min-width: 1024px) and (max-height: 620px) {
     .runs {

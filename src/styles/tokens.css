@@ -11,7 +11,8 @@
  * Color: two darks only. navy-950 is every dark ground (bands, footer, the nav's dark skin, ink
  * buttons, headings on light); navy-700 is the one raised dark surface (code blocks, diagram nodes and
  * frames inside dark bands, ink button hover). One blue accent in two steps: #2B63E0 on light,
- * #5B95FF on dark. Green and red appear only as form states.
+ * #5B95FF on dark. Green and red appear only as form states and as status marks (StatusMark.astro:
+ * included, not included, in development, planned, self-supported).
  * The --color-* names are the semantic tokens; a section with data-tone="dark" remaps them, so every
  * primitive adapts with no per-section overrides. Never hardcode a color or size a token covers.
  *
@@ -71,6 +72,12 @@
   --color-danger-line: var(--red-200);
   --color-success: var(--green-700);
   --color-success-bg: var(--green-50);
+  /* Status marks (StatusMark.astro, Badge.astro): a filled 20 to 22px disc with a white glyph. */
+  --status-yes: var(--green-700);
+  --status-no: var(--red-600);
+  --status-dev: #b45309;
+  --status-planned: var(--blue-500);
+  --status-self: var(--mist-600);
   /* Lockup and mark fills (Lockup.astro, Mark.astro): ink is the mark and MISSION, acc the node and LLM. */
   --lk-ink: var(--navy-950);
   --lk-acc: var(--blue-500);
@@ -263,6 +270,11 @@
   --shadow-card: 0 0 0 1px rgb(204 212 229 / 0.1);
   --shadow-frame: 0 0 #0000; /* frames in dark bands: the ring only */
   --shadow-shot: var(--shadow-frame);
+  --status-yes: #2e9d5f;
+  --status-no: #e5484d;
+  --status-dev: #d97706;
+  --status-planned: #3f7ae8;
+  --status-self: #5e6d8d;
 }
 
 /* ======================================================================================
