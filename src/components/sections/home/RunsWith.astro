@@ -1,0 +1,104 @@
+---
+/*
+ * RunsWith: the "Runs with" band as a continuous marquee (owner, 2026-09-26: "this section should rotate
+ * like AnythingLLM's"). The same technique as anythingllm.com's logo strip, measured there: a full-bleed
+ * band; an overflow-hidden wrapper whose mask fades both edges (transparent, black at 8 percent, black at
+ * 92 percent, transparent); a width:max-content track holding FOUR identical copies of the group that
+ * translates -50 percent over 80s, linear, infinite, so the loop is seamless (each group carries the same
+ * trailing space as its item gap); it pauses on hover and does not move under prefers-reduced-motion.
+ * Copies two to four are aria-hidden, so assistive tech reads the list once: they are the loop, not a
+ * visible duplicate. Text runtimes only, never logos of other companies (copy rule). The label sits
+ * static on the left; the marquee fills the rest of the band.
+ * Usage: <RunsWith label="Runs with" items={RUNS_WITH} />
+ */
+interface Props {
+  label: string;
+  items: readonly string[];
+}
+const { label, items } = Astro.props;
+const COPIES = 4;
+---
+
+<div class="runs" aria-label={`${label} these local model runtimes and deployment targets`}>
+  <p class="runs__label">{label}</p>
+  <div class="runs__mask">
+    <div class="runs__track">
+      {
+        Array.from({ length: COPIES }, (_, copy) => (
+          <ul class="runs__group" role={copy === 0 ? "list" : undefined} aria-hidden={copy === 0 ? undefined : "true"}>
+            {items.map((name) => (
+              <li>{name}</li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Full-bleed band along the bottom of the hero: breaks out of the centered wrap to the window edges,
+     with the page gutter inside, a hairline above it spanning the full width. */
+  .runs {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: clamp(1.5rem, 1rem + 2vw, 4rem);
+    min-height: 60px;
+    margin-inline: calc(50% - 50vw);
+    padding-inline: var(--gutter);
+    padding-top: clamp(1.25rem, 0.75rem + 1.5svh, 2rem);
+    border-top: 1px solid var(--color-line);
+  }
+  .runs__label {
+    font-size: 1rem;
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-quiet);
+    white-space: nowrap;
+  }
+  .runs__mask {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  }
+  .runs__track {
+    display: flex;
+    width: max-content;
+    animation: runs-marquee 80s linear infinite;
+    will-change: transform;
+  }
+  .runs__mask:hover .runs__track {
+    animation-play-state: paused;
+  }
+  .runs__group {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: clamp(2.5rem, 1.5rem + 2vw, 4rem);
+    padding-right: clamp(2.5rem, 1.5rem + 2vw, 4rem);
+  }
+  .runs__group li {
+    display: flex;
+    align-items: center;
+    font: var(--fw-medium) clamp(1.125rem, 0.9rem + 0.45vw, 1.5rem) / 1.3 var(--font-display);
+    letter-spacing: -0.01em;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+  @keyframes runs-marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .runs__track {
+      animation: none;
+    }
+  }
+  /* Short-and-wide screens: drop the band so the headline and scene still fit one screen. */
+  @media (min-width: 1024px) and (max-height: 620px) {
+    .runs {
+      display: none;
+    }
+  }
+</style>

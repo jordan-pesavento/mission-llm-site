@@ -164,14 +164,17 @@
   --space-24: 6rem;
 
   /* ---------- Shape and depth ---------- */
-  --r-control: 10px; /* buttons, fields */
-  --r-frame: 12px; /* product frames, code blocks, notes */
-  --r-card: 16px; /* cards, the audience menu */
+  /* Flat, modern surfaces (owner, 2026-09-26: "our style looks old and not modern enough" next to
+     anythingllm.com, where controls and frames are flat with no shadows and 6 to 8px radii): tighter radii
+     and shadows reduced to a faint 1px ring plus a whisper of depth, never a layered drop shadow. */
+  --r-control: 8px; /* buttons, fields */
+  --r-frame: 10px; /* product frames, code blocks, notes */
+  --r-card: 12px; /* cards, the audience menu */
   --radius-full: 999px;
-  --shadow-card: 0 1px 2px rgb(7 15 38 / 0.05), 0 12px 32px -16px rgb(7 15 38 / 0.18);
-  --shadow-frame: 0 1px 2px rgb(7 15 38 / 0.06), 0 24px 56px -28px rgb(7 15 38 / 0.35);
-  --shadow-pop: 0 0 0 1px rgb(7 15 38 / 0.08), 0 30px 60px -30px rgb(7 15 38 / 0.4), 0 12px 24px -12px rgb(7 15 38 / 0.2);
-  --shadow-nav: 0 14px 32px -14px rgb(3 7 20 / 0.55), 0 2px 6px -1px rgb(3 7 20 / 0.24);
+  --shadow-card: 0 0 0 1px rgb(7 15 38 / 0.06), 0 1px 2px rgb(7 15 38 / 0.04);
+  --shadow-frame: 0 0 0 1px rgb(7 15 38 / 0.08), 0 1px 3px rgb(7 15 38 / 0.05);
+  --shadow-pop: 0 0 0 1px rgb(7 15 38 / 0.08), 0 8px 24px -12px rgb(7 15 38 / 0.18);
+  --shadow-nav: 0 1px 2px rgb(3 7 20 / 0.06);
 
   /* ---------- Motion (transform and opacity only; color on hover and the nav tone switch) ---------- */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
