@@ -202,14 +202,17 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
     pointer-events: none;
   }
 
+  /* Full-bleed bar (like AnythingLLM): the row spans the whole window width with a gutter on each side,
+     the logo hugging the left gutter. On desktop the right gutter is dropped so the Download block welds
+     into the top-right corner. */
   .nav__row {
     position: relative;
     display: flex;
     align-items: center;
     gap: 12px;
     height: var(--nav-h);
-    width: var(--wrap);
-    margin-inline: auto;
+    width: 100%;
+    padding-inline: var(--gutter);
   }
   /* The lockup is --lockup-h tall (half of --nav-h), so it keeps half its height clear above and
      below; the link adds no size of its own. */
@@ -311,9 +314,7 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
        not weld into the window's top-right corner). The logo hugs the wrap's left edge, the Download its
        right, the links between. */
     .nav__row {
-      width: var(--wrap);
-      margin-inline: auto;
-      padding-inline: 0;
+      padding-right: 0;
     }
     .nav__links {
       position: relative;
@@ -321,9 +322,9 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
       align-items: center;
       gap: clamp(0rem, -0.5rem + 1vw, 0.75rem);
     }
-    /* Desktop Download: welded to the top-right corner of the bar, spanning the full nav height with
-       square corners and wide padding, exactly like AnythingLLM's header Download button. It is the last
-       item in the row, so it sits flush to the wrap's right edge (a gutter from the window edge). */
+    /* Desktop Download: welded to the top-right corner of the window, spanning the full nav height with
+       square corners and wide padding, exactly like AnythingLLM's header Download button. The row drops
+       its right gutter, so this last item sits flush to the window's right edge. */
     .nav__cta {
       margin-left: clamp(0.75rem, -0.5rem + 1.8vw, 1.5rem);
       padding-inline: clamp(32px, 2.6vw, 50px);

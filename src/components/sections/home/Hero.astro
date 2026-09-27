@@ -15,10 +15,12 @@
  * - The "Runs with" strip (HERO-REVISION.md 2b/2c): the four-number stats band is gone; the runtimes
  *   and deploy targets stay as one quiet full-width row inside the hero on its navy tone.
  * Copy: "Your class, answered." stays on two lines; "lists its sources", never "cites"; no standalone
- * "AI" in the Clash Display heading. One primary action plus one secondary (spec section 6).
+ * "AI" in the Clash Display heading. One primary action, the Security secondary, and a GitHub repository
+ * button (owner request, like AnythingLLM's hero); on a phone the primary spans the row.
  */
 import Art from "../../ui/Art.astro";
 import Button from "../../ui/Button.astro";
+import { PLACEHOLDER } from "../../../data/site";
 
 // Local model runtimes and deployment targets Mission LLM works with (copy.md), never logos or customers.
 const RUNS_WITH = ["Ollama", "LM Studio", "LocalAI", "KoboldCPP", "Docker", "Kubernetes", "Helm", "OpenShift"];
@@ -36,6 +38,7 @@ const RUNS_WITH = ["Ollama", "LM Studio", "LocalAI", "KoboldCPP", "Docker", "Kub
         <div class="actions hero__actions" data-row="hero-actions">
           <Button href="#steps">See how it works</Button>
           <Button href="/security" variant="secondary">Security overview</Button>
+          <Button href={PLACEHOLDER.repositoryUrl} variant="secondary" iconStart="github-logo" iconSet="phosphor" target="_blank" rel="noopener">GitHub</Button>
         </div>
       </div>
       <div class="hero__art">
@@ -93,11 +96,16 @@ const RUNS_WITH = ["Ollama", "LM Studio", "LocalAI", "KoboldCPP", "Docker", "Kub
     margin-inline: auto;
   }
 
-  /* The "Runs with" strip: a quiet full-width row on the hero's navy tone, a hairline above it. */
+  /* The "Runs with" strip: a full-bleed band along the bottom of the hero (owner: full width and spread
+     out, like AnythingLLM's logo strip). It breaks out of the centered wrap to the window edges with the
+     page gutter inside, so the label hugs the left gutter and the runtimes spread across the whole width;
+     a hairline above it spans the full width too. */
   .hero__runs {
     display: grid;
     gap: 10px 24px;
     align-items: baseline;
+    margin-inline: calc(50% - 50vw);
+    padding-inline: var(--gutter);
     padding-top: clamp(1.25rem, 0.75rem + 1.5svh, 2rem);
     border-top: 1px solid var(--color-line);
   }
@@ -132,6 +140,10 @@ const RUNS_WITH = ["Ollama", "LM Studio", "LocalAI", "KoboldCPP", "Docker", "Kub
     }
     .hero__actions :global(.btn) {
       padding-inline: 12px;
+    }
+    /* Three actions on a phone: the primary spans the row, Security and GitHub sit side by side. */
+    .hero__actions > :global(.btn:first-child) {
+      grid-column: 1 / -1;
     }
   }
   @media (max-width: 1023.98px) {
@@ -177,25 +189,29 @@ const RUNS_WITH = ["Ollama", "LM Studio", "LocalAI", "KoboldCPP", "Docker", "Kub
       width: auto;
       max-width: 100%;
     }
+    /* One centered, uniform row (owner: "center and uniform-looking"): the label and the eight runtimes
+       are a single flex row centered in the full-bleed strip, every element separated by the same
+       centered hairline divider with identical spacing on both sides (no label column, no dead gap). The
+       spacing scales with the viewport, so the row spreads across a wide monitor and tightens on a
+       laptop, always symmetric. */
     .hero__runs {
       align-self: end;
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      column-gap: var(--col-gap);
-    }
-    .hero__runs-label {
-      grid-column: 1 / span 2;
-    }
-    .hero__runs-list {
-      grid-column: 3 / -1;
       display: flex;
-      flex-wrap: nowrap;
+      align-items: baseline;
+      justify-content: center;
       gap: 0;
     }
-    .hero__runs-list li + li::before {
+    .hero__runs-label {
+      flex: none;
+    }
+    .hero__runs-list {
+      display: contents;
+    }
+    .hero__runs-list li::before {
       content: "";
       width: 1px;
       height: 0.9em;
-      margin-inline: clamp(0.75rem, -0.2rem + 1.1vw, 1.5rem);
+      margin-inline: clamp(1rem, -1rem + 3.2vw, 5rem);
       background: var(--color-line-strong);
     }
   }
