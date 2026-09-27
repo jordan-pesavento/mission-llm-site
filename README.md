@@ -2,7 +2,7 @@
 
 Standalone public product site for Mission LLM (home, download, security, editions, contact, 404). It is not part of the Mission LLM application and shares no code with it. Static Astro output, no UI framework, minimal vanilla JS, plus one Vercel Function for the contact form (`api/contact.js`, see [Contact form](#contact-form)).
 
-Audience: education first (course instructors running courses, students in those courses, independent students), with companies and organizations second. The home page leads with the classroom story; the security, editions and download pages speak to schools first and stay broad enough for organizations.
+Positioning (owner, 2026-09-26): Mission LLM is a private, offline, in-house AI system that schools and teams run on their own hardware. Every page leads with the system, then its uses: classrooms, students, teaching a course, training instructors (agentic coding taught on a local model) and teams and labs. The copy rules and the evidence for every claim live in `src/content/copy.md`; `npm run check:copy` enforces them.
 
 ## Hosting and deploys
 

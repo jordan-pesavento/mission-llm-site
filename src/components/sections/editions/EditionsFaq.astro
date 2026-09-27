@@ -18,7 +18,7 @@ import Section from "../../ui/Section.astro";
 import Rail from "../download/_Rail.astro";
 
 const faqs: { q: string; a?: string; html?: string }[] = [
-  { q: "Is Community free?", a: "Yes. You can self-host it at no cost, for one class or a whole school." },
+  { q: "Is Community free?", a: "Yes. You can self-host it at no cost, for one class, a whole school or a team." },
   {
     q: "Do students see each other's chats?",
     html: "No. In multi-user mode, each person's chats and threads in a workspace are their own. Admins and managers can read chat history in every workspace on the server, and <code>DISABLE_VIEW_CHAT_HISTORY</code> hides it from the interface.",
@@ -29,7 +29,7 @@ const faqs: { q: string; a?: string; html?: string }[] = [
   },
   {
     q: "Where is my data stored?",
-    a: "In the storage volume you mount on your own server: course files, chat history and, with the built-in vector store, embeddings.",
+    a: "In the storage volume you mount on your own server: documents, chat history and, with the built-in vector store, embeddings.",
   },
   {
     q: "Can a course assistant go on a class web page?",

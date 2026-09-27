@@ -1,6 +1,6 @@
 ---
 /*
- * "Run it on a lab workstation or a campus server" (#deploy), a LIGHT section now (HERO-REVISION.md tone
+ * "Run it on a lab workstation, a school server or a rack of your own" (#deploy), a LIGHT section now (HERO-REVISION.md tone
  * alternation): text 1-5 | code 7-12 (split--deploy). The code block keeps the raised dark surface in
  * both tones (CodeBlock), so it reads as a terminal panel on the light ground. Its command and caption
  * are read verbatim from copy.md ("### Deploy anywhere") at build time; REGISTRY stays a marked
@@ -27,11 +27,11 @@ const [, codeLabel, code] = fence;
 <Section id="deploy" labelledby="deploy-title">
   <div class="split split--deploy deploy">
     <div class="deploy__text">
-      <Eyebrow>Self-hosted</Eyebrow>
-      <h2 id="deploy-title" class="h2 deploy__title">Run it on a lab workstation or a campus server.</h2>
+      <Eyebrow>In-house</Eyebrow>
+      <h2 id="deploy-title" class="h2 deploy__title">Run it on a lab workstation, a school server or a rack of your own.</h2>
       <p class="deploy__lead">
         Mission LLM ships as one container that serves the app and API on port 3001. Start it with Docker, Compose, Kubernetes, Helm or
-        OpenShift, on your own hardware or in a cloud account you control.
+        OpenShift, on your own hardware or, if you prefer, in a cloud account you control.
       </p>
       <p class="deploy__more"><ArrowLink href={DOWNLOAD_HREF}>See every install option</ArrowLink></p>
     </div>

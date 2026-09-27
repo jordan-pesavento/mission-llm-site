@@ -2,8 +2,11 @@
 /*
  * "Security and control" (#control), a LIGHT section (DESIGN-SPEC 11): the same pattern as
  * FeaturesProduct (frame beside an accordion). Only what ships today (copy.md and the evidence table):
- * - Roles: the manager role is server-wide, not scoped to one course, so the body says the manager role
- *   opens every workspace and students see only the ones they are added to; never "instructor role".
+ * - Offline: chat, embeddings and search run with no internet connection once a local runtime is
+ *   connected and the built-in models are staged (the qualifier stays in the body).
+ * - Roles: the manager role is server-wide, not scoped to one course, so the body says who you give
+ *   the manager role to (instructors, team leads) opens every workspace and everyone else sees only
+ *   the workspaces they are added to; never "instructor role".
  * - Chat history review, the admin event log, and the telemetry off switch set before the first start.
  * Loopback-only binding and the SERVER_HOST/COLLECTOR_HOST settings stay on /security (not on master
  * yet). Roadmap items (SSO, MFA, audit forwarding, an offline switch) stay on /security under
@@ -29,15 +32,15 @@ const items: AccordionItem[] = [
   },
   {
     id: "offline",
-    title: "Runs in an offline lab",
-    body: "Pair it with a local model runtime and stage the built-in models. Chat, embeddings and search then run offline.",
+    title: "Runs with no internet connection",
+    body: "Pair it with a local model runtime and stage the built-in models. Chat, embeddings and search then run with no connection at all.",
     link: { href: "/security#outbound", label: "Learn more about offline use" },
     image: { name: "security-offline", alt: "The LLM Preference page, set to an OpenAI-compatible model server on the same machine (127.0.0.1)." },
   },
   {
     id: "roles",
-    title: "Staff and student roles",
-    body: "Instructors get the manager role, which opens every workspace. Students see only the ones they are added to.",
+    title: "Roles for staff, students and teams",
+    body: "Give instructors or team leads the manager role, which opens every workspace. Everyone else sees only the workspaces they are added to.",
     link: { href: "/security#controls-access", label: "Learn more about access" },
     image: { name: "security-roles", alt: "The Members tab of a course workspace, listing the students added to it, each with the default role." },
   },
@@ -62,6 +65,6 @@ const items: AccordionItem[] = [
 ---
 
 <Section id="control" labelledby="control-title">
-  <SectionIntro eyebrow="Security and control" title="Your school sets the boundary." id="control-title" />
+  <SectionIntro eyebrow="Security and control" title="You set the boundary." id="control-title" />
   <FeatureAccordion id="control-acc" label="Security and control" items={items} frame="45vw" />
 </Section>

@@ -14,7 +14,7 @@
  * - items: { id, title, body, html?, link?: { href, label }, image: { name, alt, crop?, cropSm? } }[].
  *   Each item shows its own capture. Give every crop in one accordion the same aspect (the audience
  *   crops share 1.9), so the frame box never changes height.
- * - label: accessible name of the list ("Who it's for").
+ * - label: accessible name of the list ("What it's for").
  * - anchors: an id prefix. Renders one empty jump target per item (<prefix><item id>) at the top of
  *   the block, so a link to "#for-students" scrolls the whole pair under the nav (not the section
  *   heading) and opens that item: on load, on hashchange and on a click of the same hash. The header's
@@ -26,7 +26,7 @@
  *
  * Accessibility: each title is an <h3> holding a <button aria-expanded aria-controls>; closed panels
  * are hidden. Without JS every panel is open and the first frame shows (src/scripts/accordion.ts).
- * Usage: <FeatureAccordion id="product-acc" label="Who it's for" anchors="for-" items={[...]} />
+ * Usage: <FeatureAccordion id="product-acc" label="What it's for" anchors="for-" items={[...]} />
  */
 import Screenshot, { type Crop } from "./Screenshot.astro";
 import ArrowLink from "./ArrowLink.astro";

@@ -1,13 +1,16 @@
 ---
 /*
- * "Ready for class in four steps" (#steps), a DARK section (DESIGN-SPEC 9, 11 + HERO-REVISION.md tone).
+ * "Up and running in four steps" (#steps), a DARK section (DESIGN-SPEC 9, 11 + HERO-REVISION.md tone).
  * One connected scene: the four isometric drawings stand on a shared drafting-lattice ground, and from
  * 1280 a dotted floor route runs from the server through the model and the readings to the students,
  * with the node travelling it once when the scene enters (transform only, reduced-motion draws it and
  * rests the node at the end). Each drawing draws itself once (Art `draw`). On the navy tone the art and
  * the route recolor through the --art-* dark tokens. Each drawing carries its base ports (data-port) in
  * its own viewBox units, so the route script joins them across the row.
- * Step 3 is "Add your readings". The drawings are never height-capped (the owner's favourite art).
+ * Step 3 is "Add your documents" (positioning pass: a course's readings, a team's manuals or a code
+ * repository through the Git connectors). The drawings are never height-capped (the owner's
+ * favourite art). Honesty: a local runtime such as Ollama needs only its address and a model, no
+ * cloud account; cloud providers stay optional.
  */
 import Section from "../../ui/Section.astro";
 import Art from "../../ui/Art.astro";
@@ -15,25 +18,25 @@ import Art from "../../ui/Art.astro";
 const steps = [
   {
     title: "Install on your server",
-    body: "One container serves the app and API on port 3001, with all course files and chats in one storage folder.",
+    body: "One container, with every document and chat in one storage folder on your hardware.",
     src: "images/steps/install.svg",
     port: "29.05,173.6;125.4,229.2;221.8,173.6",
   },
   {
     title: "Connect a local model",
-    body: "Point it at Ollama, LM Studio or another runtime on your campus network. Cloud providers work too.",
+    body: "Point it at Ollama, LM Studio or another runtime on your own network, with no cloud account. Approved cloud providers work too.",
     src: "images/steps/model.svg",
     port: "68.48,190.52;134.56,228.67;200.63,190.52",
   },
   {
-    title: "Add your readings",
-    body: "Create a workspace for each course and drop in its files. Mission LLM indexes them on your server.",
+    title: "Add your documents",
+    body: "Create a workspace for each course, cohort or team. Add its readings, handouts or manuals, or connect a code repository. Mission LLM indexes them on your server.",
     src: "images/steps/documents.svg",
     port: "33.13,165.44;212.11,230.18",
   },
   {
-    title: "Invite your students",
-    body: "Turn on multi-user mode, invite students, and add each one to the workspaces for their courses.",
+    title: "Invite your people",
+    body: "Turn on multi-user mode, invite students, instructors or team members, and add each one to the workspaces they need.",
     src: "images/steps/team.svg",
     port: "38.54,173.38;206.99,227.14",
   },
@@ -41,7 +44,7 @@ const steps = [
 ---
 
 <Section id="steps" tone="dark" labelledby="steps-title">
-  <div class="intro"><h2 id="steps-title" class="h2">Ready for class in four steps.</h2></div>
+  <div class="intro"><h2 id="steps-title" class="h2">Up and running in four steps.</h2></div>
   <div class="scene" data-scene>
     <ol class="steps" role="list">
       {

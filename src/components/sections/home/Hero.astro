@@ -8,18 +8,25 @@
  *   --nav-h). Its rows are the headline-and-scene composition (centered) and the "Runs with" strip
  *   pinned to the bottom, so all of it fits one screen from 1024 to 2560; on short screens it scrolls
  *   inside the hero rather than squashing (HERO-REVISION.md 1, 2d).
- * - One signature scene (images/scenes/hero-scene.svg): the classroom on its local server, the answer
- *   panel and its numbered source chips, drawn in light strokes on navy with the blue node the only
- *   color. It draws itself once when in view and rests on the final frame; reduced motion shows the
- *   final frame at once (Art `draw` + draw.ts). Decorative (aria-hidden): the lead tells the story.
- * - The "Runs with" strip (HERO-REVISION.md 2b/2c): the four-number stats band is gone; the runtimes
- *   and deploy targets stay as one quiet full-width row inside the hero on its navy tone.
- * Copy: "Your class, answered." stays on two lines; "lists its sources", never "cites"; no standalone
- * "AI" in the Clash Display heading. One primary action, the Security secondary, and a GitHub repository
- * button (owner request, like AnythingLLM's hero); on a phone the primary spans the row.
+ * - One signature scene (images/scenes/hero-scene.svg, hero v2 concept A): a finished isometric
+ *   illustration with real volume on the navy ground: three stepped tiers of nine lit learner laptops,
+ *   an instructor desk, the in-house server tower carrying the ML mark with its one glowing node, dashed
+ *   guides with moving dots from each row into the server's sockets, and the answer card above it (a
+ *   question, an answer, three numbered source chips, an input bar). It ships its own floor grid and
+ *   light pool, so the drafting lattice is off here. Its outlines draw on once when in view (Art `draw`
+ *   + draw.ts; faces are solid from the first frame), then the ambient motion below runs; reduced
+ *   motion shows the final frame at once. Decorative (aria-hidden): the lead tells the story.
+ * - The "Runs with" band (RunsWith.astro): a full-bleed continuous marquee along the bottom of the hero,
+ *   like anythingllm.com's logo strip (owner: "this section should rotate like AnythingLLM's").
+ * Copy (positioning pass, copy.md > Home > Hero): "Your class, your model." stays on two lines; "lists
+ * its sources", never "cites"; no standalone "AI" in the Clash Display heading ("AI" sits in the Jakarta
+ * eyebrow and lead only). One primary action to the uses accordion (#product), the Security secondary,
+ * and a GitHub repository button (owner request, like AnythingLLM's hero); on a phone the primary spans
+ * the row.
  */
 import Art from "../../ui/Art.astro";
 import Button from "../../ui/Button.astro";
+import RunsWith from "./RunsWith.astro";
 import { PLACEHOLDER } from "../../../data/site";
 
 // Local model runtimes and deployment targets Mission LLM works with (copy.md), never logos or customers.
@@ -30,34 +37,29 @@ const RUNS_WITH = ["Ollama", "LM Studio", "LocalAI", "KoboldCPP", "Docker", "Kub
   <div class="wrap hero__inner">
     <div class="hero__grid split">
       <div class="hero__text">
-        <p class="eyebrow">Private AI for courses, on your own hardware</p>
-        <h1 id="hero-title" class="h1 hero__title">Your class, <span class="nowrap">answered.</span></h1>
+        <p class="eyebrow">A private, offline AI system for schools and teams</p>
+        <h1 id="hero-title" class="h1 hero__title">Your class, <span class="nowrap">your model.</span></h1>
         <p class="lead hero__lead">
-          A course assistant that answers from your readings and lists its sources, on your school's own servers.
+          An in-house AI system for schools and teams. It runs on your own hardware, answers from your own documents and lists its sources. Pair it with a local model and your questions and documents never leave the building.
         </p>
         <div class="actions hero__actions" data-row="hero-actions">
-          <Button href="#steps">See how it works</Button>
+          <Button href="#product">See what it can do</Button>
           <Button href="/security" variant="secondary">Security overview</Button>
           <Button href={PLACEHOLDER.repositoryUrl} variant="secondary" iconStart="github-logo" iconSet="phosphor" target="_blank" rel="noopener">GitHub</Button>
         </div>
       </div>
       <div class="hero__art">
-        <Art src="images/scenes/hero-scene.svg" draw lattice class="hero__scene" />
+        <Art src="images/scenes/hero-scene.svg" draw class="hero__scene" />
       </div>
     </div>
 
-    <div class="hero__runs" aria-label="Runs with these local model runtimes and deployment targets">
-      <p class="hero__runs-label">Runs with</p>
-      <ul class="hero__runs-list" role="list">
-        {RUNS_WITH.map((name) => <li>{name}</li>)}
-      </ul>
-    </div>
+    <RunsWith label="Runs with" items={RUNS_WITH} />
   </div>
 </section>
 
 <style>
   .hero {
-    overflow-x: clip; /* the lattice and scene overhang are clipped to the section */
+    overflow-x: clip; /* any scene overhang (the svg keeps overflow visible) is clipped to the section */
   }
   /* At least the visible page under the fixed nav; padding sits inside it (border-box), so the section
      height stays >= --view-h and nothing of the next section shows at scroll 0. */
@@ -96,43 +98,6 @@ const RUNS_WITH = ["Ollama", "LM Studio", "LocalAI", "KoboldCPP", "Docker", "Kub
     margin-inline: auto;
   }
 
-  /* The "Runs with" strip: a full-bleed band along the bottom of the hero (owner: full width and spread
-     out, like AnythingLLM's logo strip). It breaks out of the centered wrap to the window edges with the
-     page gutter inside, so the label hugs the left gutter and the runtimes spread across the whole width;
-     a hairline above it spans the full width too. */
-  .hero__runs {
-    display: grid;
-    gap: 10px 24px;
-    align-items: baseline;
-    margin-inline: calc(50% - 50vw);
-    padding-inline: var(--gutter);
-    padding-top: clamp(1.25rem, 0.75rem + 1.5svh, 2rem);
-    border-top: 1px solid var(--color-line);
-  }
-  .hero__runs-label {
-    font-size: 1rem;
-    font-weight: var(--fw-semibold);
-    color: var(--color-text-quiet);
-  }
-  .hero__runs-list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px var(--col-gap);
-  }
-  .hero__runs-list li {
-    display: flex;
-    align-items: center;
-    font: var(--fw-medium) clamp(1.125rem, 0.9rem + 0.45vw, 1.5rem) / 1.3 var(--font-display);
-    letter-spacing: -0.01em;
-    color: var(--color-text-muted);
-    white-space: nowrap;
-  }
-
-  @media (min-width: 640px) {
-    .hero__runs-list {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-  }
   @media (max-width: 639.98px) {
     .hero__actions {
       display: grid;
@@ -189,82 +154,146 @@ const RUNS_WITH = ["Ollama", "LM Studio", "LocalAI", "KoboldCPP", "Docker", "Kub
       width: auto;
       max-width: 100%;
     }
-    /* One centered, uniform row (owner: "center and uniform-looking"): the label and the eight runtimes
-       are a single flex row centered in the full-bleed strip, every element separated by the same
-       centered hairline divider with identical spacing on both sides (no label column, no dead gap). The
-       spacing scales with the viewport, so the row spreads across a wide monitor and tightens on a
-       laptop, always symmetric. */
-    .hero__runs {
-      align-self: end;
-      display: flex;
-      align-items: baseline;
-      justify-content: center;
-      gap: 0;
-    }
-    .hero__runs-label {
-      flex: none;
-    }
-    .hero__runs-list {
-      display: contents;
-    }
-    .hero__runs-list li::before {
-      content: "";
-      width: 1px;
-      height: 0.9em;
-      margin-inline: clamp(1rem, -1rem + 3.2vw, 5rem);
-      background: var(--color-line-strong);
-    }
   }
+  /* Small laptops (1024 to 1279): the three actions must stay on ONE row (owner rule: a row of buttons
+     never wraps). The text column is what the scene leaves, so here the scene's width cap drops from 44vw
+     to 35vw and the buttons tighten their inline padding; from 1280 the normal sizes return. */
   @media (min-width: 1024px) and (max-width: 1279.98px) {
-    .hero__runs-list li {
-      font-size: 1rem;
+    .hero__scene {
+      height: clamp(320px, min(calc(var(--view-h) - 13rem), 35vw), 1000px);
     }
-  }
-  /* Short-and-wide screens: drop the strip so the headline and scene still fit one screen. */
-  @media (min-width: 1024px) and (max-height: 620px) {
-    .hero__runs {
-      display: none;
+    .hero__actions {
+      flex-wrap: nowrap;
+    }
+    .hero__actions :global(.btn) {
+      padding-inline: 16px;
     }
   }
 
-  /* HERO-REVISION.md item C: after the scene draws on (Art adds .is-drawn), keep a subtle continuous
-     ambient motion so the hero feels alive. Transform and opacity only, so no layout thrash and CSP is
-     untouched (pure CSS, no inline script). It starts only when motion is allowed and only once the
-     draw-on has finished, so it never fights the entrance animation; under prefers-reduced-motion the
-     scene stays on its resting frame with no motion. */
+  /* Hero scene ambient motion (HERO-REVISION.md item C, hero v2 concept A). Pure CSS, keyed off the
+     wrapper class draw.ts adds when the draw-on has finished (.art.is-drawn), so nothing fights the
+     entrance. Transform, opacity and stroke-dashoffset only (no layout, no scripts, CSP untouched). The
+     SVG is injected with set:html, so :global() reaches it. Hooks in the SVG: [data-node] (the one
+     glowing node), .a-halo (its glow rings), .a-screen (each laptop's lit screen group, per tier
+     .a-tier1/2/3), .a-flow (the moving-dot guides), .a-sweep (the light beam slices), .art-panel (the
+     answer card). Under prefers-reduced-motion the scene rests on its final frame (the reduce block
+     below; global.css also collapses every animation). */
   @media (prefers-reduced-motion: no-preference) {
-    /* The blue node in the server gently pulses (the one point of color: "here", processing). */
+    /* The one point of color: the node pulses with its halo (processing, "here"). */
     .hero__art :global(.art.is-drawn [data-node]) {
       transform-box: fill-box;
       transform-origin: center;
-      animation: hero-node-pulse 3.4s ease-in-out 0.5s infinite;
+      animation: hero-a-node 3.4s ease-in-out 0.4s infinite;
       will-change: transform, opacity;
     }
-    /* The answer panel floats a few units, so the "answer" reads as arriving and settling. Its base
-       matrix is re-stated before the float so the CSS transform does not drop the panel's placement. */
+    .hero__art :global(.art.is-drawn .a-halo) {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: hero-a-halo 3.4s ease-in-out 0.4s infinite;
+      will-change: transform, opacity;
+    }
+    /* Nine lit screens breathe, one phase per tier so the room never blinks in unison. */
+    .hero__art :global(.art.is-drawn .a-screen) {
+      animation: hero-a-breathe 5.2s ease-in-out infinite;
+      will-change: opacity;
+    }
+    .hero__art :global(.art.is-drawn .a-tier2 .a-screen) {
+      animation-delay: -1.7s;
+    }
+    .hero__art :global(.art.is-drawn .a-tier3 .a-screen) {
+      animation-delay: -3.5s;
+    }
+    /* Data travels: the dot pattern (dasharray 0.01 7.2, round caps) slides one period per loop, so the
+       dots run from each row's port into the server's sockets, and from the server up into the card. */
+    .hero__art :global(.art.is-drawn .a-flow) {
+      animation: hero-a-flow 0.95s linear infinite;
+      will-change: stroke-dashoffset;
+    }
+    /* A slow soft beam of light crosses the floor and the three tiers (slices drawn on each surface, all
+       moved together along the isometric x axis: 110 units = translate(95.26, 55)). */
+    .hero__art :global(.art.is-drawn .a-sweep) {
+      animation: hero-a-sweep 12s ease-in-out 1s infinite;
+      will-change: transform, opacity;
+    }
+    /* The answer card floats a few units (it has no transform attribute of its own: the isometric plane
+       sits on an inner group, so a plain translate is safe). The input caret rests visible: no blink. */
     .hero__art :global(.art.is-drawn .art-panel) {
-      animation: hero-panel-float 7s ease-in-out 0.5s infinite;
+      animation: hero-a-float 7s ease-in-out 0.3s infinite;
       will-change: transform;
     }
   }
-  @keyframes hero-node-pulse {
+  @media (prefers-reduced-motion: reduce) {
+    .hero__art :global(.art.is-drawn [data-node]),
+    .hero__art :global(.art.is-drawn .a-halo),
+    .hero__art :global(.art.is-drawn .a-screen),
+    .hero__art :global(.art.is-drawn .a-flow),
+    .hero__art :global(.art.is-drawn .a-sweep),
+    .hero__art :global(.art.is-drawn .art-panel) {
+      animation: none;
+    }
+  }
+  @keyframes hero-a-node {
     0%,
     100% {
       transform: scale(1);
       opacity: 1;
     }
     50% {
-      transform: scale(1.16);
-      opacity: 0.82;
+      transform: scale(1.14);
+      opacity: 0.86;
     }
   }
-  @keyframes hero-panel-float {
+  @keyframes hero-a-halo {
     0%,
     100% {
-      transform: translateY(0) matrix(0.58, 0.21, 0, 0.62, 305, 30);
+      transform: scale(1);
+      opacity: 0.7;
     }
     50% {
-      transform: translateY(-3.5px) matrix(0.58, 0.21, 0, 0.62, 305, 30);
+      transform: scale(1.24);
+      opacity: 1;
+    }
+  }
+  @keyframes hero-a-breathe {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.84;
+    }
+  }
+  @keyframes hero-a-flow {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -7.21;
+    }
+  }
+  @keyframes hero-a-sweep {
+    0% {
+      transform: translate(0, 0);
+      opacity: 0;
+    }
+    12% {
+      opacity: 1;
+    }
+    88% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate(95.26px, 55px);
+      opacity: 0;
+    }
+  }
+  @keyframes hero-a-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3.5px);
     }
   }
 </style>

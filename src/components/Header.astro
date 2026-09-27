@@ -10,7 +10,7 @@
  *   Body gets padding-top: var(--nav-h) (global.css), so the page never shifts (CLS 0).
  * - Row: the inline lockup (--lockup-h, half of --nav-h: 32 / 34 / 36 / 38 / 40px, the mark 36px at
  *   1024 to 1440 and 40px at 1920+, so the logo keeps its clear space of half the mark height above and
- *   below), then from 1024 the "Who it's for" menu,
+ *   below), then from 1024 the "What it's for" menu,
  *   Security, Editions, Contact and Download; below 1024 the lockup, Download and the menu
  *   button. The nav links, the menu trigger and the menu button are all 44px and centered on the logo.
  *   The Download button matches AnythingLLM's: a big, flat, accent-blue block welded to the top-right
@@ -28,7 +28,7 @@
  *   footer row. Opens on click, on hover with a fine pointer, and with ArrowDown; arrows move between
  *   rows; Escape closes and returns focus; it closes when focus or a click leaves it.
  * - Sheet (below 1024): white, under the bar (which keeps its one light skin while it is open).
- *   One row style: "Who it's for" and "More". One column below 640 with Contact and Download pinned at
+ *   One row style: "What it's for" and "More". One column below 640 with Contact and Download pinned at
  *   the bottom; two columns from 640 with the buttons after the grid. Focus trap, Escape, scroll lock; a
  *   tap opens it without a focus ring on the first row, the keyboard focuses the first row.
  * - Without JS: the header is fixed only from 1024; below it the sheet is a normal block under the bar.

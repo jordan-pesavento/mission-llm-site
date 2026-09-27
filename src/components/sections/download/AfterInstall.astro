@@ -3,7 +3,8 @@
  * Download > After you install. Package C.
  * Copy: src/content/copy.md > Download > After you install (5 steps, verbatim). The short step
  * titles are ours; the sentences under them are the copy. "Just me" and "My team" are the real
- * onboarding labels (mission-llm frontend/src/locales/en/common.js:16-17).
+ * onboarding labels (mission-llm frontend/src/locales/en/common.js:16-17). Step 5 names a course,
+ * a cohort or a team (positioning pass): the same workspace serves all three.
  * Visual system: the reference's "Up and running in a few clicks." row, with an illustration per
  * step as on the home steps row. H2 48/48 (SectionIntro size="lg"), 56 to 96px, then one column per
  * step with a 1px mist-300 left rule and a 25px inset: the number (Jakarta 36/40, mist-500), a
@@ -41,7 +42,7 @@ const STEPS = [
   },
   {
     title: "Set up access",
-    text: "Choose “Just me” to set a password, or “My team” to turn on multi-user mode for a class, before anyone else can reach the server.",
+    text: "Choose “Just me” to set a password, or “My team” to turn on multi-user mode for a class or a team, before anyone else can reach the server.",
     visual: "/images/install/access.svg",
   },
   {
@@ -50,8 +51,8 @@ const STEPS = [
     visual: "/images/install/telemetry-off.svg",
   },
   {
-    title: "Add course documents",
-    text: "Create a workspace for each course and add its syllabus and readings.",
+    title: "Add your documents",
+    text: "Create a workspace for each course, cohort or team and add its syllabus, readings, manuals or policies.",
     visual: "/images/install/course-documents.svg",
   },
 ];

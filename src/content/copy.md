@@ -1,4 +1,6 @@
-# Mission LLM website copy (v1, with the v2 education pass)
+# Mission LLM website copy (v1, with the v2 education pass and the positioning pass)
+
+> **Positioning pass (2026-09-26, branch `JP/site-redesign`).** Mission LLM is sold as a PRIVATE, OFFLINE, IN-HOUSE AI SYSTEM that schools and teams run on their own hardware. Every page leads with the system, then the concrete uses, in this order: classrooms (a course assistant that answers from the course's own readings and lists its sources), students (study help, explanations and practice questions drawn from the assigned material), teaching a course (a workspace per course from the syllabus, readings and handouts), training instructors (faculty learn modern AI workflows, agentic coding included, on a local model with nothing leaving the building) and teams and labs (policies, manuals and research, searchable with the sources listed). The Global, Home, Download hero and after-install steps, Security hero and Editions text below is the live site copy. Wording limits added by this pass: "agentic coding" is a classroom use case taught on the app's agents, skills and MCP servers with a local model, never a claim that Mission LLM is a coding tool; "practice questions", "explanations" and "summaries" are things a student asks the chat for, never features; "nothing leaves the building" and "no internet connection" always sit next to their condition (a local model runtime, the built-in models staged; the Security page lists every other outbound connection); "no cloud account" describes a local runtime such as Ollama (address and model only), and cloud providers stay optional; "AI" appears in Jakarta text (eyebrows, leads, menu rows), never in a Clash Display heading; the share card still shows the previous headline until it is re-rendered. The evidence rows for the new claims are at the end of the evidence table.
 
 > **Education pass (2026-09-26, branch `JP/site-education`).** Education is the focus of the marketing: course instructors running courses, students in those courses and independent students, with companies and organizations as the secondary audience. The Global, Home, Download, Security (Hero, Controls, Hardening) and Editions text below is the live site copy; evidence rows for the new claims are at the end of the evidence table. Wording limits: never "every answer" (sources appear only when documents were retrieved), never "private from instructors" (admins and managers can read chat history), "private" only in the sense of "runs on the school's own hardware", the manager role is server-wide (never an instructor role scoped to one course), no LMS integration, quizzes, flashcards or grading, no compliance claims, no named schools, courses or programs, no counts beyond `COUNTS`. Builder notes 1, 2 and 8 describe the v1 concept renders; the site now shows real captures of the app (a test instance with fictional sample documents), with alt text that describes those captures.
 
@@ -26,28 +28,29 @@
 
 ### Site metadata
 - Site name: Mission LLM
-- Default meta description: "Mission LLM is a self-hosted assistant for courses and teams. It answers from your documents with the sources listed, and runs with local or cloud models on hardware you control, including disconnected networks."
-- Share image alt: "Mission LLM: Your class, answered. An isometric lecture hall linked to a local server."
+- Default meta description: "Mission LLM is a private, offline AI system for schools and teams. It runs on your own hardware, answers from your own documents with the sources listed, and works with local models on disconnected networks."
+- Share image alt: "Mission LLM: Your class, your model. An isometric classroom of lit laptops linked to an in-house server, with an answer card that lists its sources."
+- Positioning pass: "AI" is allowed in Jakarta text (this description, eyebrows, leads, menu rows) and never in a Clash Display heading.
 
 ### Header
 Redesign (DESIGN-SPEC revision 3, section 6). Data: `NAV`, `AUDIENCE_MENU`, `AUDIENCES`, `SHEET_MORE`, `MENU_FOOT` in `src/data/site.ts`.
 - Lockup: the mark and MISSION LLM (inline SVG; the link's name is "Mission LLM home")
-- Nav: Who it's for (a menu; without JavaScript a link to `/#product`), Security (`/security`), Editions (`/editions`), Contact (`/contact`). Docs stays out until the docs site exists <!-- TODO: no Mission LLM docs site yet -->
+- Nav: What it's for (a menu; without JavaScript a link to `/#product`), Security (`/security`), Editions (`/editions`), Contact (`/contact`). Docs stays out until the docs site exists <!-- TODO: no Mission LLM docs site yet -->
 - Button: Download (`/download`)
 - Menu button labels: "Open menu" / "Close menu"
-- Who it's for menu rows (title, line; each links to `/#for-<id>`, the matching item on the home accordion):
-  - Instructors: "Build a course workspace from your syllabus and readings."
-  - Students in a course: "Ask about the course and see which readings an answer used." (phone sheet: "See which readings an answer used.")
-  - Independent learners: "A workspace for any subject, built from your own notes." (phone sheet: "A workspace for any subject, from your own notes.")
-  - School IT: "School servers, local models, no internet required."
-  - Organizations: "The same workspaces for teams, with roles and agents."
+- What it's for menu rows (title, line; each links to `/#for-<id>`, the matching item on the home accordion; the five thumbnail drawings keep their file names and each is used once: `thumb` in `AUDIENCES`):
+  - Classrooms (id `classrooms`, thumb `students`: an answer with three numbered sources): "A course assistant that answers from the course readings and lists its sources." (phone sheet: "A course assistant that lists its sources.")
+  - Students (id `students`, thumb `learners`: the upload panel with three indexed documents): "Study help drawn from the assigned material, in a workspace of your own." (phone sheet: "Study help drawn from the assigned material.")
+  - Teaching a course (id `courses`, thumb `instructors`: the Users page with roles): "Build a workspace per course from the syllabus, readings and handouts." (phone sheet: "A workspace per course, from the syllabus and readings.")
+  - Training instructors (id `instructors`, thumb `school-it`: the app in Docker on your own server): "Teach faculty modern AI workflows, agentic coding included, on a local model." (phone sheet: "Agentic coding and other AI workflows, on a local model.")
+  - Teams and labs (id `teams`, thumb `organizations`: telemetry switched off): "Policies, manuals and research, searchable with the sources listed." (phone sheet: "Policies, manuals and research, with sources.")
   - Footer row: "Not sure which fits?" and "Tell us what you need" (`/contact`)
-- Phone and tablet sheet: "Who it's for" (the five rows), then "More": Security ("Where data goes and which controls ship today.") and Editions ("Community today, Enterprise planned."), then Contact and Download buttons.
+- Phone and tablet sheet: "What it's for" (the five rows), then "More": Security ("Where data goes and which controls ship today.") and Editions ("Community today, Enterprise planned."), then Contact and Download buttons.
 
 ### Footer
-- Under the lockup: "A private assistant for courses and teams, on hardware you control." (`FOOTER_DESCRIPTOR` in `src/data/site.ts`)
+- Under the lockup: "A private, offline AI system for schools and teams, on hardware you control." (`FOOTER_DESCRIPTOR` in `src/data/site.ts`)
 - Entries without a destination yet show as plain text, not as links.
-- **Product:** Who it's for (`/#product`), Grounded answers (`/#grounded`), Deployment (`/#deploy`), Download (`/download`)
+- **Product:** What it's for (`/#product`), Grounded answers (`/#grounded`), Deployment (`/#deploy`), Download (`/download`)
 - **Resources:** Security overview (`/security`), Install options (`/download#options`), System requirements (`/download#requirements`), Editions (`/editions`). Documentation and Security policy come back once they exist <!-- TODO -->
 - **Project:** AnythingLLM project (https://github.com/Mintplex-Labs/anything-llm). Source code and Licenses and notices come back once they exist <!-- TODO: repository access not decided; link LICENSE and NOTICE -->
 - **Contact:** Contact us (`/contact`), Report a vulnerability (`/security#report`)
@@ -60,18 +63,19 @@ Redesign (DESIGN-SPEC revision 3, section 6). Data: `NAV`, `AUDIENCE_MENU`, `AUD
 
 ## Home (`/`)
 
-Meta title: "Mission LLM | A private assistant for courses and teams"
-Meta description: "A self-hosted assistant that answers from your course documents, lists its sources, and runs with local models on your school's own hardware."
+Meta title: "Mission LLM | A private, offline AI system for schools and teams"
+Meta description: "An in-house AI system on your own hardware: course assistants that answer from your documents and list their sources, study help, instructor training and team knowledge, on local models."
 
 ### Hero
-- Headline: **Your class, answered.** (each line under 329px of Clash 60/500: "Your class," 298px, "answered." 294px)
-- Subhead: A course assistant that answers from your readings and lists its sources, on your school's own servers.
-- Primary action: Download Free (`/download`)
-- Secondary action: Security (`/security`)
-- Screenshot: `hero` (real capture: a student's thread in a fictional course workspace, two answers about a field lab with the course documents each one drew on listed under it)
-  - Label: "Answers with sources, on your server"
-  - Alt: "A student's thread in an Intro to Ecology course workspace. Mission LLM answers two questions about a field lab and lists the course documents each answer drew on, such as the lab handout, the syllabus and a reading."
+Positioning pass. The scene beside the text is the classroom on its in-house server with the answer card (public/images/scenes/hero-scene.svg); the copy tells the same story: the system first, then what runs on it.
+- Eyebrow (Jakarta, so "AI" is fine here): A private, offline AI system for schools and teams
+- Headline: **Your class, your model.** on two lines, "Your class," then "your model." (each line under 329px of Clash 60/500, measured with the site's Clash Display Medium at 60.7px and -0.028em: "Your class," 299px, "your model." 328px; "Your school," would be 342px and does not fit). No standalone "AI" in the Clash Display heading.
+- Lead: An in-house AI system for schools and teams. It runs on your own hardware, answers from your own documents and lists its sources. Pair it with a local model and your questions and documents never leave the building.
+- Actions (three equal-height buttons): "See what it can do" (`#product`, the uses accordion; primary), "Security overview" (`/security`), "GitHub" (the repository, `PLACEHOLDER.repositoryUrl`, with the GitHub glyph).
+- "Runs with" strip (unchanged): Ollama, LM Studio, LocalAI, KoboldCPP, Docker, Kubernetes, Helm, OpenShift.
+- Previous headline, kept for the record: "Your class, answered." with the subhead "A course assistant that answers from your readings and lists its sources, on your school's own servers." (v1 actions: Download Free, Security; v1 screenshot `hero`, a student's thread in a fictional course workspace, label "Answers with sources, on your server".)
 - Why "lists its sources", not "cites": inline citations are in development (Security > In development > Answer quality), and sources appear only when documents were retrieved.
+- Why "Pair it with a local model": chat, embeddings and search leave the network only through the providers you configure; the qualifier and the scope ("your questions and documents") keep the claim honest; telemetry stays on unless DISABLE_TELEMETRY is "true", which the Security page covers, and the Security page lists the remaining outbound connections (telemetry, model downloads) and how to stop each one.
 
 ### Proof strip
 Visually hidden heading: At a glance
@@ -86,17 +90,18 @@ Visually hidden heading: At a glance
 Footnote: "Offline use requires a local model runtime and built-in models staged in advance. See Security for every outbound connection."
 Alternate fact: "14 embedding engines. Including a built-in embedder that runs on the server's CPU."
 
-### Who it is for (audience accordion)
-Anchor: `#product`
-- Eyebrow: Who it is for.
-- Heading: **Built for classrooms. Ready for teams.**
-- Accordion label: Who it is for
-- Items (title, body, link, screenshot). Bodies hold two lines in the 448px column at 1440.
-  1. **For instructors.** "Build a course workspace from your syllabus and readings, add your students, and see how they use it." Link: Set up a course in four steps (`#steps`). Screenshot: `feature-users` (the Users page as the instructor, a manager, sees it).
-  2. **For students in a course.** "Ask questions about the course. Answers drawn from its readings list the sources they used." Link: See how sources work (`#grounded`). Screenshot: `feature-documents` (a student's answer with the Sources panel open).
-  3. **For independent learners.** "Make a workspace for any subject, add your own notes and readings, and keep each topic in its own thread." Link: See install options (`/download`). Screenshot: `feature-workspaces` (a learner's workspace with a thread per topic).
-  4. **For school IT.** "Run it on school servers with local models and no internet, or set a different provider for each workspace." Link: Read the security overview (`/security`). Screenshot: `feature-models` (a course workspace's Chat Settings with its own provider setting).
-  5. **For organizations.** "Companies get the same workspaces and answers with sources, and agents that use the tools admins turn on." Link: Compare editions (`/editions`). Screenshot: `feature-agents`.
+### What it is for (the uses accordion)
+Anchor: `#product`. Positioning pass: the five uses of the one system, in the order the site tells the story (classroom, student, course, instructor training, team).
+- Eyebrow: What it's for
+- Heading: **One system for classrooms, students, courses, instructors and teams.**
+- Accordion label: What it's for
+- Items (id, title, body, link, screenshot). Bodies hold two to three lines in the 448px column at 1440.
+  1. `classrooms` **For classrooms.** "A course assistant for the whole class. It answers from the course's own readings and lists the sources under each answer." Link: See how sources work (`#grounded`). Screenshot: `feature-documents` (a student's question answered from the readings, each reading listed under the answer).
+  2. `students` **For students.** "Study help drawn from the assigned material. Ask for an explanation, a summary or practice questions, and keep each topic in its own thread." Link: Run it on your own computer (`/download`). Screenshot: `feature-workspaces` (a learner's workspace with a thread per topic, answers drawn from the learner's own notes). Explanations, summaries and practice questions are things the student asks the chat for; they are not features, and never "quizzes", "flashcards" or "grading".
+  3. `courses` **For teaching a course.** "Build a workspace for each course from the syllabus, readings and handouts, add your students, and see how they use it." Link: Set up a course in four steps (`#steps`). Screenshot: `feature-users` (the Users page as the instructor, a manager, sees it).
+  4. `instructors` **For training instructors.** "Teach faculty modern AI workflows, agentic coding included, on a local model: agents, the skills you turn on and MCP servers, all running on your own hardware." Link: See the agent controls (`/security#controls-integrations`). Screenshot: `feature-agents` (the Agent Skills settings: skills an admin switches on or off, custom skills, agent flows and MCP servers). Agentic coding is the subject of the training, run on the app's agents and a local model; Mission LLM is not described as a coding tool.
+  5. `teams` **For teams and labs.** "Put policies, manuals and research in workspaces, decide who sees which, and get answers with the sources listed. Each workspace picks its own model." Link: Compare editions (`/editions`). Screenshot: `feature-models` (a workspace's Chat Settings with its own provider setting).
+- Previous items, kept for the record: For instructors / For students in a course / For independent learners / For school IT / For organizations (ids `instructors`, `students`, `learners`, `school-it`, `organizations`; the thumbnail files keep those names).
 
 ### Product facts (v1 product tour)
 Facts behind the audience items. Not rendered as a tour on the site today.
@@ -161,8 +166,8 @@ Facts behind the audience items. Not rendered as a tour on the site today.
 ### Grounded answers (dark band)
 Anchor: `#grounded`
 - Eyebrow: Grounded answers
-- Heading: **Answers that show their readings.** (never "cite": inline citations are in development)
-- Body: When a course workspace has documents, Mission LLM searches them before the model answers. Students open Sources to see which readings an answer used, the passages it pulled and how closely each one matched.
+- Heading: **Answers from your own documents, sources listed.** (never "cite": inline citations are in development; previous heading "Answers that show their readings.")
+- Body: When a workspace has documents, Mission LLM searches them on your server before the model answers. Open Sources to see which documents an answer used, the passages it pulled and how closely each one matched.
 - Bullets (home band): "Sources listed under grounded answers" / "Retrieved passages with match scores" / "Query mode, with a refusal message you write"
 - Link: Learn more (`/security#data-flow`)
 - **Available today**
@@ -181,9 +186,9 @@ Anchor: `#grounded`
 
 ### Deploy anywhere
 Anchor: `#deploy`
-- Eyebrow: Self-hosted
-- Heading: **Run it on a lab workstation or a campus server.**
-- Body: Mission LLM ships as one container that serves the app and API on port 3001. Start it with Docker, Compose, Kubernetes, Helm or OpenShift, on your own hardware or in a cloud account you control.
+- Eyebrow: In-house
+- Heading: **Run it on a lab workstation, a school server or a rack of your own.**
+- Body: Mission LLM ships as one container that serves the app and API on port 3001. Start it with Docker, Compose, Kubernetes, Helm or OpenShift, on your own hardware or, if you prefer, in a cloud account you control.
 - Targets:
 
 | Target | Detail |
@@ -214,10 +219,10 @@ REGISTRY/mission-llm:latest
 
 ### Security and control
 - Eyebrow: Security and control
-- Heading: **Your school sets the boundary.**
+- Heading: **You set the boundary.** (previous heading "Your school sets the boundary.")
 - Home accordion (each item shows its own real capture: LLM Preference on a local model server, a course workspace's Members tab, Workspace Chats, Event Logs, Privacy & Data-Handling; bodies hold two lines at 1440):
-  1. **Runs in an offline lab.** "Pair it with a local model runtime and stage the built-in models. Chat, embeddings and search then run offline." Link: Learn more about offline use (`/security#outbound`).
-  2. **Staff and student roles.** "Instructors get the manager role, which opens every workspace. Students see only the ones they are added to." Link: Learn more about access (`/security#controls-access`). The manager role is server-wide, not scoped to one course, and the body says so.
+  1. **Runs with no internet connection.** "Pair it with a local model runtime and stage the built-in models. Chat, embeddings and search then run with no connection at all." Link: Learn more about offline use (`/security#outbound`). The condition (local runtime, staged models) stays in the sentence.
+  2. **Roles for staff, students and teams.** "Give instructors or team leads the manager role, which opens every workspace. Everyone else sees only the workspaces they are added to." Link: Learn more about access (`/security#controls-access`). The manager role is server-wide, not scoped to one course, and the body says so; who gets it is the admin's choice, so the body says "give".
   3. **Chat history for review.** "Admins and managers can read every workspace chat, see who sent it, and export it as CSV, JSON or JSONL." Link: Learn more about oversight (`/security#controls-oversight`).
   4. **Admin event log.** "Sign-ins, failed sign-ins, and changes to users, API keys, invites, workspaces and documents, in one log for admins." Link: Learn more about oversight (`/security#controls-oversight`).
   5. **Telemetry off switch.** "Set `DISABLE_TELEMETRY="true"` before the first start and no usage events are sent. Or turn it off in Settings." Link: Learn more about telemetry (`/security#outbound`). "Before the first start" stays: the server sends a `server_boot` event at start unless telemetry is disabled.
@@ -246,17 +251,17 @@ REGISTRY/mission-llm:latest
 
 ### Steps
 Anchor: `#steps`. The illustrations (`public/images/steps/*.svg`) do not change.
-- Heading: **Ready for class in four steps.**
-1. **Install on your server.** One container serves the app and API on port 3001, with all course files and chats in one storage folder.
-2. **Connect a local model.** Point it at Ollama, LM Studio or another runtime on your campus network. Cloud providers work too.
-3. **Add the syllabus and readings.** Create a workspace for each course and drop in its files. Mission LLM indexes them on your server.
-4. **Invite your students.** Turn on multi-user mode, invite students, and add each one to the workspaces for their courses.
+- Heading: **Up and running in four steps.** (previous heading "Ready for class in four steps.")
+1. **Install on your server.** One container, with every document and chat in one storage folder on your hardware.
+2. **Connect a local model.** Point it at Ollama, LM Studio or another runtime on your own network, with no cloud account. Approved cloud providers work too.
+3. **Add your documents.** Create a workspace for each course, cohort or team. Add its readings, handouts or manuals, or connect a code repository. Mission LLM indexes them on your server.
+4. **Invite your people.** Turn on multi-user mode, invite students, instructors or team members, and add each one to the workspaces they need.
 
 ### Resources
 Anchor: `#resources`. Heading: **Resources**. Three cards, each one link, with isometric line illustrations (`public/images/resources/*.svg`) on the light card tone.
-- **Security overview** (`/security`): "See where student questions go and which controls ship today." / "A plain-language data flow, every outbound connection and how to avoid it, and eight steps to harden an install."
+- **Security overview** (`/security`): "See where questions and documents go, and which controls ship today." / "A plain-language data flow, every outbound connection and how to avoid it, and eight steps to harden an install."
 - **Install guide** (`/download`): "Install it on one lab workstation or a whole campus cluster." / "Build the image from source, then run it with Docker, Docker Compose, Kubernetes, Helm or OpenShift."
-- **Editions** (`/editions`): "Start free with the full application, for one class or a whole school." / "Community is the full application, free to self-host. Enterprise is planned to add support, deployment help and governance features."
+- **Editions** (`/editions`): "Start free with the full system, for one class, a whole school or a team." / "Community is the full application, free to self-host. Enterprise is planned to add support, deployment help and governance features."
 
 ### Open source foundation
 - Eyebrow: Foundation
@@ -271,10 +276,10 @@ Anchor: `#resources`. Heading: **Resources**. Three cards, each one link, with i
 - Credit line: "Mission LLM is built on the open-source AnythingLLM project (MIT License)."
 
 ### Final CTA
-- Heading: **Bring it to your next course.**
-- Body: Start with one container, a local model and one course. Add students, workspaces and readings when you are ready.
-- Primary action: Download (`/download`)
-- Secondary action: Compare editions (`/editions`)
+- Heading: **Bring it in-house.** (previous heading "Bring it to your next course.")
+- Body: Start with one container, a local model and one workspace: a course, a training cohort or a team. Questions first? Tell us what you teach or run and we will reply by email.
+- Action: Talk to us (`/contact`; the site's one closing action, Download is the nav's job)
+- v1 actions, for the record: Download (`/download`), Compare editions (`/editions`)
 
 ---
 
@@ -286,7 +291,7 @@ Meta description: "Build Mission LLM from source, then run it with Docker, Docke
 ### Hero
 - Eyebrow: Download
 - Heading: **Install Mission LLM on your own infrastructure.**
-- Body: Mission LLM runs as a container on a lab workstation, a school server or a cluster. Pick the method that fits your environment. The commands below come from the project's deployment documentation.
+- Body: Mission LLM runs as one container on a lab workstation, a school server or a cluster, beside a local model runtime. Pick the method that fits your environment. The commands below come from the project's deployment documentation.
 - Status callout: "Public release images are not published yet. Build the image from source today, push it to your own registry, and replace REGISTRY in the commands below."
 
 ### Platforms
@@ -465,12 +470,12 @@ A Hugging Face Spaces Dockerfile runs the image you name in a Space. Keep the Sp
 Running directly on Node.js 18 or later with Yarn 1.x is documented for reference only and is not a supported deployment method.
 
 ### After you install
-Step titles on the site: Open the app, Choose a model, Set up access, Turn off telemetry, Add course documents. Each step has an isometric line illustration (step 2 reuses the home steps art; step 3 is the home Users panel with its labels drawn as ink bars).
+Step titles on the site: Open the app, Choose a model, Set up access, Turn off telemetry, Add your documents. Each step has an isometric line illustration (step 2 reuses the home steps art; step 3 is the home Users panel with its labels drawn as ink bars).
 1. In a browser, open http://localhost:3001 or your server's address on port 3001.
 2. In onboarding, choose your model provider. Documents are embedded with the built-in embedder and stored in the built-in LanceDB store by default. You can change both in Settings.
-3. Choose "Just me" to set a password, or "My team" to turn on multi-user mode for a class, before anyone else can reach the server.
+3. Choose "Just me" to set a password, or "My team" to turn on multi-user mode for a class or a team, before anyone else can reach the server.
 4. Confirm `DISABLE_TELEMETRY` is set to `"true"` in the server environment.
-5. Create a workspace for each course and add its syllabus and readings.
+5. Create a workspace for each course, cohort or team and add its syllabus, readings, manuals or policies.
 
 ---
 
@@ -482,7 +487,7 @@ Meta description: "Where your data goes in Mission LLM, the controls available t
 ### Hero
 - Eyebrow: Security
 - Heading: **Security and deployment overview.**
-- Body: Mission LLM runs inside your school's or organization's boundary. This page covers where data goes, including student questions and course files, which controls ship today, which are in development, and how to harden an install.
+- Body: Mission LLM runs inside your own network boundary, on hardware you control. This page covers where data goes, including student questions, course files and team documents, which controls ship today, which are in development, and how to harden an install.
 - Callout: "Mission LLM does not hold any government certification or authorization today. Because it runs on your infrastructure, you assess it as part of your own system."
 
 ### Data flow in plain language
@@ -603,12 +608,12 @@ Body: Report suspected vulnerabilities privately through GitHub private vulnerab
 ## Editions (`/editions`)
 
 Meta title: "Editions | Mission LLM"
-Meta description: "Mission LLM Community is free to self-host for any class, school or team. Mission LLM Enterprise adds planned support, deployment help and governance features."
+Meta description: "Mission LLM Community is the full system, free to self-host for any class, school or team. Mission LLM Enterprise adds planned support, deployment help and governance features."
 
 ### Hero
 - Eyebrow: Editions
 - Heading: **Free for every class and team.**
-- Body: Mission LLM Community is the full application, free to self-host for one course, a department or a whole school. Mission LLM Enterprise is for schools and organizations that need support, help deploying on their networks, and the governance features on our roadmap. Pricing is not published yet.
+- Body: Mission LLM Community is the full system, free to self-host for one course, a training cohort, a department or a whole school. Mission LLM Enterprise is for schools and organizations that need support, help deploying on their networks, and the governance features on our roadmap. Pricing is not published yet.
 - Illustration (from 1024): an isometric lecture hall linked to a local server (`public/images/scenes/lecture-hall.svg`), decorative.
 
 ### Community
@@ -666,10 +671,10 @@ Meta description: "Mission LLM Community is free to self-host for any class, sch
 
 ### Questions
 Questions are worded without a standalone "I" (Clash Display draws capital I and lowercase l as one glyph).
-- **Is Community free?** Yes. You can self-host it at no cost, for one class or a whole school.
+- **Is Community free?** Yes. You can self-host it at no cost, for one class, a whole school or a team.
 - **Do students see each other's chats?** No. In multi-user mode, each person's chats and threads in a workspace are their own. Admins and managers can read chat history in every workspace on the server, and `DISABLE_VIEW_CHAT_HISTORY` hides it from the interface.
 - **Does it need an internet connection?** No. Use a local model runtime and stage the built-in models in advance. The Security page lists every outbound connection.
-- **Where is my data stored?** In the storage volume you mount on your own server: course files, chat history and, with the built-in vector store, embeddings.
+- **Where is my data stored?** In the storage volume you mount on your own server: documents, chat history and, with the built-in vector store, embeddings.
 - **Can a course assistant go on a class web page?** Yes. Admins can turn a workspace into a chat widget for web pages on the domains they allow, with limits on chats per day and per session. Visitors chat without signing in, so use it with course material you are happy to share.
 - **Can we move from AnythingLLM?** Yes. Mission LLM upgrades an existing AnythingLLM install in place, including its database and settings.
 - **When will the Enterprise features ship?** Dates are not published. A feature moves to “Controls available today” on the Security page only when it ships. (Link: `/security#controls`.)
@@ -773,5 +778,10 @@ All paths are relative to `D:/OB Vault/mission-llm` unless marked otherwise.
 | Telemetry sends a boot event unless disabled before start | `server/utils/database/index.js:104` (`server_boot` sent at start unless `DISABLE_TELEMETRY` is "true") |
 | Invites carry workspaces (students are added to their course workspaces) | `server/models/invite.js:10-16` (`workspaceIds`) |
 | "Just me" and "My team" are the onboarding labels | `frontend/src/locales/en/common.js:16-17` |
+| A local runtime needs no cloud account (positioning pass: "with no cloud account"): the Ollama provider takes a base path and a model, with an optional auth token and no API key field | `frontend/src/components/LLMSelection/OllamaLLMOptions/index.jsx` (fields `OllamaLLMBasePath`, `OllamaLLMModelPref`, `OllamaLLMAuthToken`; no key field) |
+| Agents, the skills admins turn on and MCP servers, as the basis of instructor training in agentic coding (positioning pass); the filesystem skill reads, writes, edits and searches files in a folder under the server's storage and is available in Docker installs | `frontend/src/pages/Admin/Agents/skills.jsx:32-175` (skills list; `filesystem-agent`, `create-files-agent`). `server/utils/agents/aibitat/plugins/filesystem/index.js` and `lib.js:35-55` (available when `MISSION_LLM_RUNTIME` is `docker`; root `STORAGE_DIR/missionllm-fs`). `docker/Dockerfile:173` (`ENV MISSION_LLM_RUNTIME=docker`). `server/utils/MCP/hypervisor/index.js:6-12, 385-448` (MCP over stdio, SSE, streamable HTTP) |
+| "Connect a code repository" (home steps 3): GitHub, GitLab and Gitea repositories are data connectors | `frontend/src/components/Modals/ManageWorkspace/DataConnectors/index.jsx:17-30`. `collector/utils/extensions/RepoLoader/` |
+| Study help is chat, not a feature: explanations, summaries and practice questions are what a student asks for; the workspace and thread capture is a learner's own notes | `frontend/src/components/WorkspaceChat/` (one chat surface; no quiz, flashcard or grading feature exists). `server/prisma/schema.prisma:154-181` (threads) |
+| Team and lab knowledge: any documents in any workspace, membership decides who sees which, sources listed when documents were retrieved | `server/models/workspace.js:298-313` (membership). `server/utils/chats/stream.js` (sources). `collector/utils/constants.js:45-86` (file types) |
 
 Spec: `C:/Users/jorda/AppData/Local/Temp/claude/D--OB-Vault/3521ce5e-2448-4950-b754-ab35fb4b4f80/scratchpad/site/SITE-SPEC.md`. Screenshots checked: `.../scratchpad/concept/dir-c/shots/default/1920x1080.png`, `.../dir-c/shots/cite/1920x1080-state_cite.png`, `.../dir-a/shots/empty/1920x1080-state_empty.png`, `.../dir-b/shots/default/1920x1080.png`.

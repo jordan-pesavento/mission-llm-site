@@ -5,7 +5,8 @@
  * Sources from 1280 to 1919, and the wide view from 1920 (Screenshot cropMid/cropSm), so the app text
  * stays near 1:1 at every size. Honesty (copy.md): answers list the documents they used when documents
  * were retrieved; the Sources panel shows the retrieved passages with match scores. Never "cites":
- * inline citations are in development, so the heading says the answers show their readings.
+ * inline citations are in development, so the heading says the sources are listed. The band speaks
+ * of documents and workspaces (course readings, team manuals), not only of readings.
  */
 import DarkBand from "../../ui/DarkBand.astro";
 import Eyebrow from "../../ui/Eyebrow.astro";
@@ -19,10 +20,10 @@ const points = ["Sources listed under grounded answers", "Retrieved passages wit
   <div class="split split--band grounded">
     <div class="grounded__text">
       <Eyebrow>Grounded answers</Eyebrow>
-      <h2 id="grounded-title" class="h2 grounded__title">Answers that show their readings.</h2>
+      <h2 id="grounded-title" class="h2 grounded__title">Answers from your own documents, sources listed.</h2>
       <p class="grounded__lead">
-        When a course workspace has documents, Mission LLM searches them before the model answers. Students open Sources to see which
-        readings an answer used, the passages it pulled and how closely each one matched.
+        When a workspace has documents, Mission LLM searches them on your server before the model answers. Open Sources to see
+        which documents an answer used, the passages it pulled and how closely each one matched.
       </p>
       <ul class="dots" role="list">
         {points.map((p) => <li>{p}</li>)}

@@ -2,11 +2,12 @@
 <!--
   Share card source (Open Graph and X): public/og/mission-llm.png, 1200 x 630.
   Not part of the site build and never published: it is rendered once to a PNG.
-  The redesign's look: the plain mist-50 page ground, the full-color horizontal lockup
-  (public/brand/lockup-horizontal.svg), the home H1 and a one-line summary on the left, and the lecture
-  hall on a local server (the redrawn scene with the ML mark, scripts/og/lecture-hall.svg; the same
-  drawing as the /editions hero once that page uses the redrawn file) on the drafting lattice on the
-  right. The mark is always paired with the wordmark on first contact (DESIGN-SPEC section 10).
+  Matches the home hero (positioning pass, 2026-09-26): the hero's navy ground with its subtle vertical
+  gradient, the inverse horizontal lockup (public/brand/lockup-horizontal-inverse.svg), the home H1 and
+  the eyebrow line on the left, and the hero scene (public/images/scenes/hero-scene.svg: the lit
+  classroom tiers, the in-house server with the ML mark and its node, and the answer card) on the right.
+  The scene carries its own floor grid, so there is no drafting lattice. The mark is always paired with
+  the wordmark on first contact (DESIGN-SPEC section 10).
   Fonts load from the repo: Clash Display from public/fonts, Plus Jakarta Sans from node_modules/@fontsource.
   Render: node scripts/og/render-og.mjs (Chrome from D:/DevCache/puppeteer; writes the raw capture to
   OG_WORK_DIR and the compressed PNG to public/og/mission-llm.png). Keep the text in step with
@@ -39,8 +40,8 @@
       body {
         position: relative;
         overflow: hidden;
-        background: #f8fafc;
-        color: #070f26;
+        background: linear-gradient(180deg, #0c1736 0%, #070f26 58%);
+        color: #ffffff;
         font-family: "Plus Jakarta Sans", system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
       }
@@ -68,27 +69,14 @@
         max-width: 540px;
         font-size: 28px;
         line-height: 1.45;
-        color: #47546f;
+        color: #a9b5cc;
       }
       .scene {
         position: absolute;
-        right: -20px;
-        top: 96px;
-        width: 640px;
-        height: 480px;
-        isolation: isolate;
-      }
-      /* The drafting lattice behind the drawing, fading toward the edges (as .drafting on the site). */
-      .scene::before {
-        content: "";
-        position: absolute;
-        inset: -8% -10%;
-        z-index: -1;
-        background-image: url("../../public/images/lattice.svg");
-        background-size: 48px 27.713px;
-        background-position: center;
-        opacity: 0.34;
-        -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent 100%);
+        right: -24px;
+        top: 44px;
+        width: 656px;
+        height: 550px;
       }
       .scene img {
         width: 100%;
@@ -98,12 +86,12 @@
   </head>
   <body>
     <div class="text">
-      <img class="lockup" src="../../public/brand/lockup-horizontal.svg" alt="" />
-      <h1>Your class,<br />answered.</h1>
-      <p>A course assistant that answers from your readings and lists its sources.</p>
+      <img class="lockup" src="../../public/brand/lockup-horizontal-inverse.svg" alt="" />
+      <h1>Your class,<br />your model.</h1>
+      <p>A private, offline AI system for schools and teams, on your own hardware.</p>
     </div>
     <div class="scene">
-      <img src="lecture-hall.svg" width="640" height="480" alt="" />
+      <img src="../../public/images/scenes/hero-scene.svg" width="656" height="550" alt="" />
     </div>
   </body>
 </html>

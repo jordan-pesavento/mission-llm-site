@@ -1,15 +1,21 @@
 ---
 /*
- * "Who it's for" (#product), a LIGHT section (redesign, DESIGN-SPEC 11). Product frames beside an
- * accordion: instructors, students, independent learners, school IT, organizations, so the page leads
- * with the classroom story. The audience menu and the phone sheet link to #for-<id> anchors at the top
- * of the accordion block (anchors="for-"), so the landing shows the whole pair under the nav and opens
- * that item (FeatureAccordion + accordion.ts).
+ * "What it's for" (#product), a LIGHT section (redesign, DESIGN-SPEC 11). Product frames beside an
+ * accordion: the five uses of the one in-house system (positioning pass, copy.md: Home > What it is
+ * for): classrooms, students, teaching a course, training instructors, teams and labs. The hero sells
+ * the system; this section shows what people run on it. The menu and the phone sheet link to #for-<id>
+ * anchors at the top of the accordion block (anchors="for-"), so the landing shows the whole pair
+ * under the nav and opens that item (FeatureAccordion + accordion.ts). The ids match AUDIENCES in
+ * src/data/site.ts.
  * Crops (DESIGN-SPEC section 7): each item shows its own real capture. All five main crops share the
  * 1.9 aspect and all five phone crops 4:3, so the frame box never changes height when the open item
- * changes. Honesty (copy.md evidence): managers/admins open every workspace and read chat history;
- * default users see only the workspaces they are added to; answers list sources only when documents
- * were retrieved; a different provider per workspace; agents use the skills admins turn on.
+ * changes. Honesty (copy.md evidence): answers list sources only when documents were retrieved;
+ * managers/admins open every workspace and read chat history; default users see only the workspaces
+ * they are added to; a different provider per workspace; agents use the skills admins turn on, MCP
+ * servers connect over stdio, SSE or streamable HTTP, and the filesystem skill (Docker installs) reads
+ * and writes files in a folder under the server's storage. "Agentic coding" is a classroom use case
+ * taught on the app's agents and a local model, never a claim that Mission LLM is a coding tool.
+ * "Practice questions" and "explanations" are things a student asks the chat for, not features.
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
@@ -17,9 +23,9 @@ import FeatureAccordion, { type AccordionItem } from "../../ui/FeatureAccordion.
 
 const items: AccordionItem[] = [
   {
-    id: "students",
-    title: "For students in a course",
-    body: "Ask questions about the course. Answers drawn from its readings list the sources they used.",
+    id: "classrooms",
+    title: "For classrooms",
+    body: "A course assistant for the whole class. It answers from the course's own readings and lists the sources under each answer.",
     link: { href: "#grounded", label: "See how sources work" },
     image: {
       name: "feature-documents",
@@ -29,9 +35,21 @@ const items: AccordionItem[] = [
     },
   },
   {
-    id: "instructors",
-    title: "For instructors",
-    body: "Build a course workspace from your syllabus and readings, add your students, and see how they use it.",
+    id: "students",
+    title: "For students",
+    body: "Study help drawn from the assigned material. Ask for an explanation, a summary or practice questions, and keep each topic in its own thread.",
+    link: { href: "/download", label: "Run it on your own computer" },
+    image: {
+      name: "feature-workspaces",
+      alt: "A learner's Spanish Practice workspace with one thread per topic, and two answers drawn from the learner's own grammar notes.",
+      crop: { x: 283, y: 180, w: 1145, h: 603 },
+      cropSm: { x: 283, y: 180, w: 440, h: 330 },
+    },
+  },
+  {
+    id: "courses",
+    title: "For teaching a course",
+    body: "Build a workspace for each course from the syllabus, readings and handouts, add your students, and see how they use it.",
     link: { href: "#steps", label: "Set up a course in four steps" },
     image: {
       name: "feature-users",
@@ -41,34 +59,10 @@ const items: AccordionItem[] = [
     },
   },
   {
-    id: "learners",
-    title: "For independent learners",
-    body: "Make a workspace for any subject, add your own notes and readings, and keep each topic in its own thread.",
-    link: { href: "/download", label: "See install options" },
-    image: {
-      name: "feature-workspaces",
-      alt: "A learner's Spanish Practice workspace with one thread per topic, and two answers drawn from the learner's own grammar notes.",
-      crop: { x: 283, y: 180, w: 1145, h: 603 },
-      cropSm: { x: 283, y: 180, w: 440, h: 330 },
-    },
-  },
-  {
-    id: "school-it",
-    title: "For school IT",
-    body: "Run it on school servers with local models and no internet, or set a different provider for each workspace.",
-    link: { href: "/security", label: "Read the security overview" },
-    image: {
-      name: "feature-models",
-      alt: "The Chat Settings of a course workspace: its own LLM provider setting and its chat mode.",
-      crop: { x: 244, y: 48, w: 858, h: 452 },
-      cropSm: { x: 244, y: 84, w: 440, h: 330 },
-    },
-  },
-  {
-    id: "organizations",
-    title: "For organizations",
-    body: "Companies get the same workspaces and answers with sources, and agents that use the tools admins turn on.",
-    link: { href: "/editions", label: "Compare editions" },
+    id: "instructors",
+    title: "For training instructors",
+    body: "Teach faculty modern AI workflows, agentic coding included, on a local model: agents, the skills you turn on and MCP servers, all running on your own hardware.",
+    link: { href: "/security#controls-integrations", label: "See the agent controls" },
     image: {
       name: "feature-agents",
       alt: "The Agent Skills settings: skills an admin switches on or off, such as document creation, charts and a SQL connector, plus custom skills, agent flows and MCP servers.",
@@ -76,10 +70,22 @@ const items: AccordionItem[] = [
       cropSm: { x: 244, y: 60, w: 322, h: 241.5 },
     },
   },
+  {
+    id: "teams",
+    title: "For teams and labs",
+    body: "Put policies, manuals and research in workspaces, decide who sees which, and get answers with the sources listed. Each workspace picks its own model.",
+    link: { href: "/editions", label: "Compare editions" },
+    image: {
+      name: "feature-models",
+      alt: "The Chat Settings of a workspace: its own LLM provider setting and its chat mode.",
+      crop: { x: 244, y: 48, w: 858, h: 452 },
+      cropSm: { x: 244, y: 84, w: 440, h: 330 },
+    },
+  },
 ];
 ---
 
 <Section id="product" labelledby="product-title">
-  <SectionIntro eyebrow="Who it's for" title="Built for classrooms. Ready for teams." id="product-title" />
-  <FeatureAccordion id="product-acc" label="Who it's for" anchors="for-" items={items} frame="45vw" />
+  <SectionIntro eyebrow="What it's for" title="One system for classrooms, students, courses, instructors and teams." id="product-title" />
+  <FeatureAccordion id="product-acc" label="What it's for" anchors="for-" items={items} frame="45vw" />
 </Section>

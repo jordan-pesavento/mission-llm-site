@@ -70,12 +70,16 @@ const COPIES = 4;
   .runs__mask:hover .runs__track {
     animation-play-state: paused;
   }
+  /* Every copy must be exactly the same width or the loop jumps: the three aria-hidden copies carry no
+     role="list", so the global list reset does not reach them. Reset list styles here for all four. */
   .runs__group {
     display: flex;
     flex: none;
     align-items: center;
     gap: clamp(2.5rem, 1.5rem + 2vw, 4rem);
-    padding-right: clamp(2.5rem, 1.5rem + 2vw, 4rem);
+    margin: 0;
+    padding: 0 clamp(2.5rem, 1.5rem + 2vw, 4rem) 0 0;
+    list-style: none;
   }
   .runs__group li {
     display: flex;
