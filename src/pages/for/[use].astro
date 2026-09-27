@@ -1,15 +1,18 @@
 ---
 /*
  * "What it's for" pages: /for/classrooms, /for/students, /for/courses, /for/instructors, /for/teams.
- * One page per use (owner, 2026-09-27: the menu items should be their own pages, not jumps to one
- * home section). Every page is the same template, so the five read as one set:
- *   Hero DARK: eyebrow, H1, lead, Download and Talk to us, and the use's real app capture shown whole.
- *   How it works LIGHT: three numbered steps in equal cards.
- *   Available today DARK: six capabilities in equal cards (3, 2, then 1 across).
- *   Good to know LIGHT: the plain facts to know before relying on it, beside its heading (Rail).
- *   More uses LIGHT (hairline above): the other four pages as equal cards.
- *   Footer DARK (the page closes on a light band).
- * One column structure, one gutter, no side rails or sticky page chrome. Content: src/data/uses.ts.
+ * One page per use (owner, 2026-09-27: the menu items are their own pages, and they must look like the
+ * home page). Every block is the home page's own pattern, in the home page's tone rhythm:
+ *   Hero DARK: the home hero (fills the view under the nav, the home H1 size, three actions, the use's
+ *     real capture shown whole beside the text, the "Runs with" marquee along the bottom).
+ *   What it gives you LIGHT: SectionIntro plus the FeatureAccordion (frame beside the accordion), as the
+ *     home "What it's for" and "Security and control" sections; each item swaps to its own capture.
+ *   How it works DARK: the home steps row (hairline, rhombus numeral and title, isometric drawing that
+ *     draws itself, words), three steps on the drafting lattice.
+ *   Good to know LIGHT: the home deploy band's split (intro left, hairline list right).
+ *   More ways to use it DARK: the home Resources cards (drawing panel, title, words, arrow line).
+ *   Footer LIGHT (the page closes on a dark band, as home does).
+ * Content: src/data/uses.ts.
  */
 import Base from "../../layouts/Base.astro";
 import Section from "../../components/ui/Section.astro";
@@ -17,9 +20,11 @@ import SectionIntro from "../../components/ui/SectionIntro.astro";
 import Button from "../../components/ui/Button.astro";
 import ArrowLink from "../../components/ui/ArrowLink.astro";
 import Icon from "../../components/ui/Icon.astro";
+import Art from "../../components/ui/Art.astro";
 import Screenshot from "../../components/ui/Screenshot.astro";
-import Rail from "../../components/sections/download/_Rail.astro";
-import { USES, useHref, type Use } from "../../data/uses";
+import FeatureAccordion, { type AccordionItem } from "../../components/ui/FeatureAccordion.astro";
+import RunsWith from "../../components/sections/home/RunsWith.astro";
+import { USES, SHOTS, useHref, type Use } from "../../data/uses";
 import { AUDIENCES, CONTACT_HREF, DOWNLOAD_HREF } from "../../data/site";
 
 export function getStaticPaths() {
@@ -27,99 +32,116 @@ export function getStaticPaths() {
 }
 
 const { use } = Astro.props as { use: Use };
-const others = USES.filter((u) => u.id !== use.id).map((u) => ({
-  ...u,
-  desc: AUDIENCES.find((a) => a.id === u.id)?.desc ?? u.lead,
-  thumb: AUDIENCES.find((a) => a.id === u.id)?.thumb,
+
+// The same runtimes and targets as the home hero's band.
+const RUNS_WITH = ["Ollama", "LM Studio", "LocalAI", "KoboldCPP", "Docker", "Kubernetes", "Helm", "OpenShift"];
+
+const items: AccordionItem[] = use.features.map((f) => ({
+  id: f.id,
+  title: f.title,
+  body: f.body,
+  html: f.html,
+  link: f.link,
+  image: { name: f.image, alt: SHOTS[f.image] },
 }));
+
+const others = USES.filter((u) => u.id !== use.id).map((u) => {
+  const a = AUDIENCES.find((x) => x.id === u.id);
+  return { id: u.id, title: u.title, desc: a?.desc ?? u.lead, art: (a?.thumb ?? "").replace(/^\//, "") };
+});
 ---
 
-<Base title={use.meta.title} description={use.meta.description}>
-  <Section tone="dark" pad="hero" labelledby="use-title" class="use-hero">
-    <div class="use-hero__grid">
-      <div class="use-hero__text">
-        <nav class="crumbs" aria-label="Breadcrumb">
-          <a href="/#product">What it's for</a>
-          <Icon set="line" name="arrow" size={16} />
-          <span aria-current="page">{use.title}</span>
-        </nav>
-        <h1 id="use-title" class="h1-page use-hero__title">{use.heading}</h1>
-        <p class="lead use-hero__lead">{use.lead}</p>
-        <div class="actions use-hero__actions">
-          <Button href={DOWNLOAD_HREF}>Download</Button>
-          <Button href={CONTACT_HREF} variant="secondary">Talk to us</Button>
+<Base title={use.meta.title} description={use.meta.description} footerTone="light">
+  <section class="uhero" data-tone="dark" aria-labelledby="use-title">
+    <div class="wrap uhero__inner">
+      <div class="uhero__grid">
+        <div class="uhero__text">
+          <p class="eyebrow">{use.eyebrow}</p>
+          <h1 id="use-title" class="h1 uhero__title">{use.heading}</h1>
+          <p class="lead uhero__lead">{use.lead}</p>
+          <div class="actions uhero__actions">
+            <Button href="#how">See how it works</Button>
+            <Button href={DOWNLOAD_HREF} variant="secondary">Download</Button>
+            <Button href={CONTACT_HREF} variant="secondary">Talk to us</Button>
+          </div>
+        </div>
+        <div class="uhero__media">
+          <Screenshot name={use.image} alt={SHOTS[use.image]} priority frame="55vw" />
         </div>
       </div>
-      <Screenshot name={use.image.name} alt={use.image.alt} priority frame="55vw" class="use-hero__shot" />
+      <RunsWith label="Runs with" items={RUNS_WITH} />
     </div>
+  </section>
+
+  <Section id="features" labelledby="features-title">
+    <SectionIntro eyebrow="What it gives you" title={use.featuresTitle} id="features-title" />
+    <FeatureAccordion id="use-acc" label="What it gives you" items={items} frame="45vw" />
   </Section>
 
-  <Section labelledby="how-title">
-    <SectionIntro eyebrow={use.eyebrow} title="How it works" id="how-title" />
-    <ol class="use-steps" role="list">
+  <Section id="how" tone="dark" labelledby="how-title">
+    <SectionIntro eyebrow="How it works" title={use.stepsTitle} id="how-title" />
+    <ol class="usteps" role="list">
       {
         use.steps.map((s, i) => (
-          <li class="use-step card">
-            <span class="num">{i + 1}</span>
-            <h3 class="h4 use-step__title">{s.title}</h3>
-            <p class="use-step__body">{s.body}</p>
+          <li class="ustep">
+            <div class="ustep__head">
+              <span class="num" aria-hidden="true">
+                {i + 1}
+              </span>
+              <h3 class="h4">{s.title}</h3>
+            </div>
+            <div class="ustep__art">
+              <Art src={s.art} draw />
+            </div>
+            <p class="ustep__body">{s.body}</p>
           </li>
         ))
       }
     </ol>
   </Section>
 
-  <Section tone="dark" labelledby="today-title">
-    <SectionIntro eyebrow="Available today" title="What it gives you" id="today-title" />
-    <ul class="use-feats" role="list">
-      {
-        use.features.map((f) => (
-          <li class="use-feat card">
-            <span class="use-feat__icon">
-              <Icon name={f.icon} size={24} />
-            </span>
-            <h3 class="h4 use-feat__title">{f.title}</h3>
-            <p class="use-feat__body">{f.body}</p>
-          </li>
-        ))
-      }
-    </ul>
-  </Section>
-
-  <Section labelledby="know-title">
-    <Rail title="Good to know" id="know-title">
-      <ul class="use-notes" role="list">
+  <Section id="know" labelledby="know-title">
+    <div class="split split--deploy know">
+      <div class="know__intro">
+        <p class="eyebrow">Before you rely on it</p>
+        <h2 id="know-title" class="h2 know__title">{use.notesTitle}</h2>
+        <p class="know__lead">Plain facts about what this use can and cannot do today.</p>
+        <p class="know__more"><ArrowLink href={use.more.href}>{use.more.label}</ArrowLink></p>
+      </div>
+      <ul class="know__list" role="list">
         {
           use.notes.map((n) => (
-            <li class="use-note">
-              <Icon name="info" size={22} />
+            <li>
+              <Icon name="info" size={24} />
               <span>{n}</span>
             </li>
           ))
         }
       </ul>
-      <p class="use-more"><ArrowLink href={use.more.href}>{use.more.label}</ArrowLink></p>
-    </Rail>
+    </div>
   </Section>
 
-  <Section rule labelledby="others-title">
-    <SectionIntro eyebrow="What it's for" title="More ways to use it" id="others-title" />
-    <ul class="use-others" role="list">
+  <Section id="more-uses" tone="dark" labelledby="more-title">
+    <div class="intro"><h2 id="more-title" class="h2">More ways to use it</h2></div>
+    <ul class="ucards" role="list">
       {
         others.map((o) => (
-          <li class="use-other card">
-            <span class="use-other__thumb">
-              <img src={o.thumb} width="100" height="75" alt="" loading="lazy" decoding="async" />
-            </span>
-            <h3 class="h4 use-other__title">
-              <a class="use-other__link" href={useHref(o.id)}>
-                {o.title}
-              </a>
-            </h3>
-            <p class="use-other__body">{o.desc}</p>
-            <span class="use-other__go" aria-hidden="true">
-              <Icon set="line" name="arrow" size={18} />
-            </span>
+          <li class="ucard card">
+            <div class="ucard__art">
+              <Art src={o.art} />
+            </div>
+            <div class="ucard__text">
+              <h3 class="h3 ucard__title">
+                <a class="ucard__link" href={useHref(o.id)}>
+                  {o.title}
+                </a>
+              </h3>
+              <p class="ucard__body">{o.desc}</p>
+              <p class="ucard__meta" aria-hidden="true">
+                Read more
+                <Icon set="line" name="arrow" size={18} />
+              </p>
+            </div>
           </li>
         ))
       }
@@ -128,242 +150,284 @@ const others = USES.filter((u) => u.id !== use.id).map((u) => ({
 </Base>
 
 <style>
-  /* ---------- Hero: text beside the capture from 1024, stacked below ---------- */
-  .use-hero__grid {
+  /* ---------- Hero: the home hero's frame (fills the view under the nav, strip along the bottom) ---------- */
+  .uhero {
+    overflow-x: clip;
+  }
+  .uhero__inner {
+    display: grid;
+    grid-template-rows: 1fr;
+    align-content: center;
+    gap: clamp(1.5rem, 0.5rem + 2svh, 2.75rem);
+    min-height: var(--view-h);
+    padding-block: clamp(1.5rem, 0.5rem + 3svh, 3rem);
+  }
+  .uhero__grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    row-gap: clamp(2rem, 1rem + 3vw, 3.5rem);
+    row-gap: clamp(2rem, 1rem + 3vw, 3rem);
     align-items: center;
+    align-self: center;
   }
-  .use-hero__text {
+  .uhero__text {
     min-width: 0;
-    max-width: 40rem;
   }
-  .crumbs {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    font-size: var(--fs-eyebrow);
-    font-weight: var(--fw-medium);
-    color: var(--color-text-quiet);
+  .uhero__title {
+    margin-top: 14px;
+    max-width: 12ch;
   }
-  .crumbs a {
-    color: var(--color-accent);
-    text-decoration: none;
-  }
-  .crumbs a:hover {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
-  .crumbs span {
+  .uhero__lead {
+    margin-top: clamp(1rem, 0.6rem + 1vw, 1.5rem);
+    max-width: 32rem;
     color: var(--color-text-muted);
   }
-  .use-hero__title {
-    margin-top: var(--gap-eyebrow);
-  }
-  .use-hero__lead {
-    margin-top: var(--space-6);
-    color: var(--color-text-muted);
-  }
-  .use-hero__actions {
+  .uhero__actions {
     margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
   }
-  @media (max-width: 479.98px) {
-    .use-hero__actions {
+  .uhero__media {
+    min-width: 0;
+  }
+  @media (max-width: 639.98px) {
+    .uhero__actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
     }
+    .uhero__actions :global(.btn) {
+      padding-inline: 12px;
+    }
+    .uhero__actions > :global(.btn:first-child) {
+      grid-column: 1 / -1;
+    }
   }
   @media (min-width: 1024px) {
-    .use-hero__grid {
+    .uhero__inner {
+      grid-template-rows: 1fr auto;
+    }
+    .uhero__grid {
       grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-      column-gap: var(--split-gap);
+      column-gap: clamp(2rem, 0.5rem + 2.5vw, 5rem);
+    }
+    .uhero__actions {
+      flex-wrap: nowrap;
+    }
+    /* The capture is sized by the height left in the view (like the home scene), so the whole hero
+       and the strip always fit one screen; it sits against the right edge of its column. */
+    .uhero__media :global(.frame) {
+      max-width: calc((var(--view-h) - 14rem) * var(--w) / var(--h));
+      margin-left: auto;
+    }
+  }
+  @media (min-width: 1024px) and (max-width: 1279.98px) {
+    .uhero__actions :global(.btn) {
+      padding-inline: 16px;
     }
   }
 
-  /* ---------- Shared card rhythm: every card on these pages uses the same padding and gaps ---------- */
-  /* Cards in one row share their row tracks (subgrid): the marks, titles and text line up across the
-     row even when one title wraps. Without subgrid the flex column below still works. */
-  @supports (grid-template-rows: subgrid) {
-    /* The card's own gap overrides the outer row gap between its three tracks, so cards sit
-       --col-gap apart and their parts --space-3 apart, as in the flex version. */
-    .use-step,
-    .use-feat {
-      display: grid;
-      grid-row: span 3;
-      grid-template-rows: subgrid;
-      row-gap: var(--space-3);
-    }
-  }
-  .use-step,
-  .use-feat,
-  .use-other {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    padding: clamp(1.25rem, 0.8rem + 1.2vw, 2rem);
-  }
-
-  /* ---------- How it works: 3 across from 1024, 1 column below ---------- */
-  .use-steps {
+  /* ---------- How it works: the home steps row ---------- */
+  .usteps {
+    position: relative;
+    isolation: isolate;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--col-gap);
+    gap: clamp(1.75rem, 1rem + 2vw, 2.5rem) var(--col-gap);
   }
-  .use-step .num {
-    margin-bottom: var(--space-2);
+  .usteps::before {
+    content: "";
+    display: none;
+    background-image: url("/images/lattice.svg");
+    background-size: 48px 27.713px;
+    background-position: center;
+    pointer-events: none;
   }
-  .use-step__body,
-  .use-feat__body,
-  .use-other__body {
-    color: var(--color-text-muted);
-  }
-  @media (min-width: 1024px) {
-    .use-steps {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  /* ---------- Available today: 3, 2, then 1 across ---------- */
-  .use-feats {
+  .ustep {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--col-gap);
-  }
-  .use-feat__icon {
-    display: inline-grid;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    margin-bottom: var(--space-2);
-    border-radius: var(--r-control);
-    color: var(--color-accent);
-    box-shadow: inset 0 0 0 1px var(--color-line-strong);
-  }
-  @media (min-width: 640px) {
-    .use-feats {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  @media (min-width: 1024px) {
-    .use-feats {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  /* ---------- Good to know ---------- */
-  .use-notes {
-    display: grid;
+    align-content: start;
+    padding-top: 18px;
     border-top: 1px solid var(--color-line);
   }
-  .use-note {
-    display: grid;
-    grid-template-columns: 22px minmax(0, 1fr);
-    gap: var(--space-4);
-    align-items: start;
-    padding-block: var(--space-5);
-    border-bottom: 1px solid var(--color-line);
-    font-size: var(--fs-lead, 1.125rem);
-    color: var(--color-text);
+  .ustep__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
-  .use-note :global(svg) {
-    margin-top: 0.2em;
-    color: var(--color-accent);
+  .ustep__art {
+    margin-top: 14px;
   }
-  .use-more {
-    margin-top: var(--space-8);
+  .ustep__art :global(.art) {
+    width: min(60%, 16rem);
+  }
+  .ustep__body {
+    margin-top: 14px;
+    max-width: 30rem;
+    color: var(--color-text-muted);
+  }
+  /* From 768: three columns that share three rows (title, drawing, words), so they line up. */
+  @media (min-width: 768px) {
+    .usteps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: auto auto auto;
+    }
+    .ustep {
+      grid-row: 1 / span 3;
+      grid-template-rows: subgrid;
+      row-gap: 0;
+    }
+    /* Explicit columns: the lattice layer below is a grid item too, so auto-placement must not push
+       the steps into extra columns. */
+    .ustep:nth-child(1) {
+      grid-column: 1;
+    }
+    .ustep:nth-child(2) {
+      grid-column: 2;
+    }
+    .ustep:nth-child(3) {
+      grid-column: 3;
+    }
+    .ustep__art :global(.art) {
+      width: min(100%, 20rem);
+    }
+  }
+  @media (min-width: 1024px) {
+    .usteps::before {
+      display: block;
+      grid-row: 2;
+      grid-column: 1 / -1;
+      margin: -3rem calc(-1 * var(--col-gap)) -1rem;
+      opacity: 0.15;
+      -webkit-mask-image: radial-gradient(ellipse 82% 64% at 50% 50%, #000 20%, transparent 84%);
+      mask-image: radial-gradient(ellipse 82% 64% at 50% 50%, #000 20%, transparent 84%);
+    }
   }
 
-  /* ---------- More ways to use it: 4, 2, then 1 across ---------- */
-  .use-others {
+  /* ---------- Good to know: the home deploy band's split ---------- */
+  .know__intro {
+    min-width: 0;
+  }
+  .know__title {
+    margin-top: var(--gap-eyebrow);
+  }
+  .know__lead {
+    max-width: 30rem;
+    margin-top: 20px;
+    color: var(--color-text-muted);
+  }
+  .know__more {
+    display: flex;
+    margin-top: 28px;
+  }
+  .know__list {
+    min-width: 0;
+    border-top: 1px solid var(--color-line);
+  }
+  .know__list li {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--color-line);
+    font-size: var(--fs-lead);
+    line-height: var(--lh-lead);
+    color: var(--color-heading);
+  }
+  .know__list li :global(svg) {
+    margin-top: 0.15em;
+    color: var(--color-accent);
+  }
+
+  /* ---------- More ways to use it: the home Resources cards ---------- */
+  .ucards {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--col-gap);
+    margin-top: var(--gap-intro);
   }
-  .use-other {
+  .ucard {
     position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
     transition: box-shadow var(--t-fast) var(--ease);
   }
-  .use-other__thumb {
-    display: block;
-    width: 100px;
-    height: 75px;
-    margin-bottom: var(--space-2);
+  .ucard__art {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 443 / 215;
+    padding: 18px;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-line);
   }
-  .use-other__thumb img {
-    display: block;
-    width: 100%;
+  .ucard__art :global(.art),
+  .ucard__art :global(svg) {
+    width: auto;
     height: 100%;
   }
-  .use-other__link {
+  .ucard__text {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: clamp(1.25rem, 0.8rem + 1.2vw, 2rem);
+  }
+  .ucard__link {
     color: inherit;
     text-decoration: none;
   }
-  .use-other__link::after {
+  .ucard__link::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: var(--r-card);
   }
-  .use-other__link:focus-visible {
+  .ucard__link:focus-visible {
     outline: none;
   }
-  .use-other__link:focus-visible::after {
+  .ucard__link:focus-visible::after {
     outline: 2px solid var(--color-focus);
     outline-offset: 3px;
   }
-  .use-other__go {
+  .ucard__body {
+    color: var(--color-text-muted);
+  }
+  .ucard__meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     margin-top: auto;
-    padding-top: var(--space-2);
+    padding-top: 8px;
+    font-weight: var(--fw-semibold);
     color: var(--color-heading);
   }
-  .use-other__go :global(svg) {
+  .ucard__meta :global(svg) {
+    width: 18px;
+    height: 18px;
     transition: transform var(--t-fast) var(--ease);
   }
   @media (hover: hover) {
-    .use-other:hover {
+    .ucard:hover {
       box-shadow: 0 0 0 1px var(--color-line-strong), var(--shadow-card);
     }
-    .use-other:hover .use-other__go :global(svg) {
+    .ucard:hover .ucard__meta :global(svg) {
       transform: translateX(3px);
     }
-    .use-other:hover .use-other__link {
+    .ucard:hover .ucard__link {
       text-decoration: underline;
       text-decoration-thickness: 1px;
       text-underline-offset: 0.2em;
     }
   }
-  /* Phones: each card is a row (thumbnail, then the text), so the list stays short. */
-  @media (max-width: 639.98px) {
-    .use-other {
-      display: grid;
-      grid-template-columns: 72px minmax(0, 1fr) auto;
-      column-gap: var(--space-4);
-      row-gap: var(--space-1);
-      align-items: center;
-    }
-    .use-other__thumb {
-      grid-row: 1 / span 2;
-      width: 72px;
-      height: 54px;
-      margin: 0;
-    }
-    .use-other__go {
-      grid-column: 3;
-      grid-row: 1 / span 2;
-      margin: 0;
-      padding: 0;
-    }
-  }
   @media (min-width: 640px) {
-    .use-others {
+    .ucards {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
   @media (min-width: 1280px) {
-    .use-others {
+    .ucards {
       grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    /* Four narrow cards: every title keeps a two-line slot, so the words start on one line. */
+    .ucard__title {
+      min-height: calc(2 * var(--lh-h3) * 1em);
     }
   }
 </style>

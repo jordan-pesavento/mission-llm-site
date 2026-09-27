@@ -1,43 +1,83 @@
 /*
  * The five "What it's for" pages (/for/<id>), one per use of the system, in the order the site tells
  * the story (copy.md: positioning pass). The header menu, the phone sheet, the home accordion and the
- * footer link here; src/pages/for/[use].astro renders every entry with the same template, so the five
- * pages share one structure, one rhythm and one set of components.
+ * footer link here. src/pages/for/[use].astro renders every entry with the HOME PAGE's own building
+ * blocks (owner, 2026-09-27: these pages must look like the home page): a full-view navy hero with the
+ * home H1 size and the "Runs with" marquee, a feature accordion beside real app captures, the illustrated
+ * steps row on navy, a split "good to know" band, resource-style cards to the other uses, light footer.
  * Wording limits (copy.md builder notes and the evidence table): "lists its sources", never "cites";
  * sources appear only when documents were retrieved; explanations, summaries and practice questions are
  * things a student asks the chat for, not features; "agentic coding" is a training subject run on the
  * app's agents, never a claim that Mission LLM is a coding tool; "stays in the building" always sits next
  * to its condition (a local model runtime); the manager role is server-wide; no LMS or study-feature
- * claims; roadmap items say "in development".
+ * claims; roadmap items say "in development"; no standalone "AI" in a Clash Display heading.
+ * Captures: every alt describes the real capture (public/images/product); SHOTS holds one alt per file.
  */
-import { COUNTS } from "./site";
+import { COUNTS, TELEMETRY_ENV } from "./site";
 
-type ImageName =
+export type ShotName =
+  | "hero"
+  | "grounded"
   | "feature-documents"
   | "feature-workspaces"
   | "feature-users"
   | "feature-agents"
-  | "feature-models";
+  | "feature-models"
+  | "security"
+  | "security-offline"
+  | "security-roles"
+  | "security-history"
+  | "security-telemetry";
+
+/** One alt text per capture, describing what the capture shows. */
+export const SHOTS: Record<ShotName, string> = {
+  hero: "A Lab 2 prep thread in an Intro to Ecology workspace: two answers drawn from the lab handout and the readings, each with its documents listed under it.",
+  grounded:
+    "A student's answer about energy flow and the nitrogen cycle, with the Sources panel open: each course reading it drew on, a passage from it and its match score.",
+  "feature-documents":
+    "A student's question about carrying capacity in a course workspace, answered from the readings, with each reading listed under the answer.",
+  "feature-workspaces":
+    "A learner's Spanish Practice workspace with one thread per topic, and two answers drawn from the learner's own grammar notes.",
+  "feature-users":
+    "The Users page as an instructor with the manager role sees it: the admin, the instructor and the student accounts, each with its role.",
+  "feature-agents":
+    "The Agent Skills settings: skills an admin switches on or off, such as document creation, charts and a SQL connector, plus custom skills, agent flows and MCP servers.",
+  "feature-models":
+    "A course workspace's Chat Settings: its own model provider, the Agent, Chat and Query modes, its system prompt and its Query mode refusal response.",
+  security: "The Event Logs page: sign-ins, a failed sign-in, an uploaded document, a new user and an invite, each with the user and the time.",
+  "security-offline": "The LLM Preference page, set to an OpenAI-compatible model server on the same machine (127.0.0.1).",
+  "security-roles": "The Members tab of a course workspace, listing the students added to it, each with the default role.",
+  "security-history":
+    "The Workspace Chats page as an instructor sees it: each question with the student who sent it, the workspace, the answer and the time, with an Export menu.",
+  "security-telemetry":
+    "The Privacy & Data-Handling page with the anonymous telemetry switch off, and the vectors kept in the built-in LanceDB store on the instance.",
+};
+
+export type UseFeature = { id: string; title: string; body: string; html?: string; image: ShotName; link?: { href: string; label: string } };
 
 export type Use = {
   id: string;
   /** Menu and card title, e.g. "Classrooms". */
   title: string;
-  /** Page <title> and meta description. */
   meta: { title: string; description: string };
+  /** Hero: eyebrow, a short home-size H1, the lead and the capture shown beside it. */
   eyebrow: string;
   heading: string;
   lead: string;
-  image: { name: ImageName; alt: string };
-  /** Three steps: how the use works, in order. */
-  steps: { title: string; body: string }[];
-  /** Six capabilities that serve this use, each with a Phosphor icon name. */
-  features: { icon: string; title: string; body: string }[];
-  /** Plain facts to know before relying on it. */
+  image: ShotName;
+  /** "What it gives you": the accordion's heading and five items, each with its own capture. */
+  featuresTitle: string;
+  features: UseFeature[];
+  /** "How it works": the steps row's heading and three steps, each with an isometric drawing. */
+  stepsTitle: string;
+  steps: { title: string; body: string; art: string }[];
+  /** "Good to know": the band's heading, the facts to know before relying on it and one link out. */
+  notesTitle: string;
   notes: string[];
-  /** One link out, under the notes. */
   more: { href: string; label: string };
 };
+
+const telemetryHtml = `Set <code>${TELEMETRY_ENV.replace(/"/g, "&quot;")}</code> before the first start and no usage events are sent. Or turn it off in Settings.`;
 
 export const USES: Use[] = [
   {
@@ -49,40 +89,70 @@ export const USES: Use[] = [
         "A course assistant for the whole class that answers from the course readings and lists its sources, running on your school's own hardware.",
     },
     eyebrow: "For classrooms",
-    heading: "A course assistant for the whole class.",
+    heading: "A course assistant for every class.",
     lead: "Put the course readings in a workspace and your students ask questions in plain language. Mission LLM answers from those readings on your own hardware and lists the sources it used under the answer.",
-    image: {
-      name: "feature-documents",
-      alt: "A student's question about carrying capacity in a course workspace, answered from the readings, with each reading listed under the answer.",
-    },
+    image: "feature-documents",
+    featuresTitle: "Everything the course assistant needs.",
+    features: [
+      {
+        id: "sources",
+        title: "Sources listed",
+        body: "When passages from the readings were retrieved, the documents are listed under the answer. Open Sources to read each passage and how closely it matched.",
+        image: "grounded",
+        link: { href: "/#grounded", label: "How grounded answers work" },
+      },
+      {
+        id: "readings",
+        title: "The course readings",
+        body: "PDFs, Word files, slides, spreadsheets and scanned handouts with OCR. Pin the syllabus so the model sees its full text on every question.",
+        image: "feature-documents",
+      },
+      {
+        id: "prompt",
+        title: "Prompt and mode",
+        body: "Set the course's system prompt, choose Query mode to answer only from the readings, and write the reply for questions they do not cover.",
+        image: "feature-models",
+      },
+      {
+        id: "members",
+        title: "Only your students",
+        body: "In multi-user mode, students see only the course workspaces they are added to, and a per-user daily message limit keeps the hardware fair.",
+        image: "security-roles",
+        link: { href: "/security#controls-access", label: "Learn more about access" },
+      },
+      {
+        id: "local",
+        title: "A local model",
+        body: "Run the model with Ollama, LM Studio or another local runtime, and the questions and readings stay in the building.",
+        image: "security-offline",
+        link: { href: "/security#outbound", label: "Every outbound connection" },
+      },
+    ],
+    stepsTitle: "From readings to answers in three steps.",
     steps: [
       {
         title: "Add the readings",
-        body: "Upload PDFs, Word files, slides, spreadsheets and scanned handouts to the course workspace. They are parsed, embedded and stored on your server.",
+        body: "Upload the course's documents to its workspace. They are parsed, embedded and stored on your server.",
+        art: "images/steps/documents.svg",
       },
       {
         title: "Students ask",
-        body: "Each student signs in with their own account and chats in the course workspaces they were added to, in threads of their own.",
+        body: "Each student signs in with their own account and asks in the course workspace, in threads of their own.",
+        art: "images/install/open-app.svg",
       },
       {
         title: "Sources are listed",
-        body: "When passages from the readings were retrieved, the answer lists those documents under it. Open Sources to read the passages and how closely each matched.",
+        body: "The answer lists the readings it drew on, so students can check the passage before they rely on it.",
+        art: "images/menu/students.svg",
       },
     ],
-    features: [
-      { icon: "magnifying-glass", title: "Query mode", body: "Answer only from the course documents, with a refusal message you write for questions the readings do not cover." },
-      { icon: "push-pin", title: "Pinned documents", body: "Pin the syllabus so the model sees its full text on every question." },
-      { icon: "chat-centered-text", title: "A prompt per course", body: "Give each workspace its own system prompt: the level, the tone and what the assistant should avoid." },
-      { icon: "lightbulb", title: "Suggested prompts", body: "Offer students a few starting questions when they open the workspace." },
-      { icon: "gauge", title: "Daily message limits", body: "Set a per-user daily message limit so a whole class shares the hardware fairly." },
-      { icon: "cpu", title: "A local model", body: "Run the model with Ollama, LM Studio or another local runtime, and the questions and readings stay in the building." },
-    ],
+    notesTitle: "Good to know.",
     notes: [
       "Admins and managers can read workspace chats, with who sent each one. Tell your students.",
       "Sources are listed only when documents were retrieved for that question.",
       "Numbered inline citations and page references are in development.",
     ],
-    more: { href: "/#grounded", label: "How grounded answers work" },
+    more: { href: "/security", label: "Read the security overview" },
   },
   {
     id: "students",
@@ -93,40 +163,69 @@ export const USES: Use[] = [
         "Study help drawn from the assigned material: explanations, summaries and practice questions from the readings in your course workspace, on hardware your school or you control.",
     },
     eyebrow: "For students",
-    heading: "Study help from the assigned material.",
+    heading: "Study help from your readings.",
     lead: "Ask for an explanation, a summary or practice questions, and the answer draws on the readings in your course workspace. Independent learners can run the whole system on their own computer.",
-    image: {
-      name: "feature-workspaces",
-      alt: "A learner's Spanish Practice workspace with one thread per topic, and two answers drawn from the learner's own grammar notes.",
-    },
+    image: "feature-workspaces",
+    featuresTitle: "Study with the material you were assigned.",
+    features: [
+      {
+        id: "ask",
+        title: "Explanations",
+        body: "Ask in plain language, as often as you need. The answer draws on the workspace's documents and lists the ones it used.",
+        image: "hero",
+      },
+      {
+        id: "threads",
+        title: "One thread per topic",
+        body: "Keep each topic in its own thread, and fork a thread to try another direction without losing the original.",
+        image: "feature-workspaces",
+      },
+      {
+        id: "check",
+        title: "Check the sources",
+        body: "Ask for practice questions from a reading, then open Sources to check your answers against the passages.",
+        image: "grounded",
+        link: { href: "/#grounded", label: "How grounded answers work" },
+      },
+      {
+        id: "modes",
+        title: "Chat or Query mode",
+        body: "Chat mode adds the model's general knowledge. Query mode answers only from the documents in the workspace.",
+        image: "feature-models",
+      },
+      {
+        id: "own",
+        title: "On your own computer",
+        body: "Install it with Docker, add your own notes and readings, and pair it with a local runtime such as Ollama or LM Studio.",
+        image: "security-offline",
+        link: { href: "/download", label: "Run it on your own computer" },
+      },
+    ],
+    stepsTitle: "Start studying in three steps.",
     steps: [
       {
         title: "Open your workspace",
-        body: "Sign in and pick a course workspace your instructor added you to, or create your own if you run Mission LLM yourself.",
+        body: "Sign in and pick a course workspace your instructor added you to, or create your own if you run it yourself.",
+        art: "images/install/open-app.svg",
       },
       {
-        title: "One thread per topic",
-        body: "Keep each topic in its own thread, and fork a thread to try another direction without losing the original.",
+        title: "Ask about the reading",
+        body: "Ask for an explanation, a summary or practice questions, one topic per thread.",
+        art: "images/steps/documents.svg",
       },
       {
         title: "Check the sources",
-        body: "Open Sources under an answer to read the passages it drew on before you rely on it.",
+        body: "Read the passages an answer drew on before you rely on it. A model can be wrong.",
+        art: "images/menu/students.svg",
       },
     ],
-    features: [
-      { icon: "chats-circle", title: "Explanations and summaries", body: "Ask in plain language, as often as you need. The answer draws on the workspace's documents." },
-      { icon: "list-checks", title: "Practice questions", body: "Ask for practice questions from a reading, then check your answers against the source." },
-      { icon: "files", title: "Your own material", body: "PDF, Word, PowerPoint, EPUB, Markdown, web pages, YouTube transcripts and scanned pages with OCR." },
-      { icon: "git-fork", title: "Threads and forks", body: "Separate lines of study in one workspace, each with its own history." },
-      { icon: "sliders-horizontal", title: "Chat or Query mode", body: "Chat mode adds the model's general knowledge; Query mode answers only from the documents." },
-      { icon: "laptop", title: "On your own computer", body: "Install it with Docker and pair it with a local runtime such as Ollama or LM Studio." },
-    ],
+    notesTitle: "Good to know.",
     notes: [
       "On a school install, admins and managers can read workspace chats.",
       "A model can be wrong. Check the listed sources before you rely on an answer.",
       "Explanations, summaries and practice questions are things you ask the chat for, not separate tools.",
     ],
-    more: { href: "/download", label: "Run it on your own computer" },
+    more: { href: "/download", label: "Install it yourself" },
   },
   {
     id: "courses",
@@ -137,40 +236,69 @@ export const USES: Use[] = [
         "Build a workspace for each course from the syllabus, readings and handouts, invite your students into it, and review how they use it, on your school's own hardware.",
     },
     eyebrow: "For teaching a course",
-    heading: "A workspace for every course you teach.",
+    heading: "One workspace for every course.",
     lead: "Build a workspace from the syllabus, readings and handouts, invite your students into it, and review how they use it. The course material stays on the hardware your school runs.",
-    image: {
-      name: "feature-users",
-      alt: "The Users page as an instructor with the manager role sees it: the admin, the instructor and the student accounts, each with its role.",
-    },
+    image: "feature-users",
+    featuresTitle: "Run the course, not the software.",
+    features: [
+      {
+        id: "workspace",
+        title: "The course workspace",
+        body: "The syllabus, readings and handouts in one workspace, plus GitHub, GitLab or Gitea repositories, websites and YouTube transcripts.",
+        image: "feature-documents",
+      },
+      {
+        id: "invite",
+        title: "Invite your students",
+        body: "Invitations carry the course workspaces, so each student lands in the right course. Suspend an account at any time.",
+        image: "feature-users",
+      },
+      {
+        id: "members",
+        title: "Course members",
+        body: "Each workspace lists its members. Students with the default role see only the workspaces they are added to.",
+        image: "security-roles",
+        link: { href: "/security#controls-access", label: "Learn more about access" },
+      },
+      {
+        id: "review",
+        title: "Chat review and export",
+        body: "Read the course's chats with who sent each one, and export them as CSV, JSON or JSONL.",
+        image: "security-history",
+        link: { href: "/security#controls-oversight", label: "Learn more about oversight" },
+      },
+      {
+        id: "tune",
+        title: "Tune the assistant",
+        body: "Each workspace has its own model, chat mode, system prompt and refusal reply, and its own similarity threshold and passage count.",
+        image: "feature-models",
+      },
+    ],
+    stepsTitle: "Set up a course in three steps.",
     steps: [
       {
         title: "Create the workspace",
-        body: "Name it after the course, add the syllabus, readings and handouts, or connect a code repository or a website.",
+        body: "Name it after the course and add the syllabus, readings and handouts, or connect a repository or a website.",
+        art: "images/install/course-documents.svg",
       },
       {
         title: "Invite your students",
-        body: "Send invitations that carry the course workspaces, so each student lands in the right course. Suspend an account at any time.",
+        body: "Send invitations that carry the course workspace, so every student lands in the right course.",
+        art: "images/steps/team.svg",
       },
       {
         title: "Review and adjust",
-        body: "Read the course's chats with who sent each one, export them, and tune the prompt, the mode and the documents.",
+        body: "Read how the class uses it, then tune the prompt, the mode and the documents.",
+        art: "images/install/access.svg",
       },
     ],
-    features: [
-      { icon: "users-three", title: "Three roles", body: "Admins run the server, managers run workspaces and users, and students see only their own workspaces." },
-      { icon: "export", title: "Chat review and export", body: "Review workspace chats and export them as CSV, JSON or JSONL." },
-      { icon: "sliders-horizontal", title: "Retrieval settings", body: "Set a similarity threshold and how many passages each answer draws on." },
-      { icon: "plugs-connected", title: "Course sources", body: "GitHub, GitLab and Gitea repositories, websites, YouTube transcripts and Confluence." },
-      { icon: "chat-centered-text", title: "Course prompt and model", body: "Each workspace has its own system prompt, chat mode and model." },
-      { icon: "browser", title: "Embeddable chat widget", body: "Put a course assistant on a page you host, with allowed domains and per-day and per-session limits." },
-    ],
+    notesTitle: "Good to know.",
     notes: [
       "The manager role is server-wide: a manager can open every workspace, not only their own courses.",
       "Roles scoped to a single workspace are in development.",
-      "Visitors to the embedded chat widget do not sign in, so give it only public course material.",
+      "An embedded chat widget does not ask visitors to sign in, so give it only public course material.",
     ],
-    more: { href: "/#steps", label: "Set up a course in four steps" },
+    more: { href: "/#steps", label: "See the setup from install to invite" },
   },
   {
     id: "instructors",
@@ -181,34 +309,62 @@ export const USES: Use[] = [
         "Teach faculty modern AI workflows, agentic coding included, on the app's agents, skills and MCP servers with a local model on your own hardware.",
     },
     eyebrow: "For training instructors",
-    heading: "Train instructors on modern AI workflows.",
-    lead: "Run faculty workshops on agents, tools and agentic coding with a local model on your own hardware. Admins decide which skills and MCP servers are on, so the training environment is one you control.",
-    image: {
-      name: "feature-agents",
-      alt: "The Agent Skills settings: skills an admin switches on or off, such as document creation, charts and a SQL connector, plus custom skills, agent flows and MCP servers.",
-    },
+    heading: "Train faculty on agents.",
+    lead: "Run workshops on modern AI workflows, agentic coding included, with a local model on your own hardware. Admins decide which skills and MCP servers are on, so the training environment is one you control.",
+    image: "feature-agents",
+    featuresTitle: "A training lab you control.",
+    features: [
+      {
+        id: "skills",
+        title: "Skills and MCP servers",
+        body: "Switch built-in skills on or off, add custom skills, chain steps in the no-code flow builder, and connect MCP servers over stdio, SSE or streamable HTTP.",
+        image: "feature-agents",
+        link: { href: "/security#controls-integrations", label: "See the agent controls" },
+      },
+      {
+        id: "coding",
+        title: "Agentic coding",
+        body: "Show how agents plan, call tools and work with files. The filesystem skill (Docker installs) works in a folder under the server's storage.",
+        image: "feature-agents",
+      },
+      {
+        id: "local",
+        title: "A local model",
+        body: "Ollama, LM Studio, LocalAI, KoboldCPP, NVIDIA NIM or any OpenAI-compatible server, on hardware you run.",
+        image: "security-offline",
+      },
+      {
+        id: "agent-model",
+        title: "A model per workspace",
+        body: "Give each workshop workspace, and its agents, their own provider and model.",
+        image: "feature-models",
+      },
+      {
+        id: "accounts",
+        title: "Participant accounts",
+        body: "Invite each instructor, then review the workshop chats and the admin event log.",
+        image: "feature-users",
+      },
+    ],
+    stepsTitle: "Run a workshop in three steps.",
     steps: [
       {
         title: "Turn on the skills",
-        body: "Switch built-in skills on or off: document search, summaries, charts, file creation, SQL queries and web search through a provider you choose.",
+        body: "Switch on the built-in skills the workshop needs: document search, summaries, charts, file creation and SQL.",
+        art: "images/install/telemetry-off.svg",
       },
       {
         title: "Connect MCP servers",
-        body: "Add Model Context Protocol servers over stdio, SSE or streamable HTTP to give agents the tools your workshop needs.",
+        body: "Add Model Context Protocol servers to give agents the tools your workshop teaches.",
+        art: "images/steps/model.svg",
       },
       {
         title: "Hand a task to an agent",
-        body: "Type @agent in a workspace, or use Automatic mode with a model that supports native tool calling, and follow each tool call in the chat.",
+        body: "Type @agent, or use Automatic mode with a model that supports tool calling, and follow each tool call in the chat.",
+        art: "images/install/open-app.svg",
       },
     ],
-    features: [
-      { icon: "code", title: "Agentic coding", body: "Show how agents plan, call tools and work with files. The filesystem skill (Docker installs) works in a folder under the server's storage." },
-      { icon: "flow-arrow", title: "Agent flows", body: "Chain steps into a flow in the no-code builder." },
-      { icon: "puzzle-piece", title: "Custom skills", body: "Add agent skills of your own for the tools your department uses." },
-      { icon: "robot", title: "A model for agents", body: "Give a workspace's agents their own provider and model." },
-      { icon: "cpu", title: "Local runtimes", body: "Ollama, LM Studio, LocalAI, KoboldCPP, NVIDIA NIM or any OpenAI-compatible server." },
-      { icon: "terminal-window", title: "Developer API", body: "Admin-issued API keys, OpenAI-compatible endpoints and documentation at /api/docs." },
-    ],
+    notesTitle: "Good to know.",
     notes: [
       "Mission LLM is not a code editor. Agentic coding is what the training covers, run on the app's agents.",
       "Web search and cloud models connect out only when you configure them.",
@@ -225,34 +381,66 @@ export const USES: Use[] = [
         "Put policies, manuals and research in workspaces, decide who sees which, and get answers with the sources listed, on hardware your team controls.",
     },
     eyebrow: "For teams and labs",
-    heading: "Your team's knowledge, with the sources listed.",
+    heading: "Your documents, answered in-house.",
     lead: "Put policies, manuals and research in workspaces, decide who sees which, and ask questions in plain language. Each workspace picks its own model, local or cloud.",
-    image: {
-      name: "feature-models",
-      alt: "The Chat Settings of a workspace: its own LLM provider setting and its chat mode.",
-    },
+    image: "grounded",
+    featuresTitle: "Team knowledge, kept on your network.",
+    features: [
+      {
+        id: "sources",
+        title: "Sources listed",
+        body: "Answers list the documents they drew on when passages were retrieved, with each passage and its match score one click away.",
+        image: "grounded",
+        link: { href: "/#grounded", label: "How grounded answers work" },
+      },
+      {
+        id: "access",
+        title: "Decide who sees which",
+        body: "One workspace per team or topic. People with the default role see only the workspaces they are added to.",
+        image: "security-roles",
+        link: { href: "/security#controls-access", label: "Learn more about access" },
+      },
+      {
+        id: "models",
+        title: `${COUNTS.llmProviders} model providers`,
+        body: "Set a system default, then pick a local or approved cloud model for any workspace.",
+        image: "feature-models",
+      },
+      {
+        id: "events",
+        title: "Admin event log",
+        body: "Sign-ins, failed sign-ins, and changes to users, API keys, invites, workspaces and documents, in one log.",
+        image: "security",
+        link: { href: "/security#controls-oversight", label: "Learn more about oversight" },
+      },
+      {
+        id: "telemetry",
+        title: "Telemetry off switch",
+        body: `Set ${TELEMETRY_ENV} before the first start and no usage events are sent. Or turn it off in Settings.`,
+        html: telemetryHtml,
+        image: "security-telemetry",
+        link: { href: "/security#outbound", label: "Every outbound connection" },
+      },
+    ],
+    stepsTitle: "From documents to answers in three steps.",
     steps: [
       {
         title: "A workspace per topic",
         body: "Keep policies, manuals, research and project files apart, each with its own documents and settings.",
+        art: "images/steps/documents.svg",
       },
       {
         title: "Add the right people",
-        body: "In multi-user mode, people with the default role see only the workspaces they have been added to.",
+        body: "Invite your team and add each person to the workspaces they need.",
+        art: "images/steps/team.svg",
       },
       {
         title: "Ask and check",
-        body: "Answers list the documents they drew on when passages were retrieved, with the passages one click away.",
+        body: "Ask in plain language, and open the listed sources to read the passages behind the answer.",
+        art: "images/menu/students.svg",
       },
     ],
-    features: [
-      { icon: "stack", title: `${COUNTS.llmProviders} model providers`, body: "Set a system default, then pick a local or approved cloud model for any workspace." },
-      { icon: "target", title: "Accuracy Optimized search", body: "Rerank results on the built-in LanceDB store for closer matches." },
-      { icon: "list-magnifying-glass", title: "Event log", body: "Sign-ins, failed sign-ins and changes to users, API keys, workspaces and documents." },
-      { icon: "database", title: "Any document set", body: "Office files, PDFs, mailboxes, web pages, wikis and code repositories." },
-      { icon: "cube", title: "Deploy where your data lives", body: "Docker, Docker Compose, Kubernetes, Helm or OpenShift, on your own hardware." },
-      { icon: "terminal-window", title: "Developer API", body: "Build internal tools on OpenAI-compatible endpoints with admin-issued keys." },
-    ],
+    notesTitle: "Good to know.",
     notes: [
       "SSO, a tamper-evident audit trail and retention controls are in development.",
       "Cloud providers are optional. Pair it with a local runtime and the documents stay on your network.",
