@@ -15,28 +15,23 @@
  *   button. Links, the menu trigger, Download and the menu button are all 44px and centered on the logo.
  *   The Download button is a big, solid accent-blue button on every skin, the most prominent control in
  *   the bar; it shows at every width, including phones (HERO-REVISION.md, F1).
- * - Tone rule: the only thing that changes while scrolling is the surface tone. The nav is always the
- *   opposite tone of what is behind it: nav.ts watches every [data-tone="dark"] section on a 2px line at
- *   the nav's middle and sets html[data-under="dark"|"light"]. The bar has two stacked skins, dark
- *   (navy-950, always opaque, underneath) and light (mist-50, on top), and the light one fades in and out
- *   (200ms opacity), so the bar is never see-through, even mid-fade. Each skin carries its own hairline;
- *   the soft shadow under the bar is constant. Before the script runs (and without JS from 1024), a page
- *   whose first section is dark (the navy home hero) starts on the light skin (a :has() rule), so there
- *   is no flash of a navy bar on the navy hero.
- * - The node: a copy of the logo's node that rests exactly over it and slides out (transform only,
- *   180 to 420ms by distance) to the current, hovered or focused link as a 7px rhombus under it, and to
- *   the menu trigger while the menu is open. The logo keeps its own node, which rises into the V once
- *   on load (240ms).
+ * - ONE constant color: the bar is a single solid near-white band (mist-50) at every scroll position and
+ *   over every section (owner rule: the nav must not change color from section to section). It has a
+ *   permanent bottom hairline and the constant nav shadow, so it stands apart over the dark navy hero
+ *   (light on dark) and, via the hairline and shadow, over the light sections too. There is no
+ *   per-section tone switch, no cross-fade and no scrolled state; the logo, links and text are the same
+ *   navy on the light bar everywhere.
+ * - The logo node: the ML mark carries exactly one node (the accent rhombus in the M's V, part of the
+ *   lockup). It is static: there is no separate indicator, no rise-on-load and no slide to the links.
  * - Audience menu (from 1024): a white 560px panel 12px under the nav, five thumbnail rows and a
  *   footer row. Opens on click, on hover with a fine pointer, and with ArrowDown; arrows move between
  *   rows; Escape closes and returns focus; it closes when focus or a click leaves it.
- * - Sheet (below 1024): white, under the bar (the bar is forced to its dark skin while it is open).
+ * - Sheet (below 1024): white, under the bar (which keeps its one light skin while it is open).
  *   One row style: "Who it's for" and "More". One column below 640 with Contact and Download pinned at
  *   the bottom; two columns from 640 with the buttons after the grid. Focus trap, Escape, scroll lock; a
  *   tap opens it without a focus ring on the first row, the keyboard focuses the first row.
- * - Without JS: the header is fixed only from 1024; below it the sheet is a normal block under the bar
- *   and the bar keeps its dark skin. The menu trigger is a link to /#product.
- * - Reduced motion: the tone switches instantly, the node jumps, the logo's node does not rise.
+ * - Without JS: the header is fixed only from 1024; below it the sheet is a normal block under the bar.
+ *   The menu trigger is a link to /#product.
  * Data: NAV, AUDIENCE_MENU, AUDIENCES, SHEET_MORE, MENU_FOOT, DOWNLOAD_HREF in src/data/site.ts.
  */
 import Lockup from "./brand/Lockup.astro";
@@ -50,7 +45,7 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
 ---
 
 <header class="nav" data-nav>
-  <div class="nav__bar" aria-hidden="true"><i class="nav__skin nav__skin--dark"></i><i class="nav__skin nav__skin--light"></i></div>
+  <div class="nav__bar" aria-hidden="true"></div>
 
   <div class="nav__row" data-nav-row>
     <a class="brand" href="/" aria-label={`${SITE.name} home`} data-align="edge:left" data-brand><Lockup /><Mark /></a>
@@ -109,7 +104,6 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
       <Icon set="line" name="close" size={22} class="i-close" />
     </button>
   </div>
-  <span class="nav__node" aria-hidden="true" data-node></span>
 
   <nav class="sheet" id="sheet" aria-label="Primary" data-sheet>
     <p class="sheet__label" id="sheet-audiences">{AUDIENCE_MENU.label}</p>
@@ -168,15 +162,16 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
     inset: 0 0 auto 0;
     z-index: 50;
     height: var(--nav-h);
-    /* The dark skin (default): over light sections, and always while the sheet is open. */
-    --skin-light: 0;
-    --nav-fg: rgb(233 239 249 / 0.8); /* 10.64:1 on navy-950 */
-    --nav-fg-strong: #ffffff;
-    --nav-ring: rgb(155 190 255 / 0.3);
-    --nav-focus: var(--blue-400);
-    --lk-ink: #ffffff;
-    --lk-acc: var(--blue-400);
-    --node: var(--blue-400);
+    /* ONE constant skin at every scroll position and over every section (owner: the nav must not change
+       color from section to section). A single solid near-white bar (.nav__bar) with a permanent hairline
+       and shadow, so it stands out over the dark hero and, via the shadow, over light sections too. There
+       is no per-section tone switch and no scrolled state. */
+    --nav-fg: var(--mist-700); /* 9.91:1 on mist-50 */
+    --nav-fg-strong: var(--navy-950);
+    --nav-ring: rgb(7 15 38 / 0.2);
+    --nav-focus: var(--blue-500);
+    --lk-ink: var(--navy-950);
+    --lk-acc: var(--blue-500);
     /* The Download control: a solid ACCENT-BLUE button on EVERY nav skin (HERO-REVISION.md, F1), so it
        never blends into the navy hero or any dark band and is the single most prominent control in the
        bar. The surface is the accent blue-500 (#2B63E0): 3.59:1 against the navy hero (pops well past
@@ -191,60 +186,19 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
     --cta-bg-hover: var(--blue-600);
     --cta-shadow: inset 0 1px 0 rgb(255 255 255 / 0.24), 0 8px 18px -10px rgb(43 99 224 / 0.6), 0 1px 2px rgb(7 15 38 / 0.28);
   }
-  /* The light skin: over dark sections (the navy home hero, the dark bands, the footer). Also before the
-     tone script has run, on a page whose first section is dark, so the first paint is already right. */
-  :global(html[data-under="dark"]) .nav:not([data-sheet-open]),
-  :global(html.js:not([data-under]):has(main > [data-tone="dark"]:nth-child(1 of [data-tone]))) .nav:not([data-sheet-open]) {
-    --skin-light: 1;
-    --nav-fg: var(--mist-700); /* 9.91:1 on mist-50 */
-    --nav-fg-strong: var(--navy-950);
-    --nav-ring: rgb(7 15 38 / 0.2);
-    --nav-focus: var(--blue-500);
-    --lk-ink: var(--navy-950);
-    --lk-acc: var(--blue-500);
-    --node: var(--blue-500);
-    /* The Download button keeps its accent-blue surface and white label on the light skin too (the
-       --cta-* tokens are not overridden here): it is the same solid accent button on every skin, so only
-       the surrounding nav skin tone cross-fades, never the button (HERO-REVISION.md, F1). */
-  }
-  /* Without JS the bar is fixed from 1024 and cannot follow the page, so it takes the light skin when
-     the page opens on a dark section (below 1024 it is not fixed and keeps its dark skin). */
-  @media (min-width: 1024px) {
-    :global(html:not(.js):has(main > [data-tone="dark"]:nth-child(1 of [data-tone]))) .nav {
-      --skin-light: 1;
-      --nav-fg: var(--mist-700); /* 9.91:1 on mist-50 */
-      --nav-fg-strong: var(--navy-950);
-      --nav-ring: rgb(7 15 38 / 0.2);
-      --nav-focus: var(--blue-500);
-      --lk-ink: var(--navy-950);
-      --lk-acc: var(--blue-500);
-      --node: var(--blue-500);
-    }
-  }
+  /* The bar surface: one solid near-white band with a permanent bottom hairline and the nav shadow, the
+     same at every scroll position and over every section. It never shows the page through it, never
+     cross-fades, and never changes color; it stands apart over the dark hero (light on dark) and, via the
+     hairline and shadow, over light sections too. */
   .nav__bar {
     position: absolute;
     inset: 0 0 auto 0;
     height: var(--nav-h);
-    pointer-events: none;
-  }
-  .nav__skin {
-    position: absolute;
-    inset: 0;
-  }
-  /* Always opaque and underneath, so the bar never shows the page through it, even mid-fade. It carries
-     the bar's constant soft shadow (the same at every scroll position). */
-  .nav__skin--dark {
-    background: var(--navy-950);
-    box-shadow:
-      inset 0 -1px 0 rgb(155 190 255 / 0.22),
-      0 8px 22px -14px rgb(3 7 20 / 0.5);
-  }
-  /* Fades in over the dark skin (opacity only, --t-tone). */
-  .nav__skin--light {
     background: var(--mist-50);
-    box-shadow: inset 0 -1px 0 rgb(7 15 38 / 0.14);
-    opacity: var(--skin-light);
-    transition: opacity var(--t-tone) var(--ease);
+    box-shadow:
+      inset 0 -1px 0 rgb(7 15 38 / 0.14),
+      var(--shadow-nav);
+    pointer-events: none;
   }
 
   .nav__row {
@@ -289,23 +243,6 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
       display: block;
     }
   }
-  /* On load the logo's node rises into the V and settles, once (240ms). */
-  .brand :global(.lk-node) {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: node-settle 240ms var(--ease) 80ms both;
-  }
-  @keyframes node-settle {
-    from {
-      opacity: 0;
-      transform: translateY(60%);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
   .nav__links {
     display: none;
   }
@@ -451,32 +388,6 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
   }
   :global(.js) .nav__menu-link {
     display: none;
-  }
-
-  /* The node (desktop only). */
-  .nav__node {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 7px;
-    height: 7px;
-    margin: -3.5px 0 0 -3.5px;
-    background: var(--node);
-    opacity: var(--node-o, 0);
-    transform: translate(var(--nx, 0px), var(--ny, 0px)) scale(var(--ns, 1)) rotate(45deg);
-    transition:
-      transform var(--node-t, 240ms) var(--ease),
-      opacity var(--t-fast) var(--ease),
-      background-color var(--t-tone) var(--ease);
-    pointer-events: none;
-  }
-  .nav__node.is-still {
-    transition: background-color var(--t-tone) var(--ease);
-  }
-  @media (max-width: 1023.98px) {
-    .nav__node {
-      display: none;
-    }
   }
 
   /* ---------- Audience menu (desktop) and the shared menu row ---------- */
@@ -709,12 +620,5 @@ const current = (href: string) => (isCurrent(href) ? "page" : undefined);
   }
   :global(html.menu-lock) {
     overflow: hidden;
-  }
-
-  /* Reduced motion: the logo's node is in place from the first frame. */
-  @media (prefers-reduced-motion: reduce) {
-    .brand :global(.lk-node) {
-      animation: none;
-    }
   }
 </style>
