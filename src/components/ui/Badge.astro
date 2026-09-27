@@ -1,19 +1,20 @@
 ---
 /*
- * Badge: a status label. Honesty rule: anything on the roadmap sits under an "In development"
- * label, never mixed into current features.
- * - kind "dev": "In development" (dashed hairline, muted). Default.
- * - kind "soon": "Coming soon" (dashed hairline, muted).
- * - kind "today": "Available today" (solid hairline, accent dot).
- * - kind "pending": "Published with first release" (dashed).
- * The slot overrides the default text. 14px/500 label on one line, 28px tall, 8px radius.
+ * Badge: a status label. Honesty rule: anything on the roadmap sits under an "In development" label,
+ * never mixed into current features; unconfirmed Enterprise services under "Planned" (slot text).
+ * - kind "dev": "In development" (dashed ring, muted). Default.
+ * - kind "soon": "Coming soon" (dashed ring, muted).
+ * - kind "today": "Available today" (solid ring, a small accent rhombus).
+ * - kind "pending": "Published with first release" (dashed ring).
+ * The slot overrides the default text. 15px 500 label on one line, 30px tall, 8px radius.
  * Usage: <Badge /> , <Badge kind="today" /> , <Badge kind="soon" />
  */
 interface Props {
   kind?: "dev" | "soon" | "today" | "pending";
   class?: string;
+  [key: string]: unknown;
 }
-const { kind = "dev", class: className } = Astro.props;
+const { kind = "dev", class: className, ...rest } = Astro.props;
 const TEXT = {
   dev: "In development",
   soon: "Coming soon",
@@ -23,7 +24,7 @@ const TEXT = {
 const hasSlot = Astro.slots.has("default");
 ---
 
-<span class:list={["badge", `badge--${kind}`, className]}>
+<span class:list={["badge", `badge--${kind}`, className]} {...rest}>
   {kind === "today" && <span class="badge__dot" aria-hidden="true" />}
   {hasSlot ? <slot /> : TEXT[kind]}
 </span>
@@ -33,40 +34,32 @@ const hasSlot = Astro.slots.has("default");
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    height: 28px;
+    height: 30px;
     padding-inline: 10px;
-    border-radius: var(--radius-sm);
+    border-radius: 8px;
     font-family: var(--font-sans);
     font-size: var(--fs-small);
     line-height: 1;
     font-weight: var(--fw-medium);
-    letter-spacing: 0;
     white-space: nowrap;
     vertical-align: middle;
     color: var(--color-text-muted);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
   }
   .badge--dev,
   .badge--soon,
   .badge--pending {
-    border: 1px dashed #9aa7c2;
-    color: var(--color-text-muted);
-  }
-  :global([data-tone="dark"]) .badge--dev,
-  :global([data-tone="dark"]) .badge--soon,
-  :global([data-tone="dark"]) .badge--pending {
-    border-color: rgb(204 212 229 / 0.4);
+    box-shadow: none;
+    border: 1px dashed var(--color-text-quiet);
   }
   .badge--today {
-    border: 1px solid var(--color-line);
     color: var(--color-heading);
   }
   .badge__dot {
-    width: 6px;
-    height: 6px;
-    border-radius: var(--radius-full);
-    background: var(--accent);
-  }
-  :global([data-tone="dark"]) .badge__dot {
-    background: var(--accent-on-dark);
+    width: 7px;
+    height: 7px;
+    border-radius: 1px;
+    background: var(--color-accent);
+    transform: rotate(45deg);
   }
 </style>

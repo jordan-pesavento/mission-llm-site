@@ -1,356 +1,720 @@
 ---
 /*
- * Site header, after the reference (anythingllm.com):
- * - From 1024: a 68px bar with a 1px mist-300 bottom rule on the mist-200 tone. Emblem and wordmark
- *   inset 80px from the left; the nav sits right; the last element is a full-height dark "Download"
- *   block (178px wide, #070F26, white label) flush with the right edge of the window.
- * - Below 1024: a 64px bar on the page tone with the emblem and wordmark at 20px and a three-line menu
- *   button at the right (no Download in the bar, as in the reference). The menu opens a full-height
- *   panel under the bar: large nav rows and the same dark Download block across the bottom.
- * Sticky at the top. Menu: aria-expanded, Escape closes and returns focus, Tab from the last item
- * returns to the button, page scroll is locked while open, links close it.
- * Without JS the nav shows as a wrapping row under the bar on small screens, so every link works.
- * Nav entries whose destination is still a TODO ("#") render as muted text with a "Soon" tag, not as
- * links; they become links when the destination exists (src/data/site.ts). Today the nav has the
- * reference's three links; Docs is left out until a docs site exists.
+ * Site header (DESIGN-SPEC section 6, with HERO-REVISION.md: bigger logo, one fixed size).
+ * Behavior lives in src/scripts/nav.ts (a bundled module; no inline script).
+ *
+ * - ONE bar, ONE size, ONE shape: a full-width bar pinned to the top, --nav-h tall. Its height, width,
+ *   position, padding, radius and logo size never change with scroll, on any page, at any width. There
+ *   is no scrolled state (no shrink, no floating or inset bar, no logo scaling). --nav-h steps with the
+ *   width only (tokens.css: 64 below 640, 68 from 640, 72 from 1024, 76 from 1536, 80 from 1920; F5).
+ *   Body gets padding-top: var(--nav-h) (global.css), so the page never shifts (CLS 0).
+ * - Row: the inline lockup (--lockup-h, half of --nav-h: 32 / 34 / 36 / 38 / 40px, the mark 36px at
+ *   1024 to 1440 and 40px at 1920+, so the logo keeps its clear space of half the mark height above and
+ *   below), then from 1024 the "Who it's for" menu,
+ *   Security, Editions, Contact and Download; below 1024 the lockup, Download and the menu
+ *   button. Links, the menu trigger, Download and the menu button are all 44px and centered on the logo.
+ *   The Download button is a big, solid accent-blue button on every skin, the most prominent control in
+ *   the bar; it shows at every width, including phones (HERO-REVISION.md, F1).
+ * - Tone rule: the only thing that changes while scrolling is the surface tone. The nav is always the
+ *   opposite tone of what is behind it: nav.ts watches every [data-tone="dark"] section on a 2px line at
+ *   the nav's middle and sets html[data-under="dark"|"light"]. The bar has two stacked skins, dark
+ *   (navy-950, always opaque, underneath) and light (mist-50, on top), and the light one fades in and out
+ *   (200ms opacity), so the bar is never see-through, even mid-fade. Each skin carries its own hairline;
+ *   the soft shadow under the bar is constant. Before the script runs (and without JS from 1024), a page
+ *   whose first section is dark (the navy home hero) starts on the light skin (a :has() rule), so there
+ *   is no flash of a navy bar on the navy hero.
+ * - The node: a copy of the logo's node that rests exactly over it and slides out (transform only,
+ *   180 to 420ms by distance) to the current, hovered or focused link as a 7px rhombus under it, and to
+ *   the menu trigger while the menu is open. The logo keeps its own node, which rises into the V once
+ *   on load (240ms).
+ * - Audience menu (from 1024): a white 560px panel 12px under the nav, five thumbnail rows and a
+ *   footer row. Opens on click, on hover with a fine pointer, and with ArrowDown; arrows move between
+ *   rows; Escape closes and returns focus; it closes when focus or a click leaves it.
+ * - Sheet (below 1024): white, under the bar (the bar is forced to its dark skin while it is open).
+ *   One row style: "Who it's for" and "More". One column below 640 with Contact and Download pinned at
+ *   the bottom; two columns from 640 with the buttons after the grid. Focus trap, Escape, scroll lock; a
+ *   tap opens it without a focus ring on the first row, the keyboard focuses the first row.
+ * - Without JS: the header is fixed only from 1024; below it the sheet is a normal block under the bar
+ *   and the bar keeps its dark skin. The menu trigger is a link to /#product.
+ * - Reduced motion: the tone switches instantly, the node jumps, the logo's node does not rise.
+ * Data: NAV, AUDIENCE_MENU, AUDIENCES, SHEET_MORE, MENU_FOOT, DOWNLOAD_HREF in src/data/site.ts.
  */
-import { NAV, DOWNLOAD_HREF, SITE, isPlaceholder } from "../data/site";
+import Lockup from "./brand/Lockup.astro";
+import Mark from "./brand/Mark.astro";
+import Icon from "./ui/Icon.astro";
+import { NAV, AUDIENCE_MENU, AUDIENCES, SHEET_MORE, MENU_FOOT, DOWNLOAD_HREF, CONTACT_HREF, SITE, isPlaceholder } from "../data/site";
 
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 const isCurrent = (href: string) => !href.includes("#") && href !== "/" && path === href.replace(/\/$/, "");
+const current = (href: string) => (isCurrent(href) ? "page" : undefined);
 ---
 
-<header class="site-header" data-site-header>
-  <div class="site-header__bar">
-    <a class="brand" href="/" aria-label={`${SITE.name} home`}>
-      <img class="brand__emblem" src="/mission-llm-emblem.svg" width="28" height="28" alt="" />
-      <span class="brand__word">{SITE.name}</span>
-    </a>
+<header class="nav" data-nav>
+  <div class="nav__bar" aria-hidden="true"><i class="nav__skin nav__skin--dark"></i><i class="nav__skin nav__skin--light"></i></div>
 
-    <nav class="site-nav" id="site-nav" aria-label="Primary" data-site-nav>
-      <ul role="list" class="site-nav__list">
-        {
-          NAV.map((item) => (
-            <li>
-              {isPlaceholder(item.href) ? (
-                /* TODO: becomes a link when the destination exists (see src/data/site.ts). */
-                <span class="site-nav__link site-nav__link--soon" aria-disabled="true" data-todo={item.todo}>
-                  {item.label}
-                  <span class="soon-tag">Soon</span>
-                </span>
-              ) : (
-                <a class="site-nav__link" href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
-                  {item.label}
-                </a>
-              )}
-            </li>
-          ))
-        }
-      </ul>
-      <a class="site-nav__download" href={DOWNLOAD_HREF}>Download</a>
+  <div class="nav__row" data-nav-row>
+    <a class="brand" href="/" aria-label={`${SITE.name} home`} data-align="edge:left" data-brand><Lockup /><Mark /></a>
+
+    <nav class="nav__links" aria-label="Primary" data-links>
+      <div class="menu-wrap" data-menu-wrap>
+        <a class="nav__link nav__menu-link" href={AUDIENCE_MENU.href}>{AUDIENCE_MENU.label}</a>
+        <button class="nav__link nav__menu-btn" type="button" aria-expanded="false" aria-controls="aud-menu" data-menu-trigger>
+          {AUDIENCE_MENU.label}<Icon set="line" name="caret" size={16} />
+        </button>
+        <div class="menu" id="aud-menu" data-menu hidden>
+          <ul class="menu__list" role="list">
+            {
+              AUDIENCES.map((a) => (
+                <li>
+                  <a class="menu__item" href={a.href}>
+                    <span class="menu__thumb">
+                      <img src={a.thumb} width="100" height="75" alt="" loading="lazy" decoding="async" />
+                    </span>
+                    <span>
+                      <span class="menu__title">{a.title}</span>
+                      <span class="menu__desc">{a.desc}</span>
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="menu__foot">
+            <span>{MENU_FOOT.text}</span>
+            <a class="arrow" href={MENU_FOOT.link.href}><span>{MENU_FOOT.link.label}</span><Icon set="line" name="arrow" size={18} /></a>
+          </p>
+        </div>
+      </div>
+      {
+        NAV.map((item) =>
+          isPlaceholder(item.href) ? (
+            /* TODO: becomes a link when the destination exists (see src/data/site.ts). */
+            <span class="nav__link nav__link--soon" aria-disabled="true" data-todo={item.todo}>
+              {item.label}
+            </span>
+          ) : (
+            <a class="nav__link" href={item.href} aria-current={current(item.href)}>
+              {item.label}
+            </a>
+          ),
+        )
+      }
     </nav>
 
-    <a class="header-download" href={DOWNLOAD_HREF}>Download</a>
-
-    <button type="button" class="menu-toggle" data-menu-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu" hidden>
-      <svg class="menu-toggle__open" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M1 5h22M1 12h22M1 19h22" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" fill="none"></path>
-      </svg>
-      <svg class="menu-toggle__close" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M4 4l16 16M20 4L4 20" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" fill="none"></path>
-      </svg>
+    <a class="btn btn--nav nav__cta" href={DOWNLOAD_HREF} aria-current={current(DOWNLOAD_HREF)}>
+      <Icon set="line" name="download" size={18} />Download
+    </a>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="sheet" aria-label="Open menu" data-sheet-toggle>
+      <Icon set="line" name="menu" size={22} class="i-open" />
+      <Icon set="line" name="close" size={22} class="i-close" />
     </button>
   </div>
+  <span class="nav__node" aria-hidden="true" data-node></span>
+
+  <nav class="sheet" id="sheet" aria-label="Primary" data-sheet>
+    <p class="sheet__label" id="sheet-audiences">{AUDIENCE_MENU.label}</p>
+    <ul class="sheet__grid" role="list" aria-labelledby="sheet-audiences">
+      {
+        AUDIENCES.map((a) => (
+          <li>
+            <a class="menu__item" href={a.href}>
+              <span class="menu__thumb">
+                <img src={a.thumb} width="100" height="75" alt="" loading="lazy" decoding="async" />
+              </span>
+              <span>
+                <span class="menu__title">{a.title}</span>
+                <span class="menu__desc">{a.sheet ?? a.desc}</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="sheet__label" id="sheet-more">More</p>
+    <ul class="sheet__grid" role="list" aria-labelledby="sheet-more">
+      {
+        SHEET_MORE.map((m) => (
+          <li>
+            <a class="menu__item" href={m.href} aria-current={current(m.href)}>
+              <span class="menu__thumb">
+                <img src={m.thumb} width="100" height="75" alt="" loading="lazy" decoding="async" />
+              </span>
+              <span>
+                <span class="menu__title">{m.title}</span>
+                <span class="menu__desc">{m.desc}</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="sheet__actions" data-row="sheet-actions">
+      <a class="btn btn--secondary" href={CONTACT_HREF} aria-current={current(CONTACT_HREF)}>Contact</a>
+      <a class="btn btn--primary" href={DOWNLOAD_HREF} aria-current={current(DOWNLOAD_HREF)}>
+        <Icon set="line" name="download" size={20} />Download
+      </a>
+    </div>
+  </nav>
 </header>
 
 <script>
-  const header = document.querySelector<HTMLElement>("[data-site-header]");
-  const toggle = header?.querySelector<HTMLButtonElement>("[data-menu-toggle]");
-  const nav = header?.querySelector<HTMLElement>("[data-site-nav]");
-  if (header && toggle && nav) {
-    const desktop = window.matchMedia("(min-width: 1024px)");
-    toggle.hidden = false;
-    const isOpen = () => toggle.getAttribute("aria-expanded") === "true";
-    const focusables = () => [...nav.querySelectorAll<HTMLAnchorElement>("a[href]")];
-    const setOpen = (open: boolean, { restoreFocus = false, focusFirst = false } = {}) => {
-      toggle.setAttribute("aria-expanded", String(open));
-      toggle.setAttribute("aria-label", open ? "Close menu" : "Menu");
-      header.toggleAttribute("data-menu-open", open);
-      document.documentElement.classList.toggle("menu-lock", open);
-      if (open && focusFirst) focusables()[0]?.focus();
-      if (!open && restoreFocus) toggle.focus();
-    };
-    toggle.addEventListener("click", () => setOpen(!isOpen(), { focusFirst: true }));
-    // Tab from the last item cycles back to the menu button instead of leaving the open panel.
-    nav.addEventListener("keydown", (e) => {
-      if (e.key !== "Tab" || e.shiftKey || !isOpen() || desktop.matches) return;
-      const all = focusables();
-      if (document.activeElement === all[all.length - 1]) {
-        e.preventDefault();
-        toggle.focus();
-      }
-    });
-    header.addEventListener("focusout", (e) => {
-      const next = e.relatedTarget as Node | null;
-      if (isOpen() && next && !header.contains(next)) setOpen(false);
-    });
-    nav.addEventListener("click", (e) => {
-      if ((e.target as HTMLElement).closest("a")) setOpen(false);
-    });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && isOpen()) setOpen(false, { restoreFocus: true });
-    });
-    desktop.addEventListener("change", () => setOpen(false));
-  }
+  import "../scripts/nav.ts";
 </script>
 
 <style>
-  :global(html.menu-lock) {
-    overflow: hidden;
-  }
-  .site-header {
-    position: sticky;
-    top: 0;
+  /* ---------- The bar: one size, one shape; only the surface tone changes ---------- */
+  .nav {
+    position: fixed;
+    inset: 0 0 auto 0;
     z-index: 50;
-    background: var(--mist-50);
-    border-bottom: 1px solid var(--mist-300);
+    height: var(--nav-h);
+    /* The dark skin (default): over light sections, and always while the sheet is open. */
+    --skin-light: 0;
+    --nav-fg: rgb(233 239 249 / 0.8); /* 10.64:1 on navy-950 */
+    --nav-fg-strong: #ffffff;
+    --nav-ring: rgb(155 190 255 / 0.3);
+    --nav-focus: var(--blue-400);
+    --lk-ink: #ffffff;
+    --lk-acc: var(--blue-400);
+    --node: var(--blue-400);
+    /* The Download control: a solid ACCENT-BLUE button on EVERY nav skin (HERO-REVISION.md, F1), so it
+       never blends into the navy hero or any dark band and is the single most prominent control in the
+       bar. The surface is the accent blue-500 (#2B63E0): 3.59:1 against the navy hero (pops well past
+       3:1) and 5.06:1 against the light ground, so it reads as a distinct blue button on both skins. Its
+       label is white at AA (5.30:1 on the accent). It never turns navy or translucent, and it stays this
+       size and style while scrolling; only the surrounding skin tone cross-fades. (#5B95FF would pop
+       harder against navy but drops the white label to 2.9:1, below AA, so blue-500 is used to keep the
+       white label accessible while still clearly popping.) A subtle raised finish: a 1px top inset
+       highlight and a soft accent-tinted shadow. */
+    --cta-bg: var(--blue-500);
+    --cta-fg: #ffffff;
+    --cta-bg-hover: var(--blue-600);
+    --cta-shadow: inset 0 1px 0 rgb(255 255 255 / 0.24), 0 8px 18px -10px rgb(43 99 224 / 0.6), 0 1px 2px rgb(7 15 38 / 0.28);
   }
-  .site-header__bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    min-height: var(--header-h);
-    padding-left: var(--header-pad-x);
+  /* The light skin: over dark sections (the navy home hero, the dark bands, the footer). Also before the
+     tone script has run, on a page whose first section is dark, so the first paint is already right. */
+  :global(html[data-under="dark"]) .nav:not([data-sheet-open]),
+  :global(html.js:not([data-under]):has(main > [data-tone="dark"]:nth-child(1 of [data-tone]))) .nav:not([data-sheet-open]) {
+    --skin-light: 1;
+    --nav-fg: var(--mist-700); /* 9.91:1 on mist-50 */
+    --nav-fg-strong: var(--navy-950);
+    --nav-ring: rgb(7 15 38 / 0.2);
+    --nav-focus: var(--blue-500);
+    --lk-ink: var(--navy-950);
+    --lk-acc: var(--blue-500);
+    --node: var(--blue-500);
+    /* The Download button keeps its accent-blue surface and white label on the light skin too (the
+       --cta-* tokens are not overridden here): it is the same solid accent button on every skin, so only
+       the surrounding nav skin tone cross-fades, never the button (HERO-REVISION.md, F1). */
+  }
+  /* Without JS the bar is fixed from 1024 and cannot follow the page, so it takes the light skin when
+     the page opens on a dark section (below 1024 it is not fixed and keeps its dark skin). */
+  @media (min-width: 1024px) {
+    :global(html:not(.js):has(main > [data-tone="dark"]:nth-child(1 of [data-tone]))) .nav {
+      --skin-light: 1;
+      --nav-fg: var(--mist-700); /* 9.91:1 on mist-50 */
+      --nav-fg-strong: var(--navy-950);
+      --nav-ring: rgb(7 15 38 / 0.2);
+      --nav-focus: var(--blue-500);
+      --lk-ink: var(--navy-950);
+      --lk-acc: var(--blue-500);
+      --node: var(--blue-500);
+    }
+  }
+  .nav__bar {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: var(--nav-h);
+    pointer-events: none;
+  }
+  .nav__skin {
+    position: absolute;
+    inset: 0;
+  }
+  /* Always opaque and underneath, so the bar never shows the page through it, even mid-fade. It carries
+     the bar's constant soft shadow (the same at every scroll position). */
+  .nav__skin--dark {
+    background: var(--navy-950);
+    box-shadow:
+      inset 0 -1px 0 rgb(155 190 255 / 0.22),
+      0 8px 22px -14px rgb(3 7 20 / 0.5);
+  }
+  /* Fades in over the dark skin (opacity only, --t-tone). */
+  .nav__skin--light {
+    background: var(--mist-50);
+    box-shadow: inset 0 -1px 0 rgb(7 15 38 / 0.14);
+    opacity: var(--skin-light);
+    transition: opacity var(--t-tone) var(--ease);
   }
 
+  .nav__row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: var(--nav-h);
+    width: var(--wrap);
+    margin-inline: auto;
+  }
+  /* The lockup is --lockup-h tall (half of --nav-h), so it keeps half its height clear above and
+     below; the link adds no size of its own. */
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 4px; /* reference: 7px of air from the emblem ink to the wordmark ink */
-    height: var(--header-h);
+    flex: none;
     margin-right: auto;
-    color: var(--ink);
+    border-radius: 6px;
     text-decoration: none;
   }
-  .brand__emblem {
-    width: 28px;
-    height: 28px;
+  .brand:focus-visible {
+    outline-color: var(--nav-focus);
+    outline-offset: 4px;
   }
-  .brand__word {
-    font-family: var(--font-display);
-    font-size: 1.25rem; /* 20 */
-    line-height: 1;
-    font-weight: var(--fw-medium);
-    letter-spacing: -0.01em;
-    white-space: nowrap;
+  .brand :global(.lockup) {
+    height: var(--lockup-h);
   }
-
-  /* ---------- Nav (desktop row) ---------- */
-  .site-nav__list {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    column-gap: var(--space-8);
-  }
-  .site-nav__link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-height: 44px;
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    font-weight: var(--fw-regular);
-    letter-spacing: -0.025em; /* reference: "Product" 58px, "Resources" 76px at 16px */
-    white-space: nowrap;
-    color: var(--mist-700);
-    text-decoration: none;
-  }
-  a.site-nav__link:hover {
-    color: var(--ink);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 6px;
-  }
-  .site-nav__link[aria-current="page"] {
-    color: var(--ink);
-    font-weight: var(--fw-medium);
-  }
-  .site-nav__link--soon {
-    color: var(--mist-600);
-    cursor: default;
-  }
-  .soon-tag {
-    display: inline-flex;
-    align-items: center;
-    height: 22px;
-    padding-inline: 6px;
-    border: 1px dashed #9aa7c2;
-    border-radius: 4px;
-    font-size: var(--fs-small);
-    line-height: 1;
-    font-weight: var(--fw-medium);
-    color: var(--mist-600);
-  }
-
-  /* The dark Download block: full bar height, flush right. */
-  .header-download {
+  /* On narrow phones the full lockup, the Download button and the menu button do not all fit, so the
+     lockup collapses to the ML mark. This keeps the big accent Download button in the bar at every
+     width (HERO-REVISION.md, F1) while the menu button stays usable. */
+  .brand :global(.mark) {
     display: none;
-    align-items: center;
-    justify-content: center;
-    align-self: stretch;
-    width: var(--download-block-w);
-    background: var(--navy-950);
-    color: #ffffff;
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    font-weight: var(--fw-medium);
-    letter-spacing: -0.025em;
-    text-decoration: none;
-    transition: background-color var(--dur-hover) var(--ease-standard);
+    height: var(--lockup-h);
+    width: auto;
   }
-  .header-download:hover {
-    background: var(--navy-800);
-    color: #ffffff;
+  @media (max-width: 519.98px) {
+    .brand :global(.lockup) {
+      display: none;
+    }
+    .brand :global(.mark) {
+      display: block;
+    }
   }
-  .header-download:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: -4px;
-    border-radius: 0;
+  /* On load the logo's node rises into the V and settles, once (240ms). */
+  .brand :global(.lk-node) {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: node-settle 240ms var(--ease) 80ms both;
   }
-  .site-nav__download {
+  @keyframes node-settle {
+    from {
+      opacity: 0;
+      transform: translateY(60%);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .nav__links {
     display: none;
   }
-
-  /* ---------- Menu button (below 1024) ---------- */
-  .menu-toggle {
-    display: inline-grid;
+  /* The Download button shows on every width, including phones, so it is always the most prominent
+     control in the bar (HERO-REVISION.md, F1). It is only hidden while the sheet is open. */
+  .nav__cta {
+    display: inline-flex;
+  }
+  .nav__toggle {
+    display: none;
     place-items: center;
     width: 44px;
     height: 44px;
-    margin-right: 14px;
-    color: var(--ink);
-    border-radius: var(--radius-sm);
+    border-radius: var(--r-control);
+    color: var(--nav-fg-strong);
+    box-shadow: inset 0 0 0 1px var(--nav-ring);
+    transition:
+      color var(--t-tone) var(--ease),
+      box-shadow var(--t-tone) var(--ease);
   }
-  .menu-toggle:hover {
-    background: rgb(11 20 48 / 0.05);
+  :global(.js) .nav__toggle {
+    display: inline-grid;
   }
-  .menu-toggle__close,
-  .menu-toggle[aria-expanded="true"] .menu-toggle__open {
+  .nav__toggle :global(.i-close),
+  .nav__toggle[aria-expanded="true"] :global(.i-open) {
     display: none;
   }
-  .menu-toggle[aria-expanded="true"] .menu-toggle__close {
+  .nav__toggle[aria-expanded="true"] :global(.i-close) {
     display: block;
   }
-
-  @media (max-width: 1023.98px) {
-    /* Without JS: the nav wraps into a row (or two) under the bar, so the header is 121 to 165px tall.
-       It scrolls away with the page instead of staying on top, so it never covers a #fragment target
-       (global.css sets scroll-padding-top to match) or a large share of a phone's screen. */
-    :global(html:not(.js)) .site-header {
-      position: static;
-    }
-    .site-nav {
-      order: 3;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      column-gap: var(--space-6);
-      flex-basis: 100%;
-      padding: 0 var(--header-pad-x) var(--space-3) 0;
-    }
-    .site-nav__list {
-      column-gap: var(--space-6);
-    }
-    .site-nav__download {
-      display: inline-flex;
-      align-items: center;
-      min-height: 44px;
-      font-weight: var(--fw-semibold);
-      color: var(--ink);
-    }
-
-    /* With JS: a full-height panel under the bar. */
-    :global(.js) .site-nav {
-      display: none;
-      position: fixed;
-      top: calc(var(--header-h) + 1px);
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 49;
-      flex-direction: column;
-      flex-wrap: nowrap;
-      align-items: stretch;
-      padding: var(--space-2) 0 0;
-      background: var(--mist-50);
-      overflow-y: auto;
-      overscroll-behavior: contain;
-    }
-    :global(.js) .site-header[data-menu-open] .site-nav {
-      display: flex;
-    }
-    :global(.js) .site-nav__list {
-      flex-direction: column;
-      align-items: stretch;
-      padding-inline: var(--header-pad-x);
-    }
-    :global(.js) .site-nav__list li {
-      border-bottom: 1px solid var(--mist-300);
-    }
-    :global(.js) .site-nav__link {
-      display: flex;
-      width: 100%;
-      min-height: 64px;
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      line-height: 2rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0;
-      color: var(--ink);
-    }
-    :global(.js) .site-nav__link--soon {
-      color: var(--mist-500);
-    }
-    :global(.js) .site-nav__download {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex: none;
-      min-height: 64px;
-      margin-top: auto;
-      background: var(--navy-950);
-      color: #ffffff;
-      font-size: var(--fs-body);
-      line-height: var(--lh-body);
-      font-weight: var(--fw-semibold);
-      text-decoration: none;
-    }
-    :global(.js) .site-nav__download:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: -4px;
-      border-radius: 0;
+  .nav__toggle:focus-visible,
+  .nav__cta:focus-visible {
+    outline-color: var(--nav-focus);
+  }
+  .nav[data-sheet-open] .nav__cta {
+    visibility: hidden;
+  }
+  /* The Download control: the single most prominent control in the bar (HERO-REVISION.md, F1). A big,
+     confident, solid ACCENT-BLUE button (--cta-* above), sized to the nav control height (44px, btn--nav)
+     with generous horizontal padding (24px, 26px from 1024), weight 600, the download glyph plus the word
+     "Download", the control radius and a subtle raised finish (a 1px top inset highlight and a soft
+     accent-tinted shadow). Its fill stays the same on every skin; only the surrounding skin tone
+     cross-fades. It never changes size or shape with scroll, and it is never navy or translucent. */
+  .nav__cta {
+    gap: 8px;
+    padding-inline: 24px;
+    font-weight: var(--fw-semibold);
+    background: var(--cta-bg);
+    color: var(--cta-fg);
+    box-shadow: var(--cta-shadow);
+    transition:
+      background-color var(--t-fast) var(--ease),
+      color var(--t-tone) var(--ease),
+      box-shadow var(--t-tone) var(--ease),
+      transform var(--t-fast) var(--ease);
+  }
+  .nav__cta :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+  @media (hover: hover) {
+    .nav__cta:hover {
+      background: var(--cta-bg-hover);
+      color: var(--cta-fg);
     }
   }
 
   @media (min-width: 1024px) {
-    .site-header {
-      background: var(--mist-200);
+    /* The row is the content wrap, centered, so the Download button keeps a normal right gutter (it does
+       not weld into the window's top-right corner). The logo hugs the wrap's left edge, the Download its
+       right, the links between. */
+    .nav__row {
+      width: var(--wrap);
+      margin-inline: auto;
+      padding-inline: 0;
     }
-    .site-header__bar {
-      flex-wrap: nowrap;
-      align-items: stretch;
-      height: var(--header-h);
-    }
-    .site-nav {
+    .nav__links {
+      position: relative;
       display: flex;
       align-items: center;
-      margin-right: 36px;
+      gap: clamp(0rem, -0.5rem + 1vw, 0.75rem);
     }
-    .header-download {
-      display: flex;
+    /* Desktop Download: the single primary control at the nav's control height (44px, btn--nav), the
+       same height as the nav links and the menu trigger (owner rule: adjacent controls identical in
+       size). A big, solid accent-blue button with generous padding, clearly the most prominent control in
+       the bar; its surface sits on the opaque bar and pops against the navy hero below it (F1). It never
+       changes size or shape with scroll; only the surrounding skin tone cross-fades. */
+    .nav__cta {
+      margin-left: clamp(0.5rem, -0.75rem + 1.6vw, 1.25rem);
+      padding-inline: 26px;
     }
-    .menu-toggle {
+    :global(.js) .nav__toggle {
       display: none;
+    }
+  }
+
+  /* ---------- Links ---------- */
+  .nav__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 44px;
+    padding-inline: 12px;
+    border-radius: 8px;
+    font: var(--fw-medium) var(--fs-ui) / 1 var(--font-sans);
+    color: var(--nav-fg);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--t-tone) var(--ease);
+  }
+  .nav__link :global(svg) {
+    width: 16px;
+    height: 16px;
+    transition: transform var(--t-ui) var(--ease);
+  }
+  .nav__link[aria-expanded="true"] :global(svg) {
+    transform: rotate(180deg);
+  }
+  .nav__link[aria-current="page"],
+  .nav__link[aria-expanded="true"] {
+    color: var(--nav-fg-strong);
+  }
+  @media (hover: hover) {
+    .nav__link:hover {
+      color: var(--nav-fg-strong);
+    }
+  }
+  .nav__link:focus-visible {
+    outline-color: var(--nav-focus);
+    outline-offset: 0;
+    border-radius: 8px;
+  }
+  .nav__link--soon {
+    cursor: default;
+  }
+  /* Without JS the trigger is a link to the audience section; with JS it is the menu button. */
+  .nav__menu-btn {
+    display: none;
+  }
+  :global(.js) .nav__menu-btn {
+    display: inline-flex;
+  }
+  :global(.js) .nav__menu-link {
+    display: none;
+  }
+
+  /* The node (desktop only). */
+  .nav__node {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 7px;
+    height: 7px;
+    margin: -3.5px 0 0 -3.5px;
+    background: var(--node);
+    opacity: var(--node-o, 0);
+    transform: translate(var(--nx, 0px), var(--ny, 0px)) scale(var(--ns, 1)) rotate(45deg);
+    transition:
+      transform var(--node-t, 240ms) var(--ease),
+      opacity var(--t-fast) var(--ease),
+      background-color var(--t-tone) var(--ease);
+    pointer-events: none;
+  }
+  .nav__node.is-still {
+    transition: background-color var(--t-tone) var(--ease);
+  }
+  @media (max-width: 1023.98px) {
+    .nav__node {
+      display: none;
+    }
+  }
+
+  /* ---------- Audience menu (desktop) and the shared menu row ---------- */
+  .menu-wrap {
+    position: relative;
+  }
+  .menu {
+    position: absolute;
+    top: calc(100% + (var(--nav-h) - 44px) / 2 + 12px);
+    left: calc(-12px + var(--menu-shift, 0px));
+    width: min(35rem, calc(100vw - 2 * var(--gutter)));
+    max-height: calc(var(--view-h) - 1.5rem);
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 8px;
+    border-radius: var(--r-card);
+    background: #ffffff;
+    color: var(--mist-800);
+    box-shadow: var(--shadow-pop);
+    transform-origin: 40px 0;
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+    visibility: hidden;
+    transition:
+      opacity 180ms var(--ease),
+      transform 180ms var(--ease),
+      visibility 0s linear 180ms;
+  }
+  .menu[data-open] {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    transition:
+      opacity 180ms var(--ease),
+      transform 180ms var(--ease),
+      visibility 0s;
+  }
+  .menu__list {
+    display: grid;
+    gap: 2px;
+  }
+  .menu__item {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+    padding: 10px 12px 10px 10px;
+    border-radius: 12px;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color var(--t-fast) var(--ease);
+  }
+  .menu__item:hover,
+  .menu__item:focus-visible {
+    background: var(--mist-100);
+  }
+  .menu__item:focus-visible {
+    outline-color: var(--blue-500);
+    outline-offset: -2px;
+  }
+  /* Whole drawings in tight 4:3 boxes with 6px of air, strokes held at 1px (public/images/menu). */
+  .menu__thumb {
+    display: block;
+    height: 5.25rem;
+    padding: 6px;
+    border-radius: 10px;
+    background: var(--mist-50);
+    box-shadow: inset 0 0 0 1px rgb(7 15 38 / 0.08);
+  }
+  .menu__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .menu__title {
+    display: block;
+    font-weight: var(--fw-semibold);
+    font-size: 1.0625rem;
+    line-height: 1.35;
+    color: var(--navy-950);
+  }
+  .menu__desc {
+    display: block;
+    margin-top: 2px;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: var(--mist-600);
+  }
+  .menu__item[aria-current="page"] .menu__title::after {
+    content: "";
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin: 0 0 2px 10px;
+    background: var(--blue-500);
+    transform: rotate(45deg);
+  }
+  .menu__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 16px;
+    margin-top: 6px;
+    padding: 12px 12px 6px;
+    border-top: 1px solid rgb(7 15 38 / 0.1);
+    font-size: 1rem;
+    color: var(--mist-600);
+  }
+  .menu__foot .arrow {
+    color: var(--navy-950);
+  }
+  .menu__foot .arrow:focus-visible {
+    outline-color: var(--blue-500);
+  }
+
+  /* ---------- Sheet (below 1024) ---------- */
+  .sheet {
+    display: flex;
+    flex-direction: column;
+    padding: 8px var(--gutter) calc(16px + env(safe-area-inset-bottom));
+    background: #ffffff;
+    color: var(--mist-800);
+  }
+  /* With JS it is a fixed panel under the bar; without JS it is a normal block under the bar. */
+  :global(.js) .sheet {
+    position: fixed;
+    top: var(--nav-h);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 49;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    opacity: 0;
+    transform: translateY(-8px);
+    visibility: hidden;
+    transition:
+      opacity var(--t-ui) var(--ease),
+      transform var(--t-ui) var(--ease),
+      visibility 0s linear var(--t-ui);
+  }
+  :global(.js) .sheet[data-open] {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    transition:
+      opacity var(--t-ui) var(--ease),
+      transform var(--t-ui) var(--ease),
+      visibility 0s;
+  }
+  .sheet:focus {
+    outline: none;
+  }
+  .sheet__label {
+    padding: 14px 0 6px;
+    font-size: var(--fs-small);
+    line-height: var(--lh-small);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+    color: var(--mist-500);
+  }
+  .sheet__grid {
+    display: grid;
+    gap: 2px;
+    margin-inline: -10px;
+  }
+  .sheet .menu__item {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .sheet .menu__thumb {
+    height: 4.125rem;
+  }
+  .sheet__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 24px;
+  }
+  .sheet__actions .btn {
+    width: 100%;
+  }
+  .sheet__actions .btn--secondary {
+    color: var(--navy-950);
+    box-shadow: inset 0 0 0 1px rgb(7 15 38 / 0.2);
+  }
+  .sheet__actions .btn:focus-visible {
+    outline-color: var(--blue-500);
+  }
+  @media (min-width: 640px) {
+    .sheet__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 16px;
+    }
+    .sheet .menu__item {
+      grid-template-columns: 7rem minmax(0, 1fr);
+      gap: 16px;
+    }
+    .sheet .menu__thumb {
+      height: 5.25rem;
+    }
+    /* Tablets: the actions follow the grid instead of pinning to the bottom. */
+    .sheet__actions {
+      margin-top: 32px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .sheet {
+      display: none;
+    }
+  }
+  /* Without JS, below 1024: the bar is not fixed and the sheet flows under it. */
+  @media (max-width: 1023.98px) {
+    :global(html:not(.js)) .nav {
+      position: relative;
+      height: auto;
+    }
+    :global(html:not(.js)) .sheet {
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--color-line);
+    }
+    :global(html:not(.js)) .sheet__actions {
+      margin-top: 24px;
+      padding-top: 0;
+    }
+  }
+  :global(html.menu-lock) {
+    overflow: hidden;
+  }
+
+  /* Reduced motion: the logo's node is in place from the first frame. */
+  @media (prefers-reduced-motion: reduce) {
+    .brand :global(.lk-node) {
+      animation: none;
     }
   }
 </style>

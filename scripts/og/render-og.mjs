@@ -3,8 +3,8 @@
 // local puppeteer-core and Chrome (both on D:, per the owner's rule); override them with the
 // PUPPETEER_CORE and CHROME environment variables.
 //   node scripts/og/render-og.mjs
-// The raw capture goes to D:/DevCache/claude-work/site-edu/og/ (OG_WORK_DIR), then sharp writes the
-// compressed PNG. Fails if any image on the card (emblem, lecture hall art) or font did not load.
+// The raw capture goes to D:/DevCache/claude-work/site-redesign/build/og/ (OG_WORK_DIR), then sharp writes the
+// compressed PNG. Fails if any image on the card (lockup, lecture hall art) or font did not load.
 // OG_PREVIEW=1 writes only the raw capture (og-preview.png) and tolerates a missing image.
 import fs from "node:fs";
 import path from "node:path";
@@ -16,7 +16,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../..");
 const SRC = path.join(HERE, "og-card.html");
 const OUT = path.join(ROOT, "public/og/mission-llm.png");
-const WORK = process.env.OG_WORK_DIR || "D:/DevCache/claude-work/site-edu/og";
+const WORK = process.env.OG_WORK_DIR || "D:/DevCache/claude-work/site-redesign/build/og";
 const PUPPETEER = process.env.PUPPETEER_CORE || "D:/OB Vault/mission-llm/collector/node_modules/puppeteer-core";
 const CHROME = process.env.CHROME || "D:/DevCache/puppeteer/chrome/win64-119.0.6045.105/chrome-win64/chrome.exe";
 const PREVIEW = process.env.OG_PREVIEW === "1";

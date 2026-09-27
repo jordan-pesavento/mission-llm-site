@@ -1,0 +1,35 @@
+---
+/*
+ * Mark: the ML mark alone (an M whose last stem is the stem of an L, with the node in the V), inlined
+ * so it recolors per tone. Source: public/brand/mark.svg (41.6 x 28 viewBox). Fills become classes
+ * (lk-ink for the letters, lk-node for the node), painted by --lk-ink and --lk-acc like the lockup.
+ * Pair it with the wordmark on first contact (the header and footer use the Lockup); the bare mark is
+ * for places where the name is already present, such as the data-flow diagram's server node.
+ * Minimum 16px tall. Decorative unless `label` is given.
+ * Usage: <Mark class="df__mark" />   <Mark label="Mission LLM" />
+ */
+import fs from "node:fs";
+import path from "node:path";
+
+interface Props {
+  label?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+const { label, class: className, ...rest } = Astro.props;
+const src = fs.readFileSync(path.join(process.cwd(), "public/brand/mark.svg"), "utf8");
+const viewBox = (src.match(/viewBox="([^"]+)"/) || [])[1];
+const body = src
+  .replace(/^[\s\S]*?<svg[^>]*>/, "")
+  .replace(/<\/svg>\s*$/, "")
+  .replace(/<title>[\s\S]*?<\/title>/g, "")
+  .replace(/<!--[\s\S]*?-->/g, "")
+  .replace(/fill="#070F26"/g, 'class="lk-ink"')
+  .replace(/fill="#2B63E0"/g, 'class="lk-node"')
+  .replace(/\n\s*/g, "")
+  .trim();
+if (!viewBox || /fill="#/.test(body)) throw new Error("Mark: unexpected mark.svg");
+const a11y = label ? { role: "img", "aria-label": label } : { "aria-hidden": "true" };
+---
+
+<svg class:list={["mark", className]} viewBox={viewBox} xmlns="http://www.w3.org/2000/svg" focusable="false" {...rest} {...a11y} set:html={body} />

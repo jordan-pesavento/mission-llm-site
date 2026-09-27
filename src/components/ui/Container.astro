@@ -1,9 +1,9 @@
 ---
 /*
- * Container: the reference's content box. 1476px wide at most with 24px side padding, so content is
- * 1392px at 1440 and 1428px from 1476 up (anythingllm.com measurements). Header and footer are
- * full-bleed and do not use it.
- * Usage: <Container> ... </Container>  or  <Container as="nav" class="split split--feature"> ... </Container>
+ * Container: the one content width (.wrap): the window less the fluid gutter on each side, capped at
+ * 1920 (120rem). Every section, the header row and the footer use it, so everything shares one left
+ * edge. Backgrounds stay full-bleed on the element around it.
+ * Usage: <Container> ... </Container>  or  <Container as="nav" class="split split--band"> ... </Container>
  */
 interface Props {
   as?: "div" | "nav" | "header" | "footer" | "article" | "aside";
@@ -13,4 +13,4 @@ interface Props {
 const { as: Tag = "div", class: className, ...rest } = Astro.props;
 ---
 
-<Tag class:list={["container", className]} {...rest}><slot /></Tag>
+<Tag class:list={["wrap", className]} {...rest}><slot /></Tag>

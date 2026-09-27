@@ -1,19 +1,21 @@
 ---
 /*
- * Home (site v2). Section order follows the reference (anythingllm.com) one to one, with honest
- * substitutions. This file is owned by the foundation; builders edit only their own section files.
- *   A: Hero, Stats, FeaturesProduct (#product)
- *   B: GroundedBand (#grounded, dark), FeaturesSecurity (#control), Steps (#steps), DeployBand (#deploy, dark)
- *   C: Resources (#resources), OpenSource (#open-source), FinalCta
- * Tone sequence: light (wash), light, light, DARK, light, light, DARK, light, light, light, then the
- * dark footer. The reference's partner-logo strip becomes Works: plain-type names of the local
- * runtimes and deployment targets it works with (no customers or logos).
+ * Home (redesign, DESIGN-SPEC revision 3 + HERO-REVISION.md). One component per section, in order.
+ * Whole-page tone alternates so no two adjacent full-bleed sections share a tone and there is never a
+ * white-on-white or navy-on-navy seam (HERO-REVISION.md, third pass):
+ *   Hero DARK, FeaturesProduct LIGHT, GroundedBand DARK, FeaturesSecurity LIGHT, Steps DARK,
+ *   DeployBand LIGHT, Resources DARK, OpenSource LIGHT, FinalCta DARK, then Footer LIGHT.
+ * The hero fills the viewport (min-height 100svh - nav) so on desktop first load only the hero shows.
+ * The centered four-number stats band is gone (HERO-REVISION.md 2b); the "Runs with" strip lives
+ * inside the hero on its navy tone (2c), so the reference's proof row is folded into Hero and there is
+ * no separate Works/Stats section.
+ * The page closes on the dark Final CTA, so the footer is LIGHT (footerTone="light", HERO-REVISION.md
+ * item 10): the dark mark-slab moment stays, and the seam below it is a clean dark-to-light edge, not
+ * two adjacent darks.
  */
 import Base from "../layouts/Base.astro";
 import { PAGES } from "../data/site";
 import Hero from "../components/sections/home/Hero.astro";
-import Works from "../components/sections/home/Works.astro";
-import Stats from "../components/sections/home/Stats.astro";
 import FeaturesProduct from "../components/sections/home/FeaturesProduct.astro";
 import GroundedBand from "../components/sections/home/GroundedBand.astro";
 import FeaturesSecurity from "../components/sections/home/FeaturesSecurity.astro";
@@ -24,10 +26,8 @@ import OpenSource from "../components/sections/home/OpenSource.astro";
 import FinalCta from "../components/sections/home/FinalCta.astro";
 ---
 
-<Base title={PAGES.home.title} description={PAGES.home.description}>
+<Base title={PAGES.home.title} description={PAGES.home.description} footerTone="light">
   <Hero />
-  <Works />
-  <Stats />
   <FeaturesProduct />
   <GroundedBand />
   <FeaturesSecurity />

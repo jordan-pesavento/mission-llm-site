@@ -1,27 +1,37 @@
 ---
 /*
- * Button: the reference's controls. 44px tall, 8px radius, Plus Jakarta Sans 16/24 600, one line.
- * Buttons that sit next to each other always share this height and radius.
- * - primary: solid navy #070F26, white label ("Download Free"). In dark bands it inverts (white, navy label).
- * - secondary: 1px mist-300 outline, ink label ("Self-host" in the reference).
- * - quiet: no box, 16/24 500 muted label with an optional leading icon (the hero's second action).
- * - size "lg": 32px side padding (the final CTA's button). Default 20px.
- * - iconStart / iconEnd: Phosphor icon names. iconSize (px, default 18, 22 for quiet) and iconWeight
- *   ("regular", "bold", "fill") override the glyph. block: full width.
- * Renders <a> when `href` is set, otherwise <button>. Every Download button points to /download.
- * Usage: <Button href="/download">Download Free</Button>
- *        <Button href="/security" variant="quiet" iconStart="shield-check">Security overview</Button>
+ * Button: renders the .btn classes from global.css (plain markup may use the classes directly).
+ * - variant "primary" (default): ink. Navy with a white label on light (hover navy-700); white with a
+ *   navy label in dark bands (hover mist-200).
+ * - variant "secondary": a 1px ring, heading-colored label.
+ * - variant "accent": a solid blue fill. The nav Download button is a solid accent-blue button on every
+ *   skin (HERO-REVISION.md, F1), styled by .nav__cta in Header.astro (not this class). This class is not
+ *   used by any shipping control (the sheet Download is the primary treatment on the white sheet); the
+ *   accent otherwise stays reserved for eyebrows, links, the focus ring, the node and numerals. Kept for
+ *   the /kit swatch. Do not use it for a new button.
+ * - variant "quiet": v2 name, rendered as secondary. Do not use in new code.
+ * - size "md" (default, --btn-h: 48, 52 from 1920), "lg" (4px taller: the form submit and the closing
+ *   section), "nav" (44: the nav's controls), "sm" (40: the code block's Copy).
+ * - iconStart / iconEnd: a line icon name (Icon.astro set "line", 20px). A name outside the line set
+ *   falls back to Phosphor (v2 buttons); iconSet forces a set. block: full width.
+ * Rules: adjacent controls share one height (same size); one primary action per view; every Download
+ * button points to /download.
+ * Renders <a> when `href` is set, otherwise <button> (type "button" unless given).
+ * Usage: <Button href="#steps">See how it works</Button>
+ *        <Button href="/security" variant="secondary">Security overview</Button>
  */
 import type { HTMLAttributes } from "astro/types";
 import Icon from "./Icon.astro";
+import { LINE_ICONS } from "./line-icons";
 
 type Props = {
   href?: string;
-  variant?: "primary" | "secondary" | "quiet";
-  size?: "md" | "lg";
+  variant?: "primary" | "secondary" | "accent" | "quiet";
+  size?: "md" | "lg" | "nav" | "sm";
   type?: "button" | "submit";
   iconEnd?: string;
   iconStart?: string;
+  iconSet?: "line" | "phosphor";
   iconSize?: number;
   iconWeight?: "regular" | "bold" | "fill";
   block?: boolean;
@@ -35,123 +45,25 @@ const {
   type = "button",
   iconEnd,
   iconStart,
-  iconSize: iconSizeProp,
+  iconSet,
+  iconSize = 20,
   iconWeight = "regular",
   block = false,
   class: className,
   ...rest
 } = Astro.props;
 const Tag = href ? "a" : "button";
-const iconSize = iconSizeProp ?? (variant === "quiet" ? 22 : 18);
+const v = variant === "quiet" ? "secondary" : variant;
+const setFor = (n: string) => iconSet ?? (n in LINE_ICONS ? "line" : "phosphor");
 ---
 
 <Tag
   href={href}
   type={href ? undefined : type}
-  class:list={["btn", `btn--${variant}`, `btn--${size}`, { "btn--block": block }, className]}
+  class:list={["btn", `btn--${v}`, size !== "md" && `btn--${size}`, { "btn--block": block }, className]}
   {...rest}
 >
-  {iconStart && <Icon name={iconStart} size={iconSize} weight={iconWeight} class="btn__icon" />}
+  {iconStart && <Icon set={setFor(iconStart)} name={iconStart} size={iconSize} weight={iconWeight} class="btn__icon" />}
   <span class="btn__label"><slot /></span>
-  {iconEnd && <Icon name={iconEnd} size={iconSize} weight={iconWeight} class="btn__icon" />}
+  {iconEnd && <Icon set={setFor(iconEnd)} name={iconEnd} size={iconSize} weight={iconWeight} class="btn__icon" />}
 </Tag>
-
-<style>
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    height: 44px;
-    padding-inline: var(--space-5);
-    border-radius: var(--radius-sm);
-    font-family: var(--font-sans);
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    font-weight: var(--fw-semibold);
-    white-space: nowrap;
-    text-decoration: none;
-    cursor: pointer;
-    transition:
-      background-color var(--dur-hover) var(--ease-standard),
-      box-shadow var(--dur-hover) var(--ease-standard),
-      color var(--dur-hover) var(--ease-standard);
-  }
-  .btn--lg {
-    padding-inline: var(--space-8);
-  }
-  .btn__label {
-    white-space: nowrap;
-  }
-
-  .btn--primary {
-    background: var(--navy-950);
-    color: #ffffff;
-  }
-  .btn--primary:hover {
-    background: var(--navy-800);
-    color: #ffffff;
-  }
-  .btn--primary:active {
-    background: #000000;
-  }
-  :global([data-tone="dark"]) .btn--primary {
-    background: #ffffff;
-    color: var(--navy-950);
-  }
-  :global([data-tone="dark"]) .btn--primary:hover {
-    background: var(--mist-200);
-    color: var(--navy-950);
-  }
-
-  .btn--secondary {
-    background: transparent;
-    color: var(--color-heading);
-    box-shadow: inset 0 0 0 1px var(--color-line);
-  }
-  .btn--secondary:hover {
-    color: var(--color-heading);
-    background: rgb(11 20 48 / 0.04);
-    box-shadow: inset 0 0 0 1px #b3bed6;
-  }
-  :global([data-tone="dark"]) .btn--secondary {
-    box-shadow: inset 0 0 0 1px rgb(204 212 229 / 0.36);
-  }
-  :global([data-tone="dark"]) .btn--secondary:hover {
-    background: rgb(204 212 229 / 0.08);
-    box-shadow: inset 0 0 0 1px rgb(204 212 229 / 0.6);
-  }
-
-  .btn--quiet {
-    padding-inline: 0;
-    background: none;
-    font-weight: var(--fw-medium);
-    color: var(--mist-550);
-    gap: var(--space-2); /* reference: 8px from the mark to "66k+ Stars" */
-  }
-  .btn--quiet:hover {
-    color: var(--color-heading);
-  }
-  .btn--quiet :global(.btn__icon) {
-    color: var(--mist-600);
-  }
-  :global([data-tone="dark"]) .btn--quiet {
-    color: var(--band-text);
-  }
-  :global([data-tone="dark"]) .btn--quiet:hover {
-    color: #ffffff;
-  }
-  :global([data-tone="dark"]) .btn--quiet :global(.btn__icon) {
-    color: var(--band-text);
-  }
-
-  .btn:focus-visible {
-    outline: 2px solid var(--color-focus);
-    outline-offset: 2px;
-    border-radius: var(--radius-sm);
-  }
-  .btn--block {
-    display: flex;
-    width: 100%;
-  }
-</style>

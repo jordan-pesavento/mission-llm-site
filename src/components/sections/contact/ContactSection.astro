@@ -1,30 +1,32 @@
 ---
 /*
- * Contact > the whole page body, on the hero wash. The site's hero pattern (eyebrow, sentence H1,
- * lead), the form in the site's card style (EditionCards: radius-lg, surface, shadow-card), and a
- * block with the security note and "Helpful to include" tips.
- * - From 1024: intro and the extra block on the left (5fr), the form card on the right (7fr),
- *   spanning both rows.
- * - Below 1024: intro, then the form, then the security note and the tips, so the form starts on the
- *   first screen of a phone.
+ * Contact (/contact): the whole page body (DESIGN-SPEC revision 3, sections 7 and 11; the prototype's
+ * contact.html is the source of truth for the look). Two-track layout from 1024:
+ * - Left (columns 1 to 5): the intro (eyebrow, H1, lead) with the contact drawing (a message card on a
+ *   dotted floor route to the ML server), then "What happens next" with rhombus numerals and the notes.
+ * - Right (columns 7 to 12, both rows): the form card.
+ * Below 1024 it stacks: intro, form, then "What happens next" and the notes.
  *
- * The form works without JavaScript: method="post" to /api/contact (api/contact.js), which answers a
- * plain form post with a 303 to /contact/sent or back to /contact?error=<code>#error-<code>. Each
- * code has a notice below (ERROR_MESSAGES); CSS :target shows it with no script. For field errors
- * the redirect is /contact?error=invalid&fields=email,message#error-invalid-email-message: one empty
- * jump target per combination of fields sits before the notices and the fields, and sibling
- * selectors show the invalid notice, its matching lines and a note under each field named.
- * With JavaScript (src/scripts/contact-form.ts, bundled as an external module so the CSP needs no
- * new hash) the form validates inline, posts JSON with fetch and shows success or errors in place,
- * keeping what was typed; the :target rules are off then and the script shows notices itself.
- * Rules (limits, roles, labels, messages) come from src/lib/contact-rules.js, shared with the function.
- * Fields are 52px tall, labels sit above them, optional fields say so, and every error sits under
- * its field (aria-describedby) and in the summary at the top of the form.
+ * The form is unchanged in behaviour from revision 2 (do not change its logic): it works without
+ * JavaScript by posting to /api/contact (api/contact.js), which answers a plain form post with a 303 to
+ * /contact/sent or back to /contact?error=<code>#error-<code>. Each code has a notice below
+ * (ERROR_MESSAGES); CSS :target shows it with no script. For field errors the redirect is
+ * /contact?error=invalid&fields=email,message#error-invalid-email-message: one empty jump target per
+ * combination of fields sits before the notices and the fields, and sibling selectors show the invalid
+ * notice, its matching lines and a note under each field named. With JavaScript
+ * (src/scripts/contact-form.ts, a bundled module so the CSP needs no new hash) the form validates inline,
+ * posts JSON with fetch and shows success or errors in place, keeping what was typed.
+ * Rules (limits, roles, backend labels, messages) come from src/lib/contact-rules.js, shared with the
+ * function; the email body and the error notices use those labels, so they are left as the source of
+ * truth. The visible field labels are the spec's short forms.
+ * Section 7 styling: no visible heading inside the card (the form is labelled "Send us a message" for
+ * assistive tech); fields pair up and share rows from 640; fields 52px, message box 11rem (7rem on the
+ * short tier); "All fields are required unless marked optional." sits beside the submit.
  */
 import Section from "../../ui/Section.astro";
-import SectionIntro from "../../ui/SectionIntro.astro";
 import Button from "../../ui/Button.astro";
 import Icon from "../../ui/Icon.astro";
+import Art from "../../ui/Art.astro";
 import { CONTACT_HREF, PLACEHOLDER } from "../../../data/site";
 import {
   ERROR_MESSAGES,
@@ -58,29 +60,42 @@ const joiner = (field: (typeof FIELDS)[number]) => (/[?!.]$/.test(FIELD_LABELS[f
 const messageMax = LIMITS.messageMax.toLocaleString("en-US");
 const ISSUES_URL = `${PLACEHOLDER.repositoryUrl}/issues`;
 const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
+
+// The three steps in "What happens next" (rhombus numerals).
+const NEXT_STEPS = [
+  "Your message goes to the Mission LLM team by email.",
+  "We reply to the address you give. If we need more detail about your course or setup, we ask there.",
+  "We use your details only to reply. Nothing is added to a mailing list.",
+];
 ---
 
-<Section pad="hero" wash labelledby="contact-title" class="contact">
-  <div class="contact__grid">
-    <div class="contact__intro" data-reveal>
-      <SectionIntro level={1} eyebrow="Contact" title="Tell us what you are teaching, learning or building." id="contact-title" />
-      <p class="lead contact__lead">
-        Teaching a course, taking one, or learning on your own? Running IT for a school, or working at a company? Tell
-        us what you are working on and we will reply by email.
+<Section tone="dark" pad="hero" labelledby="contact-title" class="contact-hero">
+  <div class="contact-hero__grid split split--page">
+    <div class="contact-hero__intro">
+      <p class="eyebrow" data-align="edge:left">Contact</p>
+      <h1 id="contact-title" class="h1-page contact-hero__title">Tell us what you are teaching, learning or building.</h1>
+      <p class="lead contact-hero__lead">
+        Instructors, students, independent learners, school IT teams and companies are all welcome. A person on the
+        Mission LLM team reads every message.
       </p>
     </div>
+    <div class="contact-hero__aside">
+      <Art src="images/scenes/contact-route.svg" draw class="contact-hero__scene" />
+    </div>
+  </div>
+</Section>
 
-    <div class="contact-card" data-reveal="2">
+<Section pad="y" label="Contact form and what to expect" class="contact-body">
+  <div class="contact-body__grid">
+    <div class="contact-card card">
       <form
         class="contact-form"
         method="post"
         action="/api/contact"
         accept-charset="UTF-8"
-        aria-labelledby="contact-form-title"
+        aria-label="Send us a message"
         data-contact-form
       >
-        <h2 id="contact-form-title" class="h3 contact-form__title">Send us a message</h2>
-
         <!-- Jump targets for ?error=invalid&fields=... (no JavaScript): see the header comment. -->
         {INVALID_COMBOS.map((fields) => <span class="nojs-target" id={`error-invalid-${fields.join("-")}`} data-fields={fields.join(" ")} />)}
 
@@ -88,7 +103,7 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
           {
             NOTICE_CODES.map((code) => (
               <div class="form-alert form-notice" id={`error-${code}`} tabindex="-1" data-notice={code}>
-                <Icon name="warning-circle" size={22} class="form-alert__icon" />
+                <Icon set="line" name="warning" size={22} class="form-alert__icon" />
                 <div>
                   <p class="form-alert__title">{ERROR_MESSAGES[code]}</p>
                   {code === "invalid" && (
@@ -118,7 +133,7 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
             ))
           }
           <div class="form-summary" tabindex="-1" data-summary></div>
-          <template data-alert-icon><Icon name="warning-circle" size={22} class="form-alert__icon" /></template>
+          <template data-alert-icon><Icon set="line" name="warning" size={22} class="form-alert__icon" /></template>
           <template data-alternative>
             <p class="form-alert__text">
               For a question about the app, you can also <a href={ISSUES_URL}>open an issue on GitHub</a> (issues are public).
@@ -128,7 +143,7 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
 
         <div class="contact-form__grid">
           <div class="field" data-field="name">
-            <label class="field__label" for="contact-name">{FIELD_LABELS.name}</label>
+            <label class="field__label" for="contact-name">Name</label>
             <input
               class="field__control"
               id="contact-name"
@@ -145,7 +160,7 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
           </div>
 
           <div class="field" data-field="email">
-            <label class="field__label" for="contact-email">{FIELD_LABELS.email}</label>
+            <label class="field__label" for="contact-email">Email</label>
             <input
               class="field__control"
               id="contact-email"
@@ -165,7 +180,7 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
 
           <div class="field" data-field="organization">
             <label class="field__label" for="contact-organization">
-              {FIELD_LABELS.organization} <span class="field__optional">(optional)</span>
+              Organization <span class="field__optional">(optional)</span>
             </label>
             <input
               class="field__control"
@@ -180,20 +195,20 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
           </div>
 
           <div class="field" data-field="role">
-            <label class="field__label" for="contact-role">{FIELD_LABELS.role}</label>
+            <label class="field__label" for="contact-role">I am a</label>
             <div class="field__select">
               <select class="field__control" id="contact-role" name="role" required>
                 <option value="">Choose one</option>
                 {ROLES.map((r) => <option value={r.value}>{r.label}</option>)}
               </select>
-              <Icon name="caret-down" size={20} class="field__caret" />
+              <Icon set="line" name="caret" size={20} class="field__caret" />
             </div>
             <p class="field__error" id="contact-role-error" hidden></p>
             <p class="field__error field__error--nojs">{FIELD_HELP.role}</p>
           </div>
 
           <div class="field field--wide" data-field="message">
-            <label class="field__label" for="contact-message">{FIELD_LABELS.message}</label>
+            <label class="field__label" for="contact-message">Message</label>
             <textarea
               class="field__control field__control--area"
               id="contact-message"
@@ -240,11 +255,12 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
           <Button type="submit" size="lg" class="contact-form__submit" data-submit>
             <span data-submit-label>Send message</span>
           </Button>
-          <p class="contact-form__privacy">
-            We use these details only to reply to you. Your message is delivered by email through our email provider,
-            with your country and browser type to help us reply.
-          </p>
+          <p class="contact-form__required">All fields are required unless marked optional.</p>
         </div>
+        <p class="contact-form__privacy">
+          We use these details only to reply to you. Your message is delivered by email through our email provider, with
+          your country and browser type to help us reply.
+        </p>
       </form>
 
       <!-- Polite status for the script: "Sending your message." and the one summary announcement. -->
@@ -252,7 +268,7 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
 
       <div class="contact-success" data-contact-success hidden>
         <span class="contact-success__mark" aria-hidden="true">
-          <Icon name="check" size={22} weight="bold" />
+          <Icon set="line" name="check" size={24} />
         </span>
         <h2 class="h3 contact-success__title" tabindex="-1" data-success-title>Message sent.</h2>
         <p class="contact-success__text">
@@ -261,29 +277,39 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
             data-success-email></strong>.
         </p>
         <p class="contact-success__note">If that address is wrong, send another message with the right one.</p>
-        <div class="contact-success__actions">
+        <div class="contact-success__actions" data-row="success-actions">
           <Button href="/">Back to home</Button>
           <Button href={CONTACT_HREF} variant="secondary" data-send-another>Send another message</Button>
         </div>
       </div>
     </div>
 
-    <div class="contact__more" data-reveal="3">
-      <div class="contact__tips-block">
-        <h2 class="contact__subhead">Helpful to include</h2>
-        <ul class="dot-list contact__tips" role="list">
-          <li>For a course you teach: the subject, roughly how many students, and when it starts.</li>
-          <li>For a student or independent learner: your course or goal, and what you are trying to do.</li>
-          <li>For a school, district or company: where you plan to host Mission LLM and any network limits.</li>
-          <li>For a question about the app: what you tried and what happened.</li>
-        </ul>
+    <div class="contact__more">
+      <div class="contact__next">
+        <h2 class="contact__next-title">What happens next</h2>
+        <ol class="contact__steps" role="list">
+          {
+            NEXT_STEPS.map((text, i) => (
+              <li>
+                <span class="num num--sm" aria-hidden="true">
+                  {i + 1}
+                </span>
+                <span>{text}</span>
+              </li>
+            ))
+          }
+        </ol>
       </div>
-      <p class="contact__security">
-        <Icon name="shield-check" size={20} class="contact__security-icon" />
-        <span>
-          Found a security issue? Please <a href="/security#report">report it privately</a> instead of using this form.
-        </span>
-      </p>
+      <div class="contact__notes">
+        <p>
+          <Icon set="line" name="shield" size={22} class="contact__note-icon" />
+          <span>Found a security issue? Please <a href="/security#report">report it privately</a> instead of using this form.</span>
+        </p>
+        <p>
+          <Icon set="line" name="chat" size={22} class="contact__note-icon" />
+          <span>A question about the app? You can also <a href={ISSUES_URL}>open an issue on GitHub</a>. Issues are public.</span>
+        </p>
+      </div>
     </div>
   </div>
 </Section>
@@ -293,95 +319,124 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
 </script>
 
 <style>
-  /* ---------- Layout ---------- */
-  .contact__grid {
+  /* ---------- Layout (F2): the page's top section is a DARK navy hero (intro), then a LIGHT section with
+     the form card beside "what happens next" and the notes. So the page alternates dark -> light ->
+     dark(footer) per the whole-page rule, with no white-on-white seam. The form markup and behaviour are
+     unchanged; only the section wrapping and layout changed. ---------- */
+  .contact-hero__intro {
+    min-width: 0;
+  }
+  .contact-hero__title {
+    margin-top: 12px;
+    max-width: 18ch;
+  }
+  .contact-hero__lead {
+    margin-top: 20px;
+    max-width: var(--measure);
+  }
+  .contact-hero__aside {
+    display: none;
+    min-width: 0;
+  }
+  @media (min-width: 1024px) {
+    .contact-hero__aside {
+      display: block;
+      align-self: center;
+    }
+    .contact-hero__scene {
+      width: 100%;
+      max-width: 26rem;
+      margin-inline: auto;
+    }
+  }
+
+  /* Light form section: the form card and, beside it, "what happens next" and the notes. */
+  .contact-body__grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "intro" "card" "more";
-    row-gap: var(--space-10);
-  }
-  .contact__intro {
-    grid-area: intro;
-    min-width: 0;
+    grid-template-areas: "card" "more";
+    gap: clamp(2rem, 1rem + 3vw, 3rem);
+    align-items: start;
   }
   .contact-card {
     grid-area: card;
   }
   .contact__more {
     grid-area: more;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-10);
     min-width: 0;
   }
-  /* Below 1024 the security note comes first, right under the form. */
-  .contact__security {
-    order: -1;
-  }
   @media (min-width: 1024px) {
-    .contact__grid {
-      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-      grid-template-areas: "intro card" "more card";
-      grid-template-rows: auto 1fr;
-      column-gap: var(--split-gap);
-      row-gap: 0;
-      align-items: start;
-    }
-    .contact__more {
-      margin-top: var(--space-10);
-      gap: var(--space-8);
-    }
-    .contact__security {
-      order: 0;
-      padding-top: var(--space-6);
-      border-top: 1px solid var(--color-line);
+    .contact-body__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-template-areas: "more more more more more . card card card card card card";
+      column-gap: var(--col-gap);
     }
   }
-  .contact__lead {
-    max-width: var(--measure);
-    margin-top: var(--gap-h2-text);
+  @media (min-width: 1280px) {
+    .contact-body__grid {
+      grid-template-areas: "more more more more more card card card card card card card";
+    }
   }
-  .contact__subhead {
+
+  /* ---------- "What happens next" and the notes ---------- */
+  .contact__next {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .contact__next-title {
     font-family: var(--font-sans);
     font-size: var(--fs-h4);
     line-height: var(--lh-h4);
     font-weight: var(--fw-semibold);
-  }
-  .contact__tips {
-    max-width: var(--measure);
-    margin-top: var(--space-3);
-  }
-  .contact__tips > li {
-    color: var(--mist-700);
-  }
-  .contact__security {
-    display: flex;
-    gap: var(--space-3);
-    max-width: var(--measure);
-    font-size: var(--fs-body);
-    line-height: var(--lh-body-relaxed);
-    color: var(--mist-700);
-  }
-  .contact__security :global(.contact__security-icon) {
-    flex: none;
-    margin-top: 3px;
     color: var(--color-heading);
   }
+  .contact__steps {
+    display: grid;
+    gap: 14px;
+  }
+  .contact__steps li {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+    color: var(--color-text-muted);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+  .contact__steps .num {
+    margin-top: -2px;
+  }
+  .contact__notes {
+    display: grid;
+    gap: 10px;
+    margin-top: clamp(1.75rem, 1rem + 2vw, 2.5rem);
+    padding-top: 20px;
+    border-top: 1px solid var(--color-line);
+  }
+  .contact__notes p {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 12px;
+    color: var(--color-text-muted);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+  .contact__notes :global(.contact__note-icon) {
+    margin-top: 0.15em;
+    color: var(--color-text-quiet);
+  }
+  .contact__notes a {
+    color: var(--color-link);
+    text-underline-offset: 0.2em;
+  }
 
-  /* ---------- Card (the site's card style, as EditionCards) ---------- */
+  /* ---------- Card ---------- */
   .contact-card {
     min-width: 0;
-    container-type: inline-size;
-    padding: clamp(1.5rem, 1.2rem + 1.2vw, 2.5rem);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-card);
+    padding: clamp(1.25rem, 0.8rem + 2vw, 3rem);
   }
   .contact-form {
     position: relative;
-  }
-  .contact-form__title {
-    margin-bottom: var(--space-6);
   }
 
   /* ---------- Notices (?error= after a plain form post) and the summary ---------- */
@@ -393,14 +448,15 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
   }
   .form-alert,
   .form-summary:not(:empty) {
-    display: flex;
-    gap: var(--space-3);
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 12px;
     margin-bottom: var(--space-6);
     padding: var(--space-4) var(--space-5);
     border: 1px solid var(--color-danger-line);
-    border-radius: var(--radius-sm);
+    border-radius: var(--r-control);
     background: var(--color-danger-bg);
-    color: var(--mist-800);
+    color: var(--color-text);
     font-size: var(--fs-body);
     line-height: var(--lh-body);
   }
@@ -410,14 +466,12 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
   }
   .form-alert:focus-visible,
   .form-summary:focus-visible {
-    outline: 2px solid var(--color-focus);
+    outline: 2px solid var(--color-danger);
     outline-offset: 2px;
-    border-radius: var(--radius-sm);
+    border-radius: var(--r-control);
   }
   .form-alert :global(.form-alert__icon),
   .form-summary :global(.form-alert__icon) {
-    flex: none;
-    margin-top: 1px;
     color: var(--color-danger);
   }
   .form-alert__title,
@@ -428,7 +482,7 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
   .form-alert__text,
   .form-summary :global(.form-alert__text) {
     margin-top: var(--space-2);
-    color: var(--mist-700);
+    color: var(--color-text-muted);
   }
   .form-alert__list {
     margin-top: var(--space-1);
@@ -442,7 +496,8 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
   .form-summary :global(li + li) {
     margin-top: var(--space-1);
   }
-  .form-alert__list strong {
+  .form-alert__list strong,
+  .form-summary :global(strong) {
     font-weight: var(--fw-semibold);
     color: var(--color-heading);
   }
@@ -465,7 +520,7 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
   .form-notice.is-shown,
   :global(html:not(.js)) .form-notice:target,
   :global(html:not(.js)) .nojs-target:target ~ .contact-form__notices #error-invalid {
-    display: flex;
+    display: grid;
   }
   .form-alert__list li.is-shown,
   :global(html:not(.js)) #error-invalid:target .form-alert__list li,
@@ -492,28 +547,32 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
     box-shadow: inset 0 0 0 1px var(--color-danger);
   }
 
-  /* ---------- Fields ---------- */
+  /* ---------- Fields: pair up from 640 (viewport), matching the prototype and spec section 7; each
+     field is a small stack (label, control, error). align-items:start keeps paired controls level even
+     when one field shows an error below. ---------- */
   .contact-form__grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-6);
+    gap: var(--space-5);
+    align-items: start;
   }
-  @container (min-width: 36rem) {
+  @media (min-width: 640px) {
     .contact-form__grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       column-gap: var(--space-5);
+      row-gap: var(--space-5);
     }
     .field--wide {
       grid-column: 1 / -1;
     }
   }
   .field {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
     min-width: 0;
   }
   .field__label {
-    margin-bottom: var(--space-2);
     font-size: var(--fs-body);
     line-height: var(--lh-body);
     font-weight: var(--fw-semibold);
@@ -521,7 +580,7 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
   }
   .field__optional {
     font-weight: var(--fw-regular);
-    color: var(--color-text-muted);
+    color: var(--color-text-quiet);
   }
   .field__control {
     display: block;
@@ -529,14 +588,18 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
     min-height: 52px;
     padding: 13px var(--space-4);
     border: 1px solid var(--color-field-line);
-    border-radius: var(--radius-sm);
+    border-radius: var(--r-control);
     background: var(--color-field);
     color: var(--color-heading);
-    font-size: var(--fs-lead);
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
     line-height: 1.5rem;
     transition:
-      border-color var(--dur-hover) var(--ease-standard),
-      box-shadow var(--dur-hover) var(--ease-standard);
+      border-color var(--t-fast) var(--ease),
+      box-shadow var(--t-fast) var(--ease);
+  }
+  .field__control::placeholder {
+    color: var(--color-text-quiet);
   }
   .field__control:hover {
     border-color: var(--color-field-line-hover);
@@ -545,15 +608,28 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
     border-color: var(--color-focus);
-    border-radius: var(--radius-sm);
+    border-radius: var(--r-control);
   }
   .field__control[aria-invalid="true"] {
     border-color: var(--color-danger);
     box-shadow: inset 0 0 0 1px var(--color-danger);
   }
   .field__control--area {
-    min-height: 12rem;
+    min-height: 11rem;
+    max-height: 24rem;
     resize: vertical;
+  }
+  /* Short desktop screens: tighten the card and message box so the Send button stays above the fold. */
+  @media (min-width: 1024px) and (max-height: 800px) {
+    .contact-card {
+      padding: 2rem;
+    }
+    .field__control--area {
+      min-height: 7rem;
+    }
+    .contact-form__actions {
+      margin-top: var(--space-5);
+    }
   }
   .field__select {
     position: relative;
@@ -563,25 +639,28 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
     padding-right: var(--space-12);
     cursor: pointer;
   }
+  /* The placeholder option stays quiet until a real choice is made. */
+  .field__select select:invalid {
+    color: var(--color-text-quiet);
+  }
   .field__select :global(.field__caret) {
     position: absolute;
     top: 50%;
     right: var(--space-4);
     transform: translateY(-50%);
-    color: var(--color-heading);
+    color: var(--color-text-muted);
     pointer-events: none;
   }
   .field__meta {
     display: flex;
     justify-content: space-between;
     gap: var(--space-4);
-    margin-top: var(--space-2);
   }
   .field__hint,
   .field__count {
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    color: var(--color-text-muted);
+    color: var(--color-text-quiet);
   }
   /* The count only means something once the script updates it. */
   .field__count {
@@ -597,9 +676,8 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
   }
   .field__error {
     gap: var(--space-2);
-    margin-top: var(--space-2);
     font-size: var(--fs-body);
-    line-height: var(--lh-body);
+    line-height: 1.45;
     font-weight: var(--fw-medium);
     color: var(--color-danger);
   }
@@ -623,54 +701,67 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
   /* ---------- Actions ---------- */
   .contact-form__actions {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-4);
-    margin-top: var(--space-8);
-  }
-  @container (min-width: 36rem) {
-    .contact-form__actions {
-      align-items: flex-start;
-    }
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px var(--space-6);
+    margin-top: var(--space-6);
   }
   .contact-form :global(.contact-form__submit) {
     height: 52px;
   }
   .contact-form :global(.contact-form__submit[aria-disabled="true"]) {
-    background: var(--navy-800);
+    background: var(--navy-700);
     cursor: progress;
   }
-  .contact-form__privacy {
+  .contact-form__required {
+    flex: 1 1 16rem;
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    color: var(--color-text-muted);
+    color: var(--color-text-quiet);
+  }
+  .contact-form__privacy {
+    margin-top: var(--space-5);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-quiet);
   }
 
   /* ---------- Success (with JavaScript; without it, /contact/sent) ---------- */
   .contact-success {
-    padding-block: var(--space-4);
+    display: grid;
+    justify-items: start;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
   }
   .contact-success__mark {
-    display: inline-grid;
+    position: relative;
+    display: grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-full);
-    background: var(--navy-950);
-    color: #ffffff;
+    width: 56px;
+    height: 56px;
+    color: var(--color-success);
+    isolation: isolate;
+  }
+  .contact-success__mark::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    z-index: -1;
+    border-radius: 50%;
+    background: var(--color-success-bg);
+    box-shadow: inset 0 0 0 1px rgb(23 105 63 / 0.25);
   }
   .contact-success__title {
-    margin-top: var(--space-5);
+    margin-top: var(--space-2);
   }
   .contact-success__title:focus {
     outline: none;
   }
   .contact-success__text {
     max-width: var(--measure);
-    margin-top: var(--space-3);
     font-size: var(--fs-lead);
     line-height: var(--lh-lead);
-    color: var(--mist-700);
+    color: var(--color-text-muted);
   }
   .contact-success__email {
     font-weight: var(--fw-semibold);
@@ -679,15 +770,14 @@ const ALTERNATIVE = new Set<string>(OFFER_ALTERNATIVE);
   }
   .contact-success__note {
     max-width: var(--measure);
-    margin-top: var(--space-3);
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    color: var(--color-text-muted);
+    color: var(--color-text-quiet);
   }
   .contact-success__actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
-    margin-top: var(--space-8);
+    margin-top: var(--space-6);
   }
 </style>

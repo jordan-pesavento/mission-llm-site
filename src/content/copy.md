@@ -30,20 +30,31 @@
 - Share image alt: "Mission LLM: Your class, answered. An isometric lecture hall linked to a local server."
 
 ### Header
-- Emblem and wordmark: Mission LLM
-- Nav: Product (`/#product`), Security (`/security`), Deployment (`/#deploy`), Editions (`/editions`), Docs (shown as text with a "Soon" tag, not a link, until the docs site exists <!-- TODO: no Mission LLM docs site yet -->)
+Redesign (DESIGN-SPEC revision 3, section 6). Data: `NAV`, `AUDIENCE_MENU`, `AUDIENCES`, `SHEET_MORE`, `MENU_FOOT` in `src/data/site.ts`.
+- Lockup: the mark and MISSION LLM (inline SVG; the link's name is "Mission LLM home")
+- Nav: Who it's for (a menu; without JavaScript a link to `/#product`), Security (`/security`), Editions (`/editions`), Contact (`/contact`). Docs stays out until the docs site exists <!-- TODO: no Mission LLM docs site yet -->
 - Button: Download (`/download`)
-- Mobile toggle labels: "Menu" / "Close menu"
+- Menu button labels: "Open menu" / "Close menu"
+- Who it's for menu rows (title, line; each links to `/#for-<id>`, the matching item on the home accordion):
+  - Instructors: "Build a course workspace from your syllabus and readings."
+  - Students in a course: "Ask about the course and see which readings an answer used." (phone sheet: "See which readings an answer used.")
+  - Independent learners: "A workspace for any subject, built from your own notes." (phone sheet: "A workspace for any subject, from your own notes.")
+  - School IT: "School servers, local models, no internet required."
+  - Organizations: "The same workspaces for teams, with roles and agents."
+  - Footer row: "Not sure which fits?" and "Tell us what you need" (`/contact`)
+- Phone and tablet sheet: "Who it's for" (the five rows), then "More": Security ("Where data goes and which controls ship today.") and Editions ("Community today, Enterprise planned."), then Contact and Download buttons.
 
 ### Footer
-- Under the wordmark: "Self-hosted AI for classrooms and teams, on hardware you control." (`FOOTER_DESCRIPTOR` in `src/data/site.ts`; not rendered today)
-- Entries without a destination yet show as text with a "Soon" tag, not as links.
-- **Product:** Overview (`/#product`), Grounded answers (`/#grounded`), Deployment (`/#deploy`), Security (`/security`), Editions (`/editions`), Download (`/download`)
-- **Resources:** Documentation (<!-- TODO -->), Source code (<!-- TODO: repository access not decided -->), Security policy (<!-- TODO: link SECURITY.md -->), AnythingLLM project (https://github.com/Mintplex-Labs/anything-llm), Contact (`mailto:contact@example.com` <!-- TODO: real address -->)
-- **Legal:** Privacy (<!-- TODO -->), Terms (<!-- TODO -->), Licenses and notices (<!-- TODO: link LICENSE and NOTICE -->)
+- Under the lockup: "A private assistant for courses and teams, on hardware you control." (`FOOTER_DESCRIPTOR` in `src/data/site.ts`)
+- Entries without a destination yet show as plain text, not as links.
+- **Product:** Who it's for (`/#product`), Grounded answers (`/#grounded`), Deployment (`/#deploy`), Download (`/download`)
+- **Resources:** Security overview (`/security`), Install options (`/download#options`), System requirements (`/download#requirements`), Editions (`/editions`). Documentation and Security policy come back once they exist <!-- TODO -->
+- **Project:** AnythingLLM project (https://github.com/Mintplex-Labs/anything-llm). Source code and Licenses and notices come back once they exist <!-- TODO: repository access not decided; link LICENSE and NOTICE -->
+- **Contact:** Contact us (`/contact`), Report a vulnerability (`/security#report`)
+- **Legal (bottom row):** Privacy (<!-- TODO -->), Terms (<!-- TODO -->)
 - Fine print, line 1: "Mission LLM is built on the open-source AnythingLLM project (MIT License)."
-- Fine print, line 2: "Mission LLM is not affiliated with or endorsed by the U.S. Department of Defense or the U.S. Space Force."
-- Fine print, line 3: "© 2026 Mission LLM." <!-- TODO: legal entity and copyright holder not decided -->
+- Fine print, line 2: "Mission LLM is not affiliated with or endorsed by the U.S. Department of Defense or the U.S. Space Force." (owner decision pending, DESIGN-SPEC section 13; keep it until the owner decides)
+- Bottom row: "© 2026 Mission LLM." <!-- TODO: legal entity and copyright holder not decided -->
 
 ---
 

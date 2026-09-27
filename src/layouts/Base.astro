@@ -1,11 +1,17 @@
 ---
 /*
- * Base layout: document head (meta, fonts, icons), skip link, header, <main id="main">, footer,
- * and the one-time reveal. Every page uses it:
+ * Base layout: document head (meta, fonts, icons, share card), skip link, the fixed header,
+ * <main id="main">, footer. Every page uses it:
  *   <Base title={PAGES.home.title} description={PAGES.home.description}> ...sections... </Base>
- * Fonts are self-hosted, no font CDN at runtime: Clash Display 400/500/600 (ITF Free Font License,
+ * Fonts are self-hosted, no font CDN at runtime: Clash Display 500/600 (ITF Free Font License,
  * public/fonts/clash-display, declared in src/styles/fonts.css), Plus Jakarta Sans 400/500/600/700 and
  * JetBrains Mono 400 (SIL OFL, @fontsource, latin subset).
+ * Scripts: the one inline script below adds the "js" class before first paint (its SHA-256 is in the
+ * CSP in vercel.json; the build fails if it changes without the hash). Everything else is a bundled
+ * module: the header's nav.ts, and per component accordion.ts, draw.ts and copy.ts.
+ * Icons: favicon.svg (tab), favicon.ico (16, 32, 48), apple-touch-icon.png (180), the manifest's
+ * 192, 512 and maskable 512 PNGs; all from the final logo set (public/brand). theme-color is the nav
+ * navy #070F26 (SITE.themeColor).
  */
 import "@fontsource/plus-jakarta-sans/latin-400.css";
 import "@fontsource/plus-jakarta-sans/latin-500.css";
@@ -14,6 +20,7 @@ import "@fontsource/plus-jakarta-sans/latin-700.css";
 import "@fontsource/jetbrains-mono/latin-400.css";
 import "../styles/global.css";
 import jakarta400 from "@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff2?url";
+import jakarta500 from "@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-500-normal.woff2?url";
 import jakarta600 from "@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff2?url";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
@@ -22,9 +29,18 @@ import { SITE } from "../data/site";
 interface Props {
   title: string;
   description?: string;
+  // Tone of the footer band. The whole-page rule (HERO-REVISION.md, third pass) is that no two
+  // adjacent full-bleed bands share a tone. The footer is the last band, so its tone is the opposite
+  // of each page's last content section: pages that close on a LIGHT section (security, editions,
+  // download, contact) keep the default DARK footer; pages that close on a DARK section (home's Final
+  // CTA, the 404) pass footerTone="light" so the seam is a clean dark-to-light edge, not two darks.
+  footerTone?: "light" | "dark";
+  // An optional class on <main>, so a page can make its content the positioning context (the security
+  // page uses this for its whole-page sticky "On this page" table of contents; F3).
+  mainClass?: string;
 }
 
-const { title, description = SITE.description } = Astro.props;
+const { title, description = SITE.description, footerTone = "dark", mainClass } = Astro.props;
 // Canonical URL, og:url and the share image need absolute URLs, built from SITE.origin
 // (https://mission-llm.com, same as astro.config `site`). The image is public/og/mission-llm.png (1200x630).
 const canonical = SITE.origin ? new URL(Astro.url.pathname, SITE.origin).href : undefined;
@@ -42,8 +58,8 @@ const shareImage = SITE.origin ? new URL(SITE.shareImage, SITE.origin).href : un
     <meta name="theme-color" content={SITE.themeColor} />
     <meta name="generator" content={Astro.generator} />
     {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta property="og:type" content="website" />
@@ -59,6 +75,7 @@ const shareImage = SITE.origin ? new URL(SITE.shareImage, SITE.origin).href : un
     <meta name="twitter:card" content={shareImage ? "summary_large_image" : "summary"} />
     <link rel="preload" href="/fonts/clash-display/ClashDisplay-Medium.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={jakarta400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={jakarta500} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={jakarta600} as="font" type="font/woff2" crossorigin />
     <script is:inline>
       document.documentElement.classList.add("js");
@@ -68,33 +85,9 @@ const shareImage = SITE.origin ? new URL(SITE.shareImage, SITE.origin).href : un
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <Header />
-    <main id="main" tabindex="-1">
+    <main id="main" tabindex="-1" class={mainClass}>
       <slot />
     </main>
-    <Footer />
-    <script>
-      // Reveal once per element marked data-reveal (see global.css). Skipped entirely with reduced
-      // motion, where the CSS never hides anything.
-      const items = [...document.querySelectorAll<HTMLElement>("[data-reveal]")];
-      const showAll = () => items.forEach((el) => el.classList.add("is-in"));
-      if (items.length) {
-        if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          showAll();
-        } else {
-          const io = new IntersectionObserver(
-            (entries) => {
-              for (const entry of entries) {
-                if (!entry.isIntersecting) continue;
-                entry.target.classList.add("is-in");
-                io.unobserve(entry.target);
-              }
-            },
-            { rootMargin: "0px 0px -6% 0px", threshold: 0 },
-          );
-          items.forEach((el) => io.observe(el));
-          window.addEventListener("beforeprint", showAll);
-        }
-      }
-    </script>
+    <Footer tone={footerTone} />
   </body>
 </html>

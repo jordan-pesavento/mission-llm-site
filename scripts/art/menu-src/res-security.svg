@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 443 215" width="443" height="215" fill="none" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+<title>A campus network with a boundary</title>
+<!-- Resource card: Security overview (prototype copy with the ML mark on the server plate in place of the old delta). -->
+<rect width="443" height="215" fill="#FFFFFF"/>
+<rect transform="matrix(0.87 0.5 -0.87 0.5 196 31)" width="176" height="164" rx="10" fill="#F8FAFC" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<path d="M156.16,94L140.58,103M241.03,95L264.47,108.47" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<path d="M185.61,111L150.1,131.5L177.81,147.5" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<path d="M213.32,111L287.8,154" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<polygon points="199.46,43 256.62,76 256.62,86 199.46,119 142.31,86 142.31,76" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M256.62,76L199.46,109L142.31,76M199.46,109L199.46,119" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 142.31 76)"><circle cx="6.35" cy="5" r="1.8" stroke="#47546F"/>
+<path d="M10.79 5H28.12" stroke="#CCD4E5"/></g>
+<path transform="matrix(0.87 -0.5 0 1 199.46 109)" d="M27.92 2.8V7.2M35.22 2.8V7.2M42.52 2.8V7.2M49.82 2.8V7.2M57.12 2.8V7.2" stroke="#CCD4E5"/>
+<path d="M142.31,76V60M199.46,109V93M256.62,76V60" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<polygon points="199.46,17 256.62,50 256.62,60 199.46,93 142.31,60 142.31,50" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M256.62,50L199.46,83L142.31,50M199.46,83L199.46,93" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 142.31 50)"><circle cx="6.35" cy="5" r="1.8" stroke="#47546F"/>
+<path d="M10.79 5H28.12" stroke="#CCD4E5"/></g>
+<g transform="matrix(0.87 0.5 -0.87 0.5 199.46 17)"><rect x="13.96" y="13.96" width="38.08" height="38.08" rx="5.08" stroke="#CCD4E5"/>
+<path d="M30.31 46.78L19.22 35.69L21.79 33.12L27.44 33.12L27.44 36.03L24.07 36.03L32.56 44.52Z" fill="#F8FAFC" stroke="#47546F"/><path d="M41.12 35.97L46.78 30.31L44.68 28.21L41.28 31.61L32.29 22.63L29.71 25.2L29.71 30.84L32.63 30.84L32.63 27.48Z" fill="#F8FAFC" stroke="#47546F"/><path d="M29.6 33L32.74 33L32.74 36.15L29.6 36.15Z" fill="#2B63E0" stroke="#2B63E0" data-node=""/></g>
+<polygon points="280.87,99 320.7,122 320.7,125 292.99,141 253.16,118 253.16,115" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M320.7,122L292.99,138L253.16,115M292.99,138L292.99,141" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 -0.87 0.5 280.87 99)" stroke="#CCD4E5"><rect x="4" y="4.5" width="38" height="16" rx="1.5"/>
+<rect x="16.1" y="23" width="13.8" height="6.5" rx="1.5"/></g>
+<polygon points="280.87,71 320.7,94 320.7,122 318.97,123 279.14,100 279.14,72" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M320.7,94L318.97,95L279.14,72M318.97,95L318.97,123" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 279.14 72)"><rect x="3" y="3" width="40" height="22" rx="1.5" stroke="#CCD4E5"/>
+<path d="M7 10.08H24.6" stroke="#92A0BC" stroke-width="1.6"/>
+<path d="M7 15.58H32.6" stroke="#CCD4E5" stroke-width="1.4"/></g>
+<polygon points="100.74,91 140.58,114 140.58,117 112.86,133 73.03,110 73.03,107" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M140.58,114L112.86,130L73.03,107M112.86,130L112.86,133" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 -0.87 0.5 100.74 91)" stroke="#CCD4E5"><rect x="4" y="4.5" width="38" height="16" rx="1.5"/>
+<rect x="16.1" y="23" width="13.8" height="6.5" rx="1.5"/></g>
+<polygon points="100.74,63 140.58,86 140.58,114 138.84,115 99.01,92 99.01,64" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M140.58,86L138.84,87L99.01,64M138.84,87L138.84,115" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 99.01 64)"><rect x="3" y="3" width="40" height="22" rx="1.5" stroke="#CCD4E5"/>
+<path d="M7 10.08H24.6" stroke="#92A0BC" stroke-width="1.6"/>
+<path d="M7 15.58H32.6" stroke="#CCD4E5" stroke-width="1.4"/></g>
+<path d="M161.71,159.2L158.24,161.2M219.9,159.2L223.37,161.2M168.98,163.4L165.52,165.4M212.63,163.4L216.09,165.4M176.26,167.6L172.79,169.6M205.35,167.6L208.82,169.6M183.53,171.8L180.07,173.8M198.08,171.8L201.54,173.8" stroke="#92A0BC"/>
+<polygon points="190.8,127 227.18,148 227.18,155 190.8,176 154.43,155 154.43,148" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M227.18,148L190.8,169L154.43,148M190.8,169L190.8,176" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 -0.87 0.5 190.8 127)"><rect x="7.2" y="7.2" width="27.6" height="27.6" rx="2.4" stroke="#47546F"/>
+<rect x="10.8" y="10.8" width="20.4" height="20.4" rx="1.2" stroke="#CCD4E5"/>
+<g stroke="#CCD4E5"><rect x="14.4" y="14.4" width="5.4" height="5.4" rx="1"/>
+<rect x="22.2" y="14.4" width="5.4" height="5.4" rx="1"/>
+<rect x="14.4" y="22.2" width="5.4" height="5.4" rx="1"/>
+<rect x="22.2" y="22.2" width="5.4" height="5.4" rx="1" stroke="#47546F"/></g></g>
+<circle cx="156.16" cy="94" r="1.8" fill="#FFFFFF" stroke="#47546F"/>
+<circle cx="185.61" cy="111" r="1.8" fill="#FFFFFF" stroke="#47546F"/>
+<circle cx="241.03" cy="95" r="1.8" fill="#FFFFFF" stroke="#47546F"/>
+<circle cx="213.32" cy="111" r="1.8" fill="#FFFFFF" stroke="#47546F"/>
+<circle cx="287.8" cy="154" r="2.2" fill="#FFFFFF" stroke="#47546F"/>
+<circle cx="140.58" cy="103" r="1.8" fill="#FFFFFF" stroke="#47546F"/>
+<circle cx="264.47" cy="108.47" r="1.8" fill="#FFFFFF" stroke="#47546F"/>
+<polygon points="357.15,122 388.32,140 388.32,176 357.15,194 325.97,176 325.97,140" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<path d="M388.32,140L357.15,158L325.97,140M357.15,158L357.15,194" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Mission LLM">
+  <title>Mission LLM</title>
+  <!-- App icon from 72 px up (PWA icon-192 and icon-512, installers, desktop app source): navy tile with a 22 percent corner radius, master mark 300 wide. -->
+  <rect width="512" height="512" rx="112" fill="#070F26"/>
+  <path fill="#FFFFFF" d="M106 356.96L106 155.04L152.88 155.04L214.75 216.91L188.23 243.43L147.11 202.3L147.11 356.96Z"/>
+  <path fill="#FFFFFF" d="M302.88 356.96L406 356.96L406 318.74L343.98 318.74L343.98 155.04L297.11 155.04L235.23 216.91L261.75 243.43L302.88 202.3Z"/>
+  <path fill="#5B95FF" d="M224.99 225.03L253.63 253.67L224.99 282.31L196.35 253.67Z"/>
+</svg>

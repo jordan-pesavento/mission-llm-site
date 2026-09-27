@@ -1,14 +1,16 @@
 ---
 /*
- * Contact > Sent (/contact/sent): where a plain form post lands after the function accepts it
- * (with JavaScript the form shows the same confirmation in place). The 404's centered composition
- * on the hero wash: eyebrow, H1, one line, what happens next as a short numbered list, then the
- * actions (Home is the primary one, then Send another message, as in the in-place success). The page
- * is noindex (src/pages/contact/sent.astro).
+ * Contact > Sent (/contact/sent): where a plain form post lands after the function accepts it (with
+ * JavaScript the form shows the same confirmation in place). It reuses the success block on the same
+ * light ground as the contact page (DESIGN-SPEC revision 3, section 11): the green check, "Message
+ * sent.", a thank-you line, "What happens next" as a short numbered list with the rhombus numerals, then
+ * the two actions (Home first, then Send another message, as in the in-place success). The page is
+ * noindex (src/pages/contact/sent.astro) and out of the sitemap: it only makes sense right after sending.
+ * A plain post carries no email address, so this page does not name one (the in-place success does).
  */
 import Section from "../../ui/Section.astro";
-import SectionIntro from "../../ui/SectionIntro.astro";
 import Button from "../../ui/Button.astro";
+import Icon from "../../ui/Icon.astro";
 import { CONTACT_HREF } from "../../../data/site";
 
 const next = [
@@ -18,10 +20,14 @@ const next = [
 ];
 ---
 
-<Section pad="cta" wash labelledby="sent-title" class="sent-section">
-  <div class="sent" data-reveal>
-    <SectionIntro level={1} align="center" eyebrow="Contact" title="Message sent." id="sent-title" />
-    <p class="lead sent__lead">Thank you for writing to us.</p>
+<Section pad="hero" labelledby="sent-title" class="sent-section">
+  <div class="sent card">
+    <span class="sent__mark" aria-hidden="true">
+      <Icon set="line" name="check" size={24} />
+    </span>
+    <p class="eyebrow">Contact</p>
+    <h1 id="sent-title" class="h1-page sent__title">Message sent.</h1>
+    <p class="lead sent__lead">Thank you. Your message is with the Mission LLM team.</p>
 
     <div class="sent__next">
       <h2 class="sent__next-title">What happens next</h2>
@@ -29,7 +35,7 @@ const next = [
         {
           next.map((text, i) => (
             <li>
-              <span class="sent__num tnum" aria-hidden="true">
+              <span class="num num--sm" aria-hidden="true">
                 {i + 1}
               </span>
               <span>{text}</span>
@@ -39,7 +45,7 @@ const next = [
       </ol>
     </div>
 
-    <nav class="sent__nav" aria-label="Next steps" data-row="sent-actions">
+    <nav class="sent__actions" aria-label="Next steps" data-row="sent-actions">
       <Button href="/">Back to home</Button>
       <Button href={CONTACT_HREF} variant="secondary">Send another message</Button>
     </nav>
@@ -48,62 +54,68 @@ const next = [
 
 <style>
   .sent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    max-width: 40rem;
+    padding: clamp(1.5rem, 1rem + 2.5vw, 3rem);
+  }
+  .sent__mark {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--space-5);
+    color: var(--color-success);
+    isolation: isolate;
+  }
+  .sent__mark::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    z-index: -1;
+    border-radius: 50%;
+    background: var(--color-success-bg);
+    box-shadow: inset 0 0 0 1px rgb(23 105 63 / 0.25);
+  }
+  .sent__title {
+    margin-top: 12px;
   }
   .sent__lead {
+    margin-top: 16px;
     max-width: var(--measure);
-    margin-top: var(--gap-h2-text);
   }
   .sent__next {
-    width: 100%;
-    max-width: 34rem;
-    margin-top: var(--space-10);
-    padding: clamp(1.25rem, 0.9rem + 1.4vw, 2rem);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-card);
-    text-align: left;
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-line);
   }
   .sent__next-title {
     font-family: var(--font-sans);
     font-size: var(--fs-h4);
     line-height: var(--lh-h4);
     font-weight: var(--fw-semibold);
+    color: var(--color-heading);
   }
   .sent__steps {
     display: grid;
-    gap: var(--space-4);
-    margin-top: var(--space-5);
+    gap: 14px;
+    margin-top: var(--space-4);
   }
   .sent__steps li {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-3);
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    color: var(--mist-700);
+    color: var(--color-text-muted);
   }
-  .sent__num {
-    flex: none;
-    display: inline-grid;
-    place-items: center;
-    width: 24px;
-    height: 24px;
-    border-radius: var(--radius-full);
-    background: var(--navy-950);
-    color: #ffffff;
-    font-size: var(--fs-small);
-    line-height: 1;
-    font-weight: var(--fw-semibold);
+  .sent__steps .num {
+    margin-top: -2px;
   }
-  .sent__nav {
+  .sent__actions {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: var(--space-3);
-    margin-top: var(--gap-text-action);
+    margin-top: var(--space-8);
   }
 </style>

@@ -1,22 +1,19 @@
 ---
 /*
  * Editions > Hero (copy.md, verbatim). Package C.
- * Visual system (reference, anythingllm.com): the hero's mist wash under the header, an eyebrow, a
- * 60/63 H1 and an 18/28 subhead. The edition cards follow inside the same wash-to-page flow
- * (EditionCards starts with no top padding), so the hero keeps only the text-to-cards gap below.
- * From 1024 the text sits in a 7fr column (514px at 1024, 757px at 1440) beside the lecture hall
- * illustration (public/images/scenes/lecture-hall.svg, isometric line art in the steps style, up to
- * 400 x 300) in a 5fr column with the 94px split gap, centered on the text block. The H1 holds two
- * lines in both text widths. Below 1024 the art is hidden, so the phone hero stays text only; the
- * image is lazy so phones never download it. Decorative (alt="").
- * The H1 names classes and teams: this page also sells Enterprise to organizations.
+ * The page's top section, so it is DARK (HERO-REVISION.md: each inner page's hero-equivalent top
+ * section is navy, and the sections alternate below it; the edition cards that follow are light).
+ * From 1024 the text sits beside the lecture-hall illustration, inlined with <Art> so it recolors to
+ * the dark tone (light strokes on navy). Below 1024 the art is hidden, so the phone hero stays text
+ * only. The H1 names classes and teams: this page also sells Enterprise to organizations.
  * No prices anywhere: pricing is not decided.
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
+import Art from "../../ui/Art.astro";
 ---
 
-<Section pad="hero" wash labelledby="editions-title" class="editions-hero">
+<Section tone="dark" pad="hero" labelledby="editions-title" class="editions-hero">
   <div class="editions-hero__grid">
     <div class="editions-hero__intro" data-reveal>
       <SectionIntro level={1} eyebrow="Editions" title="Free for every class and team." id="editions-title" />
@@ -27,18 +24,17 @@ import SectionIntro from "../../ui/SectionIntro.astro";
       </p>
     </div>
     <div class="editions-hero__art" data-reveal="2">
-      <img src="/images/scenes/lecture-hall.svg" width="400" height="300" alt="" loading="lazy" decoding="async" />
+      <Art src="images/scenes/lecture-hall.svg" draw />
     </div>
   </div>
 </Section>
 
 <style>
-  :global(.section.editions-hero) {
-    padding-bottom: var(--gap-h2-grid);
-  }
   .editions-hero__grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    row-gap: var(--space-10);
   }
   .editions-hero__intro {
     min-width: 0;
@@ -46,7 +42,7 @@ import SectionIntro from "../../ui/SectionIntro.astro";
   }
   .editions-hero__lead {
     max-width: 40rem;
-    margin-top: var(--gap-h2-text);
+    margin-top: var(--space-6);
   }
   .editions-hero__art {
     display: none;
@@ -55,19 +51,13 @@ import SectionIntro from "../../ui/SectionIntro.astro";
     .editions-hero__grid {
       grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
       column-gap: var(--split-gap);
-      align-items: center;
     }
     .editions-hero__art {
-      display: flex;
-      justify-content: center;
-      min-width: 0;
-    }
-    .editions-hero__art img {
       display: block;
+      min-width: 0;
+      margin-inline: auto;
       width: 100%;
       max-width: 400px;
-      height: auto;
-      aspect-ratio: 4 / 3;
     }
   }
 </style>

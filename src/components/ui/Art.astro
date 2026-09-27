@@ -1,0 +1,79 @@
+---
+/*
+ * Art: an isometric line drawing inlined from public/, so it recolors per tone and can draw itself once.
+ * The site-wide helper for every illustration slot (DESIGN-SPEC sections 5, 8 and 10).
+ *
+ * - src: the file under public/, for example "images/steps/team.svg". The file follows the style kit in
+ *   the README (Illustrations): presentation attributes only, the art palette, a <title> and a comment.
+ * - draw: draw the strokes once when 20 percent of the drawing is in view (src/scripts/draw.ts). Only
+ *   strokes animate; filled faces are solid from the first frame; dashed guides, text and the blue node
+ *   fade in. Nothing is hidden without JS or with reduced motion (the drawing is simply complete).
+ * - lattice: put the drafting lattice (a faded 30-degree grid) behind the drawing. The section that
+ *   holds it must clip the overhang (overflow-x: clip).
+ * - viewBox: override the file's viewBox (a tighter crop).
+ * - label: the drawing's accessible name (role="img"). Omit it for decorative art (aria-hidden); most
+ *   slots are decorative because the text beside them says the same thing.
+ * - class: sizing and placement are the caller's; the wrapper is a block and the svg fills its width.
+ *
+ * Build-time processing (so the files stay in the kit's format): the XML declaration, comments and the
+ * <title> are removed, the root width and height are dropped, every id (and its href and url()
+ * references) gets a prefix unique to this use, and <defs><g id> clones placed with <use> are expanded
+ * into real groups, so each clone draws in document order like everything else.
+ * Colors: global.css maps the kit's literal colors to the --art-* tokens, which data-tone="dark" remaps.
+ * Usage: <Art src="images/steps/install.svg" draw class="step__art" />
+ */
+import fs from "node:fs";
+import path from "node:path";
+
+interface Props {
+  src: string;
+  draw?: boolean;
+  lattice?: boolean;
+  viewBox?: string;
+  label?: string;
+  class?: string;
+  [key: `data-${string}`]: unknown;
+}
+
+const { src, draw = false, lattice = false, viewBox, label, class: className, ...rest } = Astro.props;
+const file = path.join(process.cwd(), "public", src.replace(/^\/+/, ""));
+if (!fs.existsSync(file)) throw new Error(`Art: ${src} not found under public/`);
+let svg = fs.readFileSync(file, "utf8");
+
+// A prefix unique within the page: a short hash of the path plus a per-build counter.
+const g = globalThis as unknown as { __artUid?: number };
+g.__artUid = (g.__artUid ?? 0) + 1;
+const hash = [...src].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7).toString(36).slice(0, 4);
+const p = `art${hash}${g.__artUid}-`;
+
+// Expand <defs><g id="x">...</g></defs> plus <use href="#x" x y/> into real groups.
+const defs = svg.match(/<defs>\s*<g id="([^"]+)">([\s\S]*?)<\/g>\s*<\/defs>/);
+if (defs) {
+  const [block, id, body] = defs;
+  const useRe = new RegExp(`<use (?:xlink:)?href="#${id}" x="([\\d.-]+)" y="([\\d.-]+)"\\s*/>`, "g");
+  svg = svg.replace(block, "").replace(useRe, (_m, x, y) => `<g transform="translate(${x} ${y})">${body}</g>`);
+}
+if (/<use\b/.test(svg)) throw new Error(`Art: ${src} has a <use> that could not be expanded`);
+
+svg = svg
+  .replace(/<\?xml[^>]*>/, "")
+  .replace(/<!--[\s\S]*?-->/g, "")
+  .replace(/<title>[\s\S]*?<\/title>/g, "")
+  .replace(/\sid="([^"]+)"/g, (_m, id) => ` id="${p}${id}"`)
+  .replace(/(xlink:)?href="#([^"]+)"/g, (_m, x, id) => `${x ?? ""}href="#${p}${id}"`)
+  .replace(/url\(#([^)]+)\)/g, (_m, id) => `url(#${p}${id})`)
+  .replace(/<svg\b([^>]*?)\swidth="[\d.]+"\sheight="[\d.]+"/, "<svg$1")
+  .trim();
+if (viewBox) svg = svg.replace(/(<svg\b[^>]*?)\sviewBox="[^"]*"/, `$1 viewBox="${viewBox}"`);
+const a11y = label
+  ? ` role="img" aria-label="${label.replace(/&/g, "&amp;").replace(/"/g, "&quot;")}"`
+  : ' aria-hidden="true"';
+svg = svg.replace(/<svg\b/, `<svg focusable="false"${a11y}`);
+---
+
+<div class:list={["art", { drafting: lattice }, className]} data-draw={draw ? "" : undefined} {...rest} set:html={svg} />
+
+<script>
+  // Bundled once per page (Astro dedupes component scripts); it only arms art marked data-draw.
+  import "../../scripts/draw.ts";
+</script>

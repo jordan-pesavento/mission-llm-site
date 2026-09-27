@@ -21,8 +21,8 @@
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
-import Button from "../../ui/Button.astro";
-import { COUNTS, DOWNLOAD_HREF } from "../../../data/site";
+import ArrowLink from "../../ui/ArrowLink.astro";
+import { COUNTS, UPSTREAM } from "../../../data/site";
 
 const FACTS = [
   { value: "MIT", label: "License" },
@@ -57,10 +57,7 @@ const CORE = ["Ingestion", "Retrieval", "Agents", "Providers"];
           ))
         }
       </dl>
-      <div class="os__actions" data-row="os-actions">
-        <Button href={DOWNLOAD_HREF}>Download</Button>
-        <Button href="/security" variant="secondary">Security overview</Button>
-      </div>
+      <p class="os__more"><ArrowLink href={UPSTREAM.url} icon="arrow-up-right">See the AnythingLLM project</ArrowLink></p>
     </div>
 
     <figure class="stack" aria-labelledby="stack-caption" data-reveal="2">
@@ -159,15 +156,9 @@ const CORE = ["Ingestion", "Retrieval", "Agents", "Providers"];
     }
   }
 
-  .os__actions {
+  .os__more {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
     margin-top: var(--space-6);
-  }
-  /* Reference: GitHub and Self-host are 42px tall. */
-  .os__actions :global(.btn) {
-    height: 42px;
   }
 
   /* ---------- The figure: what Mission LLM adds, on the AnythingLLM core ---------- */

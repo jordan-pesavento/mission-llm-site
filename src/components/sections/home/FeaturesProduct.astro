@@ -1,73 +1,85 @@
 ---
 /*
- * Feature accordion 1 (package A): the reference's first feature block, used here as the audience
- * section ("Who it is for"): instructors, students in a course, independent learners, school IT,
- * then organizations, so the page leads with the classroom story. Anchor #product is linked from
- * the header and footer. Measured at 1440: pad "feature" (112), eyebrow 20/28, H2 36/40 16px below
- * it, then the FeatureAccordion 58px below the H2 (screenshot 714 x 416 at x 24, accordion
- * 832..1416). Phones: screenshot above the list.
- *
- * Copy rules: titles stay on one line at 390 (24 characters or fewer); bodies are one or two
- * sentences that fit two lines in the 448px column at 1440, so the open item keeps the list as tall
- * as the screenshot. Every item carries a link to a real page or anchor, as in the reference, so the
- * list height does not jump when another item opens. Each item shows a real capture of the view it
- * names, from a test instance seeded with a fictional course (scripts/image-sources.mjs); the alts
- * describe those captures.
- * Facts: src/content/copy.md evidence table. Managers and admins create workspaces, add documents
- * and users, and read chat history with the sender (system.js /system/workspace-chats, ManagerRoute
- * GeneralChats); default users see only the workspaces they are added to; answers list sources only
- * when documents were retrieved (so never "under each answer"); threads per workspace; local models
- * and a different provider per workspace; agents use the skills and MCP servers admins turn on.
+ * "Who it's for" (#product), a LIGHT section (redesign, DESIGN-SPEC 11). Product frames beside an
+ * accordion: instructors, students, independent learners, school IT, organizations, so the page leads
+ * with the classroom story. The audience menu and the phone sheet link to #for-<id> anchors at the top
+ * of the accordion block (anchors="for-"), so the landing shows the whole pair under the nav and opens
+ * that item (FeatureAccordion + accordion.ts).
+ * Crops (DESIGN-SPEC section 7): each item shows its own real capture. All five main crops share the
+ * 1.9 aspect and all five phone crops 4:3, so the frame box never changes height when the open item
+ * changes. Honesty (copy.md evidence): managers/admins open every workspace and read chat history;
+ * default users see only the workspaces they are added to; answers list sources only when documents
+ * were retrieved; a different provider per workspace; agents use the skills admins turn on.
  */
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 import FeatureAccordion, { type AccordionItem } from "../../ui/FeatureAccordion.astro";
 
-// Real captures of the app (test instance with fictional sample documents).
 const items: AccordionItem[] = [
-  {
-    id: "instructors",
-    title: "For instructors",
-    body: "Build a course workspace from your syllabus and readings, add your students, and see how they use it.",
-    link: { href: "#steps", label: "Set up a course in four steps" },
-    image: { name: "feature-users", alt: "The Users page as an instructor with the manager role sees it: the admin, the instructor and the student accounts, each with its role." },
-  },
   {
     id: "students",
     title: "For students in a course",
     body: "Ask questions about the course. Answers drawn from its readings list the sources they used.",
     link: { href: "#grounded", label: "See how sources work" },
-    image: { name: "feature-documents", alt: "A student's question about carrying capacity in a course workspace, answered from the readings, with the Sources panel listing each reading and its match score." },
+    image: {
+      name: "feature-documents",
+      alt: "A student's question about carrying capacity in a course workspace, answered from the readings, with each reading listed under the answer.",
+      crop: { x: 283, y: 56, w: 858, h: 452 },
+      cropSm: { x: 283, y: 186, w: 440, h: 330 },
+    },
+  },
+  {
+    id: "instructors",
+    title: "For instructors",
+    body: "Build a course workspace from your syllabus and readings, add your students, and see how they use it.",
+    link: { href: "#steps", label: "Set up a course in four steps" },
+    image: {
+      name: "feature-users",
+      alt: "The Users page as an instructor with the manager role sees it: the admin, the instructor and the student accounts, each with its role.",
+      crop: { x: 244, y: 0, w: 800, h: 421 },
+      cropSm: { x: 252, y: 102, w: 400, h: 300 },
+    },
   },
   {
     id: "learners",
     title: "For independent learners",
     body: "Make a workspace for any subject, add your own notes and readings, and keep each topic in its own thread.",
     link: { href: "/download", label: "See install options" },
-    image: { name: "feature-workspaces", alt: "A learner's Spanish Practice workspace with one thread per topic, and two answers drawn from the learner's own grammar notes." },
+    image: {
+      name: "feature-workspaces",
+      alt: "A learner's Spanish Practice workspace with one thread per topic, and two answers drawn from the learner's own grammar notes.",
+      crop: { x: 283, y: 180, w: 1145, h: 603 },
+      cropSm: { x: 283, y: 180, w: 440, h: 330 },
+    },
   },
   {
     id: "school-it",
     title: "For school IT",
     body: "Run it on school servers with local models and no internet, or set a different provider for each workspace.",
     link: { href: "/security", label: "Read the security overview" },
-    image: { name: "feature-models", alt: "The Chat Settings of a course workspace: its own LLM provider setting (the system default here) and its chat mode." },
+    image: {
+      name: "feature-models",
+      alt: "The Chat Settings of a course workspace: its own LLM provider setting and its chat mode.",
+      crop: { x: 244, y: 48, w: 858, h: 452 },
+      cropSm: { x: 244, y: 84, w: 440, h: 330 },
+    },
   },
   {
     id: "organizations",
     title: "For organizations",
     body: "Companies get the same workspaces and answers with sources, and agents that use the tools admins turn on.",
     link: { href: "/editions", label: "Compare editions" },
-    image: { name: "feature-agents", alt: "The Agent Skills settings page with the RAG and long-term memory skill open: switched on, with a note that the agent answers from local documents and can remember content." },
+    image: {
+      name: "feature-agents",
+      alt: "The Agent Skills settings: skills an admin switches on or off, such as document creation, charts and a SQL connector, plus custom skills, agent flows and MCP servers.",
+      crop: { x: 244, y: 272, w: 858, h: 452 },
+      cropSm: { x: 244, y: 60, w: 322, h: 241.5 },
+    },
   },
 ];
 ---
 
-<Section id="product" pad="feature" class="section--h800" labelledby="product-title">
-  <div data-reveal>
-    <SectionIntro eyebrow="Who it is for." title="Built for classrooms. Ready for teams." id="product-title" />
-  </div>
-  <div data-reveal="2">
-    <FeatureAccordion id="product-acc" label="Who it is for" items={items} />
-  </div>
+<Section id="product" labelledby="product-title">
+  <SectionIntro eyebrow="Who it's for" title="Built for classrooms. Ready for teams." id="product-title" />
+  <FeatureAccordion id="product-acc" label="Who it's for" anchors="for-" items={items} frame="45vw" />
 </Section>

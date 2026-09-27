@@ -55,7 +55,7 @@ const KIND: Record<Value, string> = {
 };
 ---
 
-<Section id="compare" divider labelledby="compare-title">
+<Section id="compare" tone="dark" labelledby="compare-title">
   <Rail title="Comparison" id="compare-title" sticky>
     <table class="data-table data-table--stack cmp">
       <caption class="sr-only">Community and Enterprise capabilities</caption>
@@ -142,8 +142,8 @@ const KIND: Record<Value, string> = {
     color: var(--color-heading);
   }
   .status--yes .status__icon {
-    color: #ffffff;
-    background: var(--navy-950);
+    color: var(--color-bg);
+    background: var(--color-heading);
   }
   .status--no {
     color: var(--color-text-quiet);

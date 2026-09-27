@@ -2,11 +2,11 @@
 /*
  * Download > Hero and platform chooser. Package C.
  * Copy: src/content/copy.md > Download > Hero and Platforms (verbatim).
+ * The page's top section, so it is DARK (HERO-REVISION.md: each inner page's hero-equivalent top
+ * section is navy, and the sections alternate below it; Install options that follows is light).
  * Every Download button on the site leads here, so the first screen answers "what can I install".
- * Visual system (reference, anythingllm.com): the hero's mist wash under the header, an eyebrow and
- * a 60/63 H1, an 18/28 subhead, then the platforms in the reference's "Up and running" row: four
- * columns, each with a 1px mist-300 left rule and 25px inset, a 36px glyph where the step number
- * sits, a Jakarta 600 20/28 title and 16/24 text.
+ * The platforms read as the reference's "Up and running" row: four columns, each with a 1px left rule
+ * and 25px inset, a 36px glyph, a title and one line of text.
  * - Server (Docker, build from source): available today; "Get started" opens the Build from source
  *   tab (#p-source), the one method that works before public images exist.
  * - Windows, macOS, Linux desktop apps: "Coming soon", no links (installers do not exist).
@@ -26,7 +26,7 @@ const DESKTOP = [
 ];
 ---
 
-<Section pad="hero" wash labelledby="download-title" class="dl-hero">
+<Section tone="dark" pad="hero" labelledby="download-title" class="dl-hero">
   <div class="dl-hero__top">
     <div class="dl-hero__intro" data-reveal>
       <SectionIntro level={1} eyebrow="Download" title="Install Mission LLM on your own infrastructure." id="download-title" />
@@ -81,11 +81,11 @@ const DESKTOP = [
 </Section>
 
 <style>
-  /* From 1024: the intro and the status note side by side (11fr | 9fr, the feature split). */
+  /* From 1024: the intro and the status note side by side, the note aligned to the intro's baseline. */
   .dl-hero__top {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    row-gap: var(--gap-text-action);
+    row-gap: var(--space-8);
     align-items: end;
   }
   .dl-hero__intro {
@@ -93,13 +93,13 @@ const DESKTOP = [
   }
   @media (min-width: 1024px) {
     .dl-hero__top {
-      grid-template-columns: var(--feature-cols);
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
       column-gap: var(--split-gap);
     }
   }
   .dl-hero__lead {
     max-width: var(--measure);
-    margin-top: var(--gap-h2-text);
+    margin-top: var(--space-6);
   }
   .dl-hero__note {
     max-width: var(--measure);
@@ -107,7 +107,7 @@ const DESKTOP = [
 
   /* ---------- Platforms: the reference's step columns ---------- */
   .platforms {
-    margin-top: var(--gap-h2-grid);
+    margin-top: var(--gap-intro);
   }
   .platforms__grid {
     display: grid;
@@ -134,13 +134,14 @@ const DESKTOP = [
   }
   .platform__top {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-3);
+    gap: var(--space-2) var(--space-3);
     min-height: 40px;
   }
   .platform__top :global(.platform__glyph) {
-    color: var(--mist-500);
+    color: var(--color-text-muted);
   }
   .platform__name {
     margin-top: var(--space-8);
@@ -150,14 +151,14 @@ const DESKTOP = [
     font-size: var(--fs-body);
     line-height: var(--lh-body);
     font-weight: var(--fw-medium);
-    color: var(--mist-700);
+    color: var(--color-text);
   }
   .platform__text {
     max-width: 17.5rem;
     margin-top: var(--space-3);
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    color: var(--mist-600);
+    color: var(--color-text-muted);
   }
   .platform__foot {
     margin-top: auto;
@@ -167,7 +168,7 @@ const DESKTOP = [
     max-width: var(--measure);
     margin-top: var(--space-10);
     font-size: var(--fs-body);
-    line-height: var(--lh-body-relaxed);
+    line-height: var(--lh-body);
     color: var(--color-text-muted);
   }
 

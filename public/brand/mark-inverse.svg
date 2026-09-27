@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41.6 28" width="41.6" height="28" role="img" aria-label="Mission LLM">
+  <title>Mission LLM</title>
+  <!-- Mission LLM mark. Inverse for dark grounds: white, node #5B95FF. An M whose last stem is also the stem of an L, with a node where the two
+       45-degree diagonals meet; each diagonal ends square-on to a node face with an even 1.8-unit gap.
+       Grid 41.6 x 28 units: stems 5.7, diagonals 5.2, apexes 6.5, foot 8.6 x 5.3, node 7.9 across. -->
+  <path fill="#FFFFFF" d="M0 28L0 0L6.5 0L15.08 8.58L11.4 12.26L5.7 6.55L5.7 28Z"/>
+  <path fill="#FFFFFF" d="M27.3 28L41.6 28L41.6 22.7L33 22.7L33 0L26.5 0L17.92 8.58L21.6 12.26L27.3 6.55Z"/>
+  <path fill="#5B95FF" d="M16.5 9.71L20.47 13.68L16.5 17.65L12.53 13.68Z"/>
+</svg>

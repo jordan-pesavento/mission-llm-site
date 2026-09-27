@@ -14,12 +14,13 @@
 import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 import Button from "../../ui/Button.astro";
+import Art from "../../ui/Art.astro";
 import { DOWNLOAD_HREF } from "../../../data/site";
 ---
 
-<Section pad="cta" wash labelledby="not-found-title" class="nf-section">
+<Section tone="dark" pad="cta" divider labelledby="not-found-title" class="nf-section">
   <div class="nf" data-reveal>
-    <img class="nf__art" src="/images/scenes/not-found.svg" width="250" height="250" alt="" decoding="async" />
+    <Art src="images/scenes/not-found.svg" draw class="nf__art" />
     <SectionIntro level={1} align="center" eyebrow="404" title="Page not found." id="not-found-title" />
     <p class="lead nf__lead">The page you asked for does not exist or has moved.</p>
     <nav class="nf__nav" aria-label="Suggested pages" data-row="nf-actions">

@@ -1,0 +1,213 @@
+---
+/*
+ * /kit: the foundation's primitives on one page, for building and checking sections (astro dev only:
+ * scripts/prune-dist.mjs removes dist/kit after every build, so it never ships). It is also the
+ * "empty page" the header is checked on: a navy full-view block first (like the home hero, so the nav
+ * starts on its light skin), light sections, one dark band, then the footer.
+ * To render it from dist, build with `npx astro build` (no prune), render, then run `npm run build`.
+ */
+import Base from "../layouts/Base.astro";
+import Section from "../components/ui/Section.astro";
+import DarkBand from "../components/ui/DarkBand.astro";
+import SectionIntro from "../components/ui/SectionIntro.astro";
+import Button from "../components/ui/Button.astro";
+import ArrowLink from "../components/ui/ArrowLink.astro";
+import Badge from "../components/ui/Badge.astro";
+import Icon from "../components/ui/Icon.astro";
+import Art from "../components/ui/Art.astro";
+import Screenshot from "../components/ui/Screenshot.astro";
+import CodeBlock from "../components/ui/CodeBlock.astro";
+import FeatureAccordion, { type AccordionItem } from "../components/ui/FeatureAccordion.astro";
+import Mark from "../components/brand/Mark.astro";
+
+const items: AccordionItem[] = [
+  {
+    id: "instructors",
+    title: "For instructors",
+    body: "Build a course workspace from your syllabus and readings, add your students, and see how they use it.",
+    link: { href: "#kit-steps", label: "Set up a course in four steps" },
+    image: {
+      name: "feature-users",
+      alt: "The Users page as an instructor with the manager role sees it.",
+      crop: { x: 244, y: 0, w: 800, h: 421 },
+      cropSm: { x: 252, y: 102, w: 400, h: 300 },
+    },
+  },
+  {
+    id: "students",
+    title: "For students in a course",
+    body: "Ask questions about the course. Answers drawn from its readings list the sources they used.",
+    link: { href: "#kit-band", label: "See how sources work" },
+    image: {
+      name: "feature-documents",
+      alt: "A student's question answered from the course readings.",
+      crop: { x: 283, y: 56, w: 858, h: 452 },
+      cropSm: { x: 283, y: 186, w: 440, h: 330 },
+    },
+  },
+];
+const code = `docker run -d -p 3001:3001 \\
+  -e DISABLE_TELEMETRY="true" \\
+  REGISTRY/mission-llm:latest`;
+---
+
+<Base title="Foundation kit | Mission LLM" description="The site's shared primitives.">
+  <meta slot="head" name="robots" content="noindex" />
+
+  <Section tone="dark" pad="none" labelledby="kit-title">
+    <div class="fill-view">
+      <div class="kit-hero">
+        <p class="eyebrow">Foundation kit</p>
+        <h1 id="kit-title" class="h1 kit-mt">A navy full-view block.</h1>
+        <p class="lead kit-mt2">It fills the page under the nav at every size, and the nav takes its light skin over it.</p>
+        <div class="actions kit-mt3" data-row="kit-hero">
+          <Button href="#kit-intro">See the primitives</Button>
+          <Button href="#kit-band" variant="secondary">Dark band</Button>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <Section pad="hero" labelledby="kit-intro">
+    <div class="split split--page">
+      <div>
+        <p class="eyebrow">Foundation</p>
+        <h2 id="kit-intro" class="h1-page kit-mt">Shared tokens and primitives.</h2>
+        <p class="lead kit-mt2">Every section builds on these: one gutter, one grid, two darks, one accent.</p>
+      </div>
+      <div class="note">
+        <Icon set="line" name="shield" size={22} />
+        <p><strong>Not a page of the site.</strong> This page is removed from every build.</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section rule labelledby="kit-type">
+    <SectionIntro eyebrow="Type" title="Large, readable, fluid." id="kit-type" lead="Sizes grow with the width and spacing tightens on short screens. Nothing that is read as a sentence is under 16px." />
+    <div class="kit-stack">
+      <p class="h1">Your class, answered.</p>
+      <p class="h1-page">Security and deployment overview.</p>
+      <p class="h2">Answers that show their readings.</p>
+      <p class="h3">Security overview</p>
+      <p class="h4">Install on your server</p>
+      <p class="lead">A course assistant that answers from your readings and lists its sources.</p>
+      <p>Body text at 16 to 19px on a 1.6 line, in the body color. <a href="#kit-title">A text link</a> is accent.</p>
+      <p class="body-muted">Secondary text for paragraphs beside a heading.</p>
+      <p class="small">A 15px label</p>
+      <p class="label">Uppercase label</p>
+    </div>
+  </Section>
+
+  <Section rule labelledby="kit-controls">
+    <SectionIntro eyebrow="Controls" title="Adjacent controls share one height." id="kit-controls" />
+    <div class="kit-stack">
+      <div class="actions" data-row="kit-md">
+        <Button href="#kit-controls">See how it works</Button>
+        <Button href="#kit-controls" variant="secondary">Security overview</Button>
+      </div>
+      <div class="actions" data-row="kit-lg">
+        <Button type="button" size="lg">Send message</Button>
+        <Button type="button" size="lg" variant="secondary">Send another</Button>
+      </div>
+      <div class="actions">
+        <Button type="button" size="nav" variant="accent">Accent (reserved)</Button>
+        <Button type="button" size="sm" variant="secondary" iconStart="copy">Copy</Button>
+      </div>
+      <p><ArrowLink href="#kit-band">How your data flows</ArrowLink></p>
+      <p class="kit-row">
+        <span class="num">1</span><span class="num">2</span><span class="num num--sm">3</span>
+        <Badge /><Badge kind="today" /><Badge kind="soon" />
+      </p>
+      <ul class="dots" role="list">
+        <li>Sources listed under grounded answers</li>
+        <li>Retrieved passages with match scores</li>
+      </ul>
+    </div>
+  </Section>
+
+  <Section rule labelledby="kit-acc">
+    <SectionIntro eyebrow="Who it's for" title="Built for classrooms. Ready for teams." id="kit-acc" />
+    <FeatureAccordion id="kit-facc" label="Who it's for" anchors="kit-for-" items={items} />
+  </Section>
+
+  <DarkBand id="kit-band" labelledby="kit-band-title">
+    <div class="split split--band">
+      <div>
+        <p class="eyebrow">Dark band</p>
+        <h2 id="kit-band-title" class="h2 kit-mt">Two darks: the ground and one raised surface.</h2>
+        <p class="kit-mt2">Body text on navy-950. The code block and diagram nodes use the raised surface.</p>
+        <ul class="dots kit-mt2" role="list">
+          <li>The nav turns light over this band</li>
+          <li>Buttons invert</li>
+        </ul>
+        <div class="actions kit-mt2" data-row="kit-dark">
+          <Button href="#kit-band">Primary</Button>
+          <Button href="#kit-band" variant="secondary">Secondary</Button>
+        </div>
+        <p class="kit-mt2"><ArrowLink href="#kit-title">Back to the top</ArrowLink> <Mark class="kit-mark" /></p>
+      </div>
+      <CodeBlock label="Docker on Linux or macOS" lang="shell" code={code} caption="Replace REGISTRY with your image registry." />
+    </div>
+  </DarkBand>
+
+  <Section labelledby="kit-art" id="kit-steps" class="kit-clip">
+    <SectionIntro eyebrow="Illustration" title="Line art that draws itself once." id="kit-art" />
+    <div class="split split--closing">
+      <div class="kit-stack">
+        <table class="data-table data-table--stack">
+          <thead><tr><th>Destination</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><th>Model provider</th><td data-label="When">Only the provider you configure</td></tr>
+            <tr><th>Telemetry</th><td data-label="When">Off with <code>DISABLE_TELEMETRY="true"</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <Art src="images/steps/team.svg" draw lattice class="kit-art" />
+    </div>
+    <div class="kit-mt3">
+      <Screenshot name="grounded" alt="The Sources panel." crop={{ x: 283, y: 52, w: 1157, h: 641 }} cropMid={{ x: 680, y: 52, w: 760, h: 470 }} cropSm={{ x: 1150, y: 0, w: 290, h: 380 }} frame="50vw" frameClass="kit-frame" />
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .kit-hero {
+    padding-block: 48px;
+  }
+  .kit-stack {
+    display: grid;
+    gap: 16px;
+    justify-items: start;
+  }
+  .kit-mt {
+    margin-top: 12px;
+  }
+  .kit-mt2 {
+    margin-top: 20px;
+  }
+  .kit-mt3 {
+    margin-top: var(--gap-intro);
+  }
+  .kit-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .kit-clip {
+    overflow-x: clip;
+  }
+  .kit-art {
+    max-width: 22rem;
+    margin-inline: auto;
+  }
+  .kit-mark {
+    display: inline-block;
+    height: 24px;
+    margin-left: 16px;
+    vertical-align: middle;
+  }
+  .kit-frame {
+    max-width: 48rem;
+  }
+</style>

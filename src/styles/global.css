@@ -1,21 +1,17 @@
 /*
- * Mission LLM site v2: base styles and shared utilities.
- * Tokens live in tokens.css. Section components keep their own layout in scoped <style> blocks and
- * reuse the type and layout utilities below, so every section steps down together.
+ * Mission LLM site: base styles and shared utilities (redesign, DESIGN-SPEC revision 3).
+ * Tokens live in tokens.css. Sections keep their own layout in scoped <style> blocks and build on the
+ * utilities below, so every section steps down together. Class reference (full notes in the
+ * foundation guide, D:/DevCache/claude-work/site-redesign/build/FOUNDATION.md):
  *
- * Type utilities (reference sizes at 1440):
- *   .h1        Clash Display 500, 60/63 (48 on phones), -0.025em
- *   .h2        Clash Display 500, 36/40, -0.025em
- *   .h2-lg     Clash Display 500, 48/48 from 1024 (36/40 below)
- *   .h2-cta    Clash Display 500, 48/48 at every width (final CTA)
- *   .h3        Clash Display 500, 24/32 (resource cards)
- *   .h4        Plus Jakarta Sans 600, 20/28 (step titles)
- *   .eyebrow   Plus Jakarta Sans 500, 20/28, sentence case, muted (the line above an H2)
- *   .label     Plus Jakarta Sans 500, 14/20, uppercase, tracked (the hero's small label)
- *   .lead      18/28 (hero subhead)
- *   .body      16/24;  .body-relaxed 16/26 (paragraphs beside an H2)
- *   .small     14/20 (non-sentence labels only: stat labels, dates, legal)
- * Layout utilities: .container, .split (two columns from 1024; see the modifiers), .divider-dotted.
+ * Type:    .h1 (home hero)  .h1-page (inner-page H1)  .h2 (40ch max)  .h3  .h4  .lead  .eyebrow
+ *          .body  .body-muted  .small (labels only)  .label (uppercase label)  .tnum  .nowrap  .measure
+ * Layout:  .wrap (the one content width)  .grid (4 / 8 / 12 columns)  .split + modifiers (the spec's
+ *          12-column spans: --hero --band --deploy --closing --page --table)  .intro  .section--rule
+ *          .section--pad-*  (Section.astro sets these)  .fill-view (the full-view hero under the nav)
+ * Parts:   .btn (+ --primary --secondary --accent, --sm --nav --lg, --block)  .arrow  .num (+ --sm)
+ *          .dots  .note  .card  .data-table  .frame (Screenshot.astro)  .art  .drafting  .lockup
+ * Motion:  prefers-reduced-motion turns every transition and animation off.
  */
 @import "./fonts.css";
 @import "./tokens.css";
@@ -32,21 +28,15 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  /* Jump targets (#fragments) land below the sticky header: its height (64 on phones, 68 from 1024,
-     tokens.css --header-h) plus its 1px border, plus 16px of air. */
-  scroll-padding-top: calc(var(--header-h) + 1px + var(--space-4));
+  /* The header is fixed: #fragment targets land 16px under it. */
+  scroll-padding-top: calc(var(--nav-h) + 1rem);
   hanging-punctuation: first last;
 }
-/* Without JavaScript the header is not sticky below 1024 (Header.astro), so nothing covers a target. */
-@media (max-width: 1023.98px) {
-  html:not(.js) {
-    scroll-padding-top: var(--space-4);
-  }
-}
 body {
-  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
+  padding-top: var(--nav-h);
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
@@ -57,8 +47,17 @@ body {
   font-kerning: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
   overflow-x: clip;
+}
+/* Without JavaScript the header is not fixed below 1024 (its menu is a normal block under the bar,
+   Header.astro), so the page starts under it and nothing covers a #fragment target. */
+@media (max-width: 1023.98px) {
+  html:not(.js) {
+    scroll-padding-top: 1rem;
+  }
+  html:not(.js) body {
+    padding-top: 0;
+  }
 }
 main {
   flex: 1 0 auto;
@@ -104,12 +103,19 @@ table {
 ::selection {
   background: var(--color-selection);
 }
-
-/* ---------- Focus ---------- */
 :focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
   border-radius: 4px;
+}
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* ---------- Tones ---------- */
+[data-tone] {
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 /* ---------- Typography ---------- */
@@ -133,6 +139,10 @@ blockquote {
   text-wrap: pretty;
   overflow-wrap: break-word;
 }
+strong,
+b {
+  font-weight: var(--fw-semibold);
+}
 .h1 {
   font-family: var(--font-display);
   font-size: var(--fs-h1);
@@ -141,82 +151,85 @@ blockquote {
   font-weight: var(--fw-medium);
   color: var(--color-heading);
 }
-.h2 {
+.h1-page {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1-page);
+  line-height: var(--lh-h1-page);
+  letter-spacing: var(--ls-h1-page);
+  font-weight: var(--fw-medium);
+  color: var(--color-heading);
+}
+/* One H2 size. Limited in characters, not pixels, so a line that fits at 1024 still fits at 2560.
+   .h2-lg and .h2-cta are the v2 names, kept as aliases. */
+.h2,
+.h2-lg,
+.h2-cta {
   font-family: var(--font-display);
   font-size: var(--fs-h2);
   line-height: var(--lh-h2);
   letter-spacing: var(--ls-h2);
   font-weight: var(--fw-medium);
   color: var(--color-heading);
-}
-.h2-lg {
-  font-family: var(--font-display);
-  font-size: var(--fs-h2-lg);
-  line-height: var(--lh-h2-lg);
-  letter-spacing: var(--ls-h2-lg);
-  font-weight: var(--fw-medium);
-  color: var(--color-heading);
-}
-.h2-cta {
-  font-family: var(--font-display);
-  font-size: var(--fs-h2-cta);
-  line-height: var(--lh-h2-cta);
-  letter-spacing: var(--ls-h2-lg);
-  font-weight: var(--fw-medium);
-  color: var(--color-heading);
+  max-width: 40ch;
 }
 .h3 {
   font-family: var(--font-display);
   font-size: var(--fs-h3);
   line-height: var(--lh-h3);
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
   font-weight: var(--fw-medium);
   color: var(--color-heading);
 }
 .h4 {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-size: var(--fs-h4);
   line-height: var(--lh-h4);
-  letter-spacing: 0;
-  font-weight: var(--fw-semibold);
+  letter-spacing: -0.005em;
+  font-weight: var(--fw-medium);
   color: var(--color-heading);
-}
-.eyebrow {
-  display: block;
-  font-family: var(--font-sans);
-  font-size: var(--fs-eyebrow);
-  line-height: var(--lh-eyebrow);
-  font-weight: var(--fw-medium);
-  color: var(--color-text-muted);
-}
-.label {
-  display: block;
-  font-family: var(--font-sans);
-  font-size: var(--fs-small);
-  line-height: var(--lh-small);
-  font-weight: var(--fw-medium);
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
-  color: var(--mist-550);
 }
 .lead {
   font-size: var(--fs-lead);
   line-height: var(--lh-lead);
-  color: var(--mist-550);
+  color: var(--color-text-muted);
+  max-width: 36rem;
+}
+/* The short line above a heading: accent, sentence case. */
+.eyebrow {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  line-height: 1.4;
+  font-weight: var(--fw-semibold);
+  color: var(--color-accent);
 }
 .body {
   font-size: var(--fs-body);
   line-height: var(--lh-body);
   color: var(--color-text);
 }
+.body-muted,
 .body-relaxed {
   font-size: var(--fs-body);
-  line-height: var(--lh-body-relaxed);
+  line-height: var(--lh-body);
   color: var(--color-text-muted);
 }
-.small {
+/* 15px: labels only (stat labels, dates, legal marks), never a sentence. */
+.small,
+.caption,
+.legal {
   font-size: var(--fs-small);
   line-height: var(--lh-small);
+  color: var(--color-text-quiet);
+}
+.label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
   color: var(--color-text-quiet);
 }
 .measure {
@@ -228,40 +241,34 @@ blockquote {
 .nowrap {
   white-space: nowrap;
 }
-strong,
-b {
-  font-weight: var(--fw-semibold);
-}
 
+/* Text links are accent with an underline. Components (nav, footer, buttons, arrow links, cards)
+   set their own color and decoration. */
 a {
   color: var(--color-link);
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.25em;
-  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
-  transition:
-    color var(--dur-hover) var(--ease-standard),
-    text-decoration-color var(--dur-hover) var(--ease-standard);
+  text-underline-offset: 0.22em;
 }
 a:hover {
-  text-decoration-color: currentColor;
+  text-decoration-thickness: 2px;
 }
 
 code,
 kbd,
 samp {
   font-family: var(--font-mono);
-  font-size: 0.9em;
+  font-size: 0.92em;
   font-weight: 400;
   /* Commands show every character as typed ("--build" never joins into one long dash). */
   font-variant-ligatures: none;
 }
 /* Inline commands and settings never break mid-token. Long flags opt in with .code-flag. */
 :not(pre) > code {
-  padding: 0.1em 0.35em;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--color-heading) 6%, transparent);
-  box-shadow: inset 0 0 0 1px var(--color-line-soft);
+  padding: 0.08em 0.35em;
+  border-radius: 6px;
+  background: var(--color-surface-2);
+  color: var(--color-heading);
   white-space: nowrap;
   overflow-wrap: normal;
 }
@@ -270,8 +277,6 @@ samp {
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
-
-/* Long-form text. */
 .prose > * + * {
   margin-top: 1em;
 }
@@ -289,157 +294,405 @@ samp {
   margin-top: var(--flow, var(--space-4));
 }
 
-/* Dot list (dark band bullets): 16/26 lines with a small round marker, as in the reference. */
-.dot-list {
-  display: grid;
-  gap: var(--space-2);
-  padding: 0;
-  list-style: none;
-}
-.dot-list > li {
-  position: relative;
-  padding-left: 1.25rem;
-  font-size: var(--fs-body);
-  line-height: var(--lh-body-relaxed);
-  color: var(--color-text);
-}
-.dot-list > li::before {
-  content: "";
-  position: absolute;
-  left: 0.125rem;
-  top: calc(var(--lh-body-relaxed) / 2 - 3px);
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-full);
-  background: var(--mist-500);
-}
-
 /* ---------- Layout ---------- */
+/* The one content width: full window less the fluid gutter, capped at 1920. Every header row,
+   section and footer uses it, so everything shares one left edge. .container is the v2 name. */
+.wrap,
 .container {
-  width: 100%;
-  max-width: var(--container-max);
+  width: var(--wrap);
   margin-inline: auto;
-  padding-inline: var(--gutter);
+}
+/* 4 columns, 8 from 640, 12 from 1024. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+}
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
 }
 
 /*
- * .split: the reference's two-column compositions, stacked below 1024 (first child on top).
- *   .split--hero     text 11fr | visual 20fr, 48 gap, centered vertically (hero)
- *   .split--feature  screenshot 11fr | accordion 9fr, 94 gap, centered (feature sections)
- *   .split--band     text 9fr | screenshot 11fr, 94 gap, centered (dark bands)
- * Stacked gap below 1024: --split-stack-gap (default 40px).
+ * .split: two-part compositions, stacked below 1024 (first child on top), on the 12-column grid from
+ * 1024 with the spec's spans (section 2). The first child is the text, the second the media.
+ *   --hero     text 1-5 | art 6-12 (1-6 | 7-12 from 1920), centered
+ *   --band     text 1-5 | media 6-12 (1-4 | 5-12 from 1536), centered
+ *   --deploy   text 1-5 | code 7-12 (6-12 from 1024 to 1279), centered
+ *   --closing  text 1-6 | art 7-12, centered
+ *   --page     inner-page hero: text 1-6 | aside 8-12, top-aligned
+ *   --table    title 1-4 | table 5-12, top-aligned
+ * Stacked gap: --split-stack-gap (default clamp 32 to 48).
  */
 .split {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  row-gap: var(--split-stack-gap, 2.5rem);
+  row-gap: var(--split-stack-gap, clamp(2rem, 1rem + 3vw, 3rem));
   align-items: center;
 }
+.split--page,
+.split--table {
+  align-items: start;
+}
 @media (min-width: 1024px) {
-  .split--hero {
-    grid-template-columns: var(--hero-cols);
-    column-gap: var(--hero-gap);
+  .split--hero,
+  .split--band,
+  .split--deploy,
+  .split--closing,
+  .split--page,
+  .split--table {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--col-gap);
   }
-  .split--feature {
-    grid-template-columns: var(--feature-cols);
-    column-gap: var(--split-gap);
+  .split--hero > :first-child,
+  .split--band > :first-child,
+  .split--deploy > :first-child {
+    grid-column: 1 / span 5;
   }
-  .split--band {
-    grid-template-columns: var(--band-cols);
-    column-gap: var(--split-gap);
+  .split--hero > :last-child,
+  .split--band > :last-child {
+    grid-column: 6 / -1;
+  }
+  .split--deploy > :last-child,
+  .split--closing > :last-child {
+    grid-column: 7 / -1;
+  }
+  .split--closing > :first-child,
+  .split--page > :first-child {
+    grid-column: 1 / span 6;
+  }
+  .split--page > :last-child {
+    grid-column: 8 / -1;
+  }
+  .split--table > :first-child {
+    grid-column: 1 / span 4;
+  }
+  .split--table > :last-child {
+    grid-column: 5 / -1;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .split--deploy > :last-child {
+    grid-column: 6 / -1;
+  }
+}
+@media (min-width: 1536px) {
+  .split--band > :first-child {
+    grid-column: 1 / span 4;
+  }
+  .split--band > :last-child {
+    grid-column: 5 / -1;
+  }
+}
+@media (min-width: 1920px) {
+  .split--hero > :first-child {
+    grid-column: 1 / span 6;
+  }
+  .split--hero > :last-child {
+    grid-column: 7 / -1;
   }
 }
 
-/* A 1px dotted rule in the hairline color (reference: under the stats strip and the open source
-   section). Put it on the element whose bottom edge it marks, inside the container width. */
-.divider-dotted {
-  border-bottom: 1px dotted var(--color-line);
+/* The full-view block (the home hero; HERO-REVISION.md): exactly the visible page under the nav
+   (--view-h: 100svh less --nav-h), at least 600px (a short screen scrolls inside it instead of
+   squashing it), content centered. It is never capped, so nothing of the next section shows at scroll
+   0 on any screen; on very tall screens cap the composition inside it (max-height or max-width on the
+   child) and let it center. */
+.fill-view {
+  display: grid;
+  align-content: center;
+  min-height: max(600px, var(--view-h));
 }
 
-/* ---------- Tones and sections ---------- */
-/* The reference's feature sections are exactly 800px tall at every desktop width (1440 and 1920).
-   Put this on a Section whose content is shorter; the padding stays, the extra goes below. */
-@media (min-width: 1024px) {
-  .section--h800 {
-    min-height: 800px;
-  }
-}
-[data-tone] {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-}
+/* Sections: full-bleed backgrounds, content in .wrap, vertical padding from --pad-y. */
 .section {
   position: relative;
 }
+.section--pad-y {
+  padding-block: var(--pad-y);
+}
+.section--pad-hero {
+  padding-block: var(--pad-hero-top) var(--pad-y);
+}
+.section--pad-flush-top {
+  padding-bottom: var(--pad-y);
+}
+.section--rule {
+  border-top: 1px solid var(--color-line);
+}
+/* A hairline at the section's bottom edge, content width. */
+.section--divider::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: var(--wrap);
+  transform: translateX(-50%);
+  border-bottom: 1px solid var(--color-line);
+  pointer-events: none;
+}
 
-/* ---------- Legacy layout helpers (v1 pages; do not use in new code) ---------- */
-.display {
-  font-family: var(--font-display);
-  font-size: var(--fs-h1);
-  line-height: var(--lh-h1);
-  letter-spacing: var(--ls-h1);
-  font-weight: var(--fw-medium);
-  max-width: 22ch;
-}
-.caption {
-  font-size: var(--fs-small);
-  line-height: var(--lh-small);
-  color: var(--color-text-quiet);
-}
-.legal {
-  font-size: var(--fs-small);
-  line-height: var(--lh-small);
-  color: var(--color-text-quiet);
-}
-.ui-text {
-  font-size: var(--fs-body);
-  line-height: var(--lh-body);
-  font-weight: var(--fw-medium);
-}
-.layout-grid {
+/* Section intro: eyebrow, heading, paragraph; the content after it sits --gap-intro below. */
+.intro {
   display: grid;
-  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
-  column-gap: var(--grid-gap);
+  justify-items: start;
+  gap: var(--gap-eyebrow);
 }
-.layout-grid > * {
-  grid-column: 1 / -1;
+.intro > p:not(.eyebrow) {
+  max-width: var(--measure);
 }
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(var(--card-cols), minmax(0, 1fr));
-  gap: var(--grid-gap);
-  align-items: stretch;
+.intro + * {
+  margin-top: var(--gap-intro);
 }
-.split-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--grid-gap);
-  align-items: stretch;
+
+/* ---------- Buttons (Button.astro renders these; plain markup may use the classes) ----------
+ * Height --btn-h (48, 52 from 1920). --lg is 4px taller (form submit, closing), --nav 44 (the nav's
+ * controls), --sm 40 (the code block's Copy). Radius 10. Adjacent controls share one height.
+ * primary: ink (navy on light, white in dark bands). secondary: 1px ring. accent: the Download
+ * control only (the only accent-filled control on the site).
+ */
+.btn {
+  --h: var(--btn-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: var(--h);
+  padding-inline: 22px;
+  border-radius: var(--r-control);
+  font-family: var(--font-sans);
+  font-size: var(--fs-ui);
+  line-height: 1;
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
 }
-@media (min-width: 1024px) {
-  .split-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+.btn svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.btn--sm {
+  --h: 40px;
+  padding-inline: 14px;
+}
+.btn--nav {
+  --h: 44px;
+  padding-inline: 18px;
+}
+.btn--lg {
+  --h: calc(var(--btn-h) + 4px);
+  padding-inline: 26px;
+}
+.btn--block {
+  display: flex;
+  width: 100%;
+}
+.btn--primary {
+  background: var(--color-btn-bg);
+  color: var(--color-btn-fg);
+}
+.btn--accent {
+  background: var(--blue-500);
+  color: #ffffff;
+}
+.btn--secondary {
+  background: transparent;
+  color: var(--color-heading);
+  box-shadow: inset 0 0 0 1px var(--color-btn-line);
+}
+@media (hover: hover) {
+  .btn--primary:hover {
+    background: var(--color-btn-bg-hover);
+    color: var(--color-btn-fg);
+  }
+  .btn--accent:hover {
+    background: var(--blue-600);
+    color: #ffffff;
+  }
+  .btn--secondary:hover {
+    color: var(--color-heading);
+    background: var(--color-btn-tint-hover);
+    box-shadow: inset 0 0 0 1px var(--color-btn-line-hover);
   }
 }
+.btn:active {
+  transform: translateY(1px);
+}
+.btn:focus-visible {
+  outline-offset: 3px;
+  border-radius: var(--r-control);
+}
+.btn[aria-disabled="true"] {
+  opacity: 0.72;
+  cursor: progress;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
 
-/* ---------- Data table (requirements, outbound connections, comparison) ---------- */
-.data-table {
-  width: 100%;
+/* ---------- Arrow link (ArrowLink.astro): 600 weight, heading color, arrow nudges on hover ---------- */
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-heading);
+  text-decoration: none;
+}
+.arrow:hover {
+  color: var(--color-heading);
+}
+.arrow svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  transition: transform var(--t-fast) var(--ease);
+}
+.arrow:hover svg {
+  transform: translateX(3px);
+}
+.arrow > span {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color var(--t-fast) var(--ease);
+}
+.arrow:hover > span {
+  text-decoration-color: currentColor;
+}
+
+/* ---------- Rhombus numerals: every numbered sequence (Steps, Hardening, After install, What happens
+   next) and nowhere else. A 24px accent square turned 45 degrees with a white 16px 600 figure. ---------- */
+.num {
+  position: relative;
+  isolation: isolate;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  font: 600 1rem / 1 var(--font-sans);
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+.num::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  z-index: -1;
+  background: var(--color-accent);
+  transform: rotate(45deg);
+  border-radius: 3px;
+}
+.num--sm {
+  width: 30px;
+  height: 30px;
+  font-size: 0.9375rem;
+}
+/* In dark bands the accent is the lighter blue; keep the figure readable on it. */
+[data-tone="dark"] .num {
+  color: var(--navy-950);
+}
+
+/* ---------- Dot list (dark band bullets and short lists). .dot-list is the v2 name. ---------- */
+.dots,
+.dot-list {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+.dots > li,
+.dot-list > li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--color-text);
+}
+.dots > li::before,
+.dot-list > li::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 0.7em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-text-quiet);
+}
+.dots strong,
+.dot-list strong {
+  color: var(--color-heading);
+}
+
+/* ---------- Note: a bordered callout with an optional leading icon ---------- */
+.note {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  max-width: var(--measure);
+  padding: 16px 18px;
+  border-radius: var(--r-frame);
+  box-shadow: inset 0 0 0 1px var(--color-line-strong);
+  color: var(--color-text-muted);
   font-size: var(--fs-body);
   line-height: var(--lh-body);
+}
+.note:has(> svg:first-child) {
+  grid-template-columns: 22px minmax(0, 1fr);
+}
+.note > svg:first-child {
+  width: 22px;
+  height: 22px;
+  margin-top: 0.15em;
+  color: var(--color-accent);
+}
+.note strong {
+  color: var(--color-heading);
+}
+
+/* ---------- Card: white, 16px radius, 1px ring plus the card shadow ---------- */
+.card {
+  border-radius: var(--r-card);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 1px var(--color-line), var(--shadow-card);
+}
+
+/* ---------- Tables: 16px 600 headers, hairline rows; below 768 each row stacks with its labels
+   (every td needs data-label). ---------- */
+.data-table {
+  width: 100%;
+  font-size: 1rem;
+  line-height: 1.5;
   text-align: left;
   font-variant-numeric: tabular-nums;
 }
 .data-table caption {
-  text-align: left;
   caption-side: top;
   padding-bottom: var(--space-4);
+  text-align: left;
   color: var(--color-text-quiet);
 }
 .data-table th,
 .data-table td {
-  padding: var(--space-4) var(--space-6) var(--space-4) 0;
+  padding: 14px 20px 14px 0;
   vertical-align: top;
+  text-align: left;
   border-bottom: 1px solid var(--color-line);
 }
 .data-table th:last-child,
@@ -447,9 +700,10 @@ samp {
   padding-right: 0;
 }
 .data-table thead th {
+  font-family: var(--font-sans);
   font-weight: var(--fw-semibold);
   color: var(--color-heading);
-  font-family: var(--font-sans);
+  border-bottom-color: var(--color-line-strong);
   padding-top: 0;
 }
 .data-table tbody th {
@@ -460,8 +714,7 @@ samp {
 .data-table td {
   color: var(--color-text-muted);
 }
-/* Stacked variant for phones: class="data-table data-table--stack" and data-label on every td. */
-@media (max-width: 639.98px) {
+@media (max-width: 767.98px) {
   .data-table--stack thead {
     position: absolute;
     width: 1px;
@@ -480,7 +733,9 @@ samp {
     width: 100%;
   }
   .data-table--stack tr {
-    padding-block: var(--space-4);
+    display: grid;
+    gap: 4px;
+    padding-block: 14px;
     border-bottom: 1px solid var(--color-line);
   }
   .data-table--stack th,
@@ -488,45 +743,139 @@ samp {
     border: 0;
     padding: 0;
   }
-  .data-table--stack td {
-    margin-top: var(--space-3);
-  }
   .data-table--stack td[data-label]::before {
     content: attr(data-label);
     display: block;
-    font-size: var(--fs-small);
-    line-height: var(--lh-small);
     font-weight: var(--fw-semibold);
-    color: var(--color-text-quiet);
+    color: var(--color-text);
   }
 }
 
-/* ---------- Definition list (security controls) ---------- */
-.dl-grid > div {
-  padding-block: var(--space-6);
-  border-top: 1px solid var(--color-line);
+/* ---------- Product frames (Screenshot.astro): the WHOLE capture, contained (HERO-REVISION.md E) ------
+ * The frame takes the capture's own aspect ratio from its natural pixels (--w / --h, set by
+ * Screenshot.astro) and the image is object-fit: contain, so the entire screen is visible at every
+ * width, never cropped so UI is cut off and never distorted. 12px radius, strong ring plus the frame
+ * shadow on light, ring only in dark bands. A section may cap the frame width by its aspect with
+ * max-width: calc(availableHeight * var(--w) / var(--h)).
+ */
+.frame {
+  --w: 2880;
+  --h: 1681;
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--w) / var(--h);
+  overflow: hidden;
+  border-radius: var(--r-frame);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 1px var(--color-line-strong), var(--shadow-frame);
 }
-.dl-grid dt {
-  font-weight: var(--fw-semibold);
-  color: var(--color-heading);
+.frame picture {
+  display: contents;
 }
-.dl-grid dd {
-  margin-top: var(--space-2);
-  color: var(--color-text-muted);
+.frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
-/* ---------- Note / callout ---------- */
-.note {
-  padding: var(--space-5) var(--space-6);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  box-shadow: inset 0 0 0 1px var(--color-line);
-  color: var(--color-text-muted);
-  font-size: var(--fs-body);
-  line-height: var(--lh-body-relaxed);
+/* ---------- Lockup and mark (Lockup.astro, Mark.astro): fills follow the tone ---------- */
+.lockup,
+.mark {
+  display: block;
+  width: auto;
+  overflow: visible;
 }
-.note strong {
-  color: var(--color-heading);
+.lk-ink {
+  fill: var(--lk-ink);
+  transition: fill var(--t-tone) var(--ease);
+}
+.lk-acc,
+.lk-node {
+  fill: var(--lk-acc);
+  transition: fill var(--t-tone) var(--ease);
+}
+
+/* ---------- Isometric line art (Art.astro): recolored per tone, drawn once ---------- */
+.art svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.art [fill="#F8FAFC"],
+.art [fill="#FFFFFF"] {
+  fill: var(--art-fill);
+}
+.art [fill="#E6ECF8"] {
+  fill: var(--art-tint);
+}
+.art [stroke="#47546F"] {
+  stroke: var(--art-line);
+}
+.art [stroke="#92A0BC"] {
+  stroke: var(--art-line-2);
+}
+.art [stroke="#CCD4E5"] {
+  stroke: var(--art-line-3);
+}
+.art [fill="#47546F"],
+.art [fill="#33405B"] {
+  fill: var(--art-glyph);
+}
+.art [fill="#2B63E0"] {
+  fill: var(--art-node);
+}
+.art [stroke="#2B63E0"] {
+  stroke: var(--art-node);
+}
+.art [fill="#2456C8"] {
+  fill: var(--art-node-side);
+}
+.art [stroke="#2456C8"] {
+  stroke: var(--art-node-side);
+}
+/* Draw once (src/scripts/draw.ts arms it; nothing is hidden without JS). Only strokes animate: every
+   filled shape keeps its fill from the first frame, so a face always hides the lines behind it and
+   nothing goes see-through. Dashed guides, text and the blue node fade in. */
+.art.is-armed .draw {
+  stroke-dasharray: 2 2;
+  stroke-dashoffset: 2;
+}
+.art.is-armed .fade {
+  opacity: 0;
+}
+.art.is-drawing .draw {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--t-draw) var(--ease-io);
+  transition-delay: var(--d, 0ms);
+}
+.art.is-drawing .fade {
+  opacity: 1;
+  transition: opacity 400ms var(--ease) var(--d, 0ms);
+}
+.art.is-drawn .draw {
+  stroke-dasharray: none;
+}
+
+/* The drafting lattice: a 30-degree grid behind a drawing, fading out toward the edges. The pattern is
+   a file (public/images/lattice.svg): the CSP allows images from 'self' only, never data: URIs.
+   The section that holds it clips the overhang (overflow-x: clip). */
+.drafting {
+  position: relative;
+  isolation: isolate;
+}
+.drafting::before {
+  content: "";
+  position: absolute;
+  inset: -6% -8%;
+  z-index: -1;
+  background-image: url("/images/lattice.svg");
+  background-size: 72px 41.57px;
+  background-position: center;
+  opacity: var(--lattice-opacity);
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 0%, rgba(0, 0, 0, 0.4) 40%, transparent 72%);
+  mask-image: radial-gradient(ellipse at center, #000 0%, rgba(0, 0, 0, 0.4) 40%, transparent 72%);
+  pointer-events: none;
 }
 
 /* ---------- Accessibility helpers ---------- */
@@ -543,47 +892,26 @@ samp {
 }
 .skip-link {
   position: fixed;
-  top: var(--space-3);
-  left: var(--space-3);
+  top: 8px;
+  left: var(--gutter);
   z-index: 100;
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-sm);
-  background: var(--navy-950);
-  color: #ffffff;
-  font-size: var(--fs-body);
+  padding: 10px 16px;
+  border-radius: var(--r-control);
+  background: #ffffff;
+  color: var(--navy-950);
+  font-size: 1rem;
   font-weight: var(--fw-semibold);
   text-decoration: none;
-  transform: translateY(-200%);
+  box-shadow: var(--shadow-pop);
+  transform: translateY(-160%);
 }
 .skip-link:focus-visible {
   transform: none;
-  color: #ffffff;
+  color: var(--navy-950);
 }
 
-/* ---------- Motion: reveal once per element ----------
- * Mark up to 3 elements per section with data-reveal (optionally data-reveal="2" or "3" for order).
- * Hidden only when JS runs and motion is allowed, so the page is complete without JS.
- */
-@media (prefers-reduced-motion: no-preference) {
-  .js [data-reveal] {
-    opacity: 0;
-    transform: translateY(var(--reveal-rise));
-    transition:
-      opacity var(--dur-reveal) var(--ease-out),
-      transform var(--dur-reveal) var(--ease-out);
-    transition-delay: calc(var(--reveal-i, 0) * var(--reveal-stagger));
-  }
-  .js [data-reveal="2"] {
-    --reveal-i: 1;
-  }
-  .js [data-reveal="3"] {
-    --reveal-i: 2;
-  }
-  .js [data-reveal].is-in {
-    opacity: 1;
-    transform: none;
-  }
-}
+/* ---------- Motion preferences ---------- */
+/* Reduced motion: drawings complete, the node jumps, the nav's tone switches instantly. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -591,6 +919,7 @@ samp {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
 }

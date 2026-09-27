@@ -1,21 +1,21 @@
 ---
 /*
- * CodeBlock: a navy code surface (#0B1430, radius 16) with a label bar and a Copy button (announced
- * via aria-live). JetBrains Mono 15/24, no syntax colors. From 640 long lines scroll inside the
- * block, never the page; below 640 lines wrap with a hanging indent (continuations start 2ch in), so
- * nothing is ever cut off at the block's edge on a phone. Copy always copies the exact source
- * (data-code), however the lines are laid out. The <pre> is a labelled region and a Tab stop (so
- * keyboard users can scroll it); with JS it stays a Tab stop only while its content is wider than the
- * block (src/scripts/copy.ts re-checks on resize). Placeholders the reader must replace (REGISTRY, REPOSITORY_URL, ...) are underlined so
- * nobody pastes them blindly; the copied text is unchanged. Same look on light pages and in dark bands.
+ * CodeBlock (DESIGN-SPEC section 7): the raised dark surface (#1E2B52) in both tones, 12px radius, a
+ * 56px label bar with a 40px Copy button (announced via aria-live), JetBrains Mono at 15 to 17px on a
+ * 1.6 line with 20px padding, no syntax colors (shell and yaml comments are dimmed). It sizes to its
+ * content. From 640 long lines scroll inside the block, never the page; below 640 lines wrap with a
+ * hanging indent (continuations start 2ch in), so nothing is cut off at the block's edge on a phone.
+ * Copy always copies the exact source (data-code), however the lines are laid out. The <pre> is a
+ * labelled region and a Tab stop only while its content is wider than the block (src/scripts/copy.ts
+ * re-checks on resize). Placeholders the reader must replace (REGISTRY, REPOSITORY_URL, ...) get a
+ * dotted underline so nobody pastes them blindly; the copied text is unchanged.
  * - code: the exact command text (keep it verbatim from copy.md).
  * - label: shown in the bar and used as the accessible name ("Run with Docker (Linux or macOS)").
  * - lang: "shell" | "powershell" | "yaml" | "text" (dims # comments for shell and yaml).
- * - caption: optional line under the block (for example the REGISTRY placeholder note).
+ * - caption: optional 16px line under the code (for example the REGISTRY placeholder note).
  * - placeholders: extra tokens to mark, added to the defaults.
- * - fill: stretch to the height of its container, the code at the top and the caption at the bottom
- *   (unused today: the home deploy band's terminal now sizes to its content and is centered).
- * Usage: <CodeBlock label="Linux or macOS" lang="shell" code={`docker compose up -d`} />
+ * - fill: stretch to the height of its container, the code at the top and the caption at the bottom.
+ * Usage: <CodeBlock label="Linux or macOS" lang="shell" code="docker compose up -d" />
  */
 import Icon from "./Icon.astro";
 
@@ -27,9 +27,10 @@ interface Props {
   placeholders?: string[];
   fill?: boolean;
   class?: string;
+  [key: string]: unknown;
 }
 
-const { code, label, lang = "shell", caption, placeholders = [], fill = false, class: className } = Astro.props;
+const { code, label, lang = "shell", caption, placeholders = [], fill = false, class: className, ...rest } = Astro.props;
 const DEFAULT_PLACEHOLDERS = ["REGISTRY", "REPOSITORY_URL", "REPLACE_WITH_A_LONG_RANDOM_STRING", "/path/on/local/disk"];
 const marks = [...new Set([...DEFAULT_PLACEHOLDERS, ...placeholders])].sort((a, b) => b.length - a.length);
 
@@ -72,12 +73,12 @@ const html = lines
   .join("");
 ---
 
-<figure class:list={["code", { "code--fill": fill }, className]} data-codeblock data-code={source}>
+<figure class:list={["code", { "code--fill": fill }, className]} data-codeblock data-code={source} {...rest}>
   <div class="code__bar">
     <span class="code__label">{label}</span>
-    <button type="button" class="code__copy" data-copy hidden aria-label={`Copy: ${label}`}>
-      <Icon name="copy" size={18} class="code__icon code__icon--copy" />
-      <Icon name="check" size={18} class="code__icon code__icon--done" />
+    <button type="button" class="btn btn--sm code__copy" data-copy hidden aria-label={`Copy: ${label}`}>
+      <Icon set="line" name="copy" size={18} class="code__icon code__icon--copy" />
+      <Icon set="line" name="check" size={18} class="code__icon code__icon--done" />
       <span data-copy-label>Copy</span>
     </button>
   </div>
@@ -94,52 +95,44 @@ const html = lines
   .code {
     min-width: 0;
     margin: 0;
-    border-radius: var(--radius-lg);
-    background: var(--navy-900);
-    color: #e6ecf8;
-    box-shadow: 0 0 0 1px rgb(204 212 229 / 0.12);
+    border-radius: var(--r-frame);
+    background: var(--navy-700);
+    color: #e3e8f2;
+    box-shadow: 0 0 0 1px rgb(204 212 229 / 0.16);
     overflow: hidden;
-  }
-  :global([data-tone="light"]) .code {
-    box-shadow: 0 0 0 1px rgb(11 20 48 / 0.08), var(--shadow-shot);
   }
   .code__bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-4);
-    min-height: 52px;
-    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-6);
-    border-bottom: 1px solid rgb(204 212 229 / 0.12);
+    min-height: 56px;
+    padding: 8px 8px 8px 20px;
+    border-bottom: 1px solid rgb(204 212 229 / 0.14);
   }
   .code__label {
     min-width: 0;
-    font-size: var(--fs-small);
-    line-height: var(--lh-small);
-    font-weight: var(--fw-medium);
-    color: #a3afc8;
+    font-size: 1rem;
+    line-height: 1.4;
+    font-weight: var(--fw-semibold);
+    color: #ffffff;
   }
   .code__copy {
-    flex: none;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    height: 36px;
-    padding-inline: var(--space-3);
-    border-radius: var(--radius-sm);
-    font-size: var(--fs-small);
-    line-height: 1;
-    font-weight: var(--fw-medium);
-    white-space: nowrap;
-    color: #e6ecf8;
-    transition: background-color var(--dur-hover) var(--ease-standard);
+    font-size: 1rem;
+    color: #ffffff;
+    box-shadow: inset 0 0 0 1px rgb(204 212 229 / 0.3);
   }
   .code__copy:hover {
     background: rgb(204 212 229 / 0.1);
+    color: #ffffff;
   }
   .code__copy:focus-visible {
-    outline: 2px solid var(--accent-on-dark);
-    outline-offset: 0;
+    outline: 2px solid var(--blue-400);
+    outline-offset: 2px;
+  }
+  .code__copy :global(svg) {
+    width: 18px;
+    height: 18px;
   }
   .code__copy :global(.code__icon--done),
   .code__copy[data-state="copied"] :global(.code__icon--copy) {
@@ -150,7 +143,7 @@ const html = lines
   }
   .code__pre {
     margin: 0;
-    padding: var(--space-6);
+    padding: 20px;
     overflow-x: auto;
     font-family: var(--font-mono);
     font-size: var(--fs-code);
@@ -160,9 +153,9 @@ const html = lines
     scrollbar-color: rgb(204 212 229 / 0.3) transparent;
   }
   .code__pre:focus-visible {
-    outline: 2px solid var(--accent-on-dark);
+    outline: 2px solid var(--blue-400);
     outline-offset: -2px;
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    border-radius: 0 0 var(--r-frame) var(--r-frame);
   }
   .code__pre code {
     font-size: inherit;
@@ -171,9 +164,11 @@ const html = lines
   }
   /* Phones: wrap instead of scrolling, continuation lines hang 2ch in. */
   @media (max-width: 639.98px) {
+    .code__bar {
+      padding-left: 16px;
+    }
     .code__pre {
-      padding: var(--space-5) var(--space-4);
-      font-size: 0.875rem; /* 14: about 37 characters a line at 390 */
+      padding: 16px;
     }
     .code__pre code {
       display: block;
@@ -185,14 +180,10 @@ const html = lines
       padding-left: 2ch;
       text-indent: -2ch;
     }
-    .code__bar {
-      padding-left: var(--space-4);
-    }
     .code .code__caption {
-      padding-inline: var(--space-4);
+      padding-inline: 16px;
     }
   }
-  /* fill: a tall terminal that spans its container, the caption at the bottom. */
   .code--fill {
     display: flex;
     flex-direction: column;
@@ -202,20 +193,19 @@ const html = lines
     flex: 1 0 auto;
   }
   .code__pre :global(.c) {
-    color: #a3afc8;
+    color: #93a0ba;
   }
   .code__pre :global(mark.ph) {
     background: none;
-    color: #c4d8ff;
-    text-decoration: underline dashed #c4d8ff;
+    color: var(--blue-300);
+    text-decoration: underline dotted;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.25em;
   }
   .code__caption {
-    padding: var(--space-4) var(--space-6);
-    border-top: 1px solid rgb(204 212 229 / 0.12);
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    color: #a3afc8;
+    padding: 0 20px 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #a9b5cc;
   }
 </style>

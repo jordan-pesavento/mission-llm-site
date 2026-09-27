@@ -1,5 +1,5 @@
-// Generates responsive AVIF and WebP variants of the product images, the touch icons from the
-// emblem, and src/data/images.generated.json (read by src/components/ui/Screenshot.astro).
+// Generates responsive AVIF and WebP variants of the product images and
+// src/data/images.generated.json (read by src/components/ui/Screenshot.astro).
 // Runs before every `astro dev` and `astro build`. Outputs are skipped when already newer than
 // their source and this script's configuration, so repeat runs are fast.
 //
@@ -18,8 +18,6 @@ const SRC_DIR = path.join(ROOT, "public/images/product");
 const OUT_DIR = path.join(SRC_DIR, "generated");
 const PUBLIC_URL = "/images/product";
 const MANIFEST = path.join(ROOT, "src/data/images.generated.json");
-const EMBLEM = path.join(ROOT, "public/mission-llm-emblem.svg");
-const ICON_DIR = path.join(ROOT, "public/icons");
 const CONFIG_MTIME = Math.max(
   fs.statSync(path.join(HERE, "image-sources.mjs")).mtimeMs,
   fs.statSync(fileURLToPath(import.meta.url)).mtimeMs,
@@ -81,22 +79,8 @@ for (const f of fs.readdirSync(OUT_DIR)) {
   }
 }
 
-// Touch and fallback icons from the emblem (opaque navy tile for iOS; transparent PNG fallback).
-fs.mkdirSync(ICON_DIR, { recursive: true });
-const icons = [
-  { file: "apple-touch-icon.png", size: 180, pad: 14, bg: "#070F26" },
-  { file: "icon-192.png", size: 192, pad: 0 },
-  { file: "icon-512.png", size: 512, pad: 0 },
-  { file: "favicon-32.png", size: 32, pad: 0 },
-];
-for (const i of icons) {
-  const abs = path.join(ICON_DIR, i.file);
-  if (fresh(abs, EMBLEM)) continue;
-  const inner = i.size - i.pad * 2;
-  const emblem = await sharp(EMBLEM, { density: 384 }).resize(inner, inner).png().toBuffer();
-  const base = sharp({ create: { width: i.size, height: i.size, channels: 4, background: i.bg || { r: 0, g: 0, b: 0, alpha: 0 } } });
-  await base.composite([{ input: emblem, left: i.pad, top: i.pad }]).png({ compressionLevel: 9 }).toFile(abs);
-  written++;
-}
+// Icons (favicon.svg, favicon.ico, public/icons/*.png) are the final logo set's own exports, copied from
+// D:/DevCache/claude-work/site-redesign/logo/final (png/ and the SVG tiles; see its NOTES.md and
+// public/brand/). They are not generated here.
 
 console.log(`images: ${Object.keys(manifest).length} screenshots, ${written} file(s) written, ${removed} stale file(s) removed`);

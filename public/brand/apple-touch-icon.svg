@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Mission LLM">
+  <title>Mission LLM</title>
+  <!-- Apple touch icon and maskable PWA icon source, 512 square, full bleed with no corner radius (the platform applies its own mask). The mark is 290 wide and sits inside the central 80 percent safe circle. -->
+  <rect width="512" height="512" fill="#070F26"/>
+  <path fill="#FFFFFF" d="M111 353.6L111 158.4L156.31 158.4L216.13 218.22L190.49 243.85L150.74 204.09L150.74 353.6Z"/>
+  <path fill="#FFFFFF" d="M301.31 353.6L401 353.6L401 316.65L341.05 316.65L341.05 158.4L295.74 158.4L235.92 218.22L261.55 243.85L301.31 204.09Z"/>
+  <path fill="#5B95FF" d="M226.02 226.06L253.71 253.75L226.02 281.43L198.34 253.75Z"/>
+</svg>

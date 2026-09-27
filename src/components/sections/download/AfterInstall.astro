@@ -65,7 +65,7 @@ const STEPS = [
     {
       STEPS.map((s, i) => (
         <li class="step">
-          <span class="step__num" aria-hidden="true">
+          <span class="num" aria-hidden="true">
             {i + 1}
           </span>
           <h3 class="h4 step__title">{s.title}</h3>
@@ -94,14 +94,8 @@ const STEPS = [
     padding: var(--space-3) var(--space-6) 0 25px;
     border-left: 1px solid var(--color-line);
   }
-  .step__num {
-    display: block;
-    font-size: var(--fs-step-num);
-    line-height: var(--lh-step-num);
-    color: var(--mist-500);
-  }
   .step__title {
-    margin-top: var(--space-8);
+    margin-top: var(--space-5);
   }
   .step__visual {
     display: block;
@@ -116,7 +110,15 @@ const STEPS = [
     max-width: var(--measure);
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    color: var(--mist-600);
+    color: var(--color-text-muted);
+  }
+  /* In the narrow five-column layout a URL chip can be wider than its column; let it wrap there
+     (these are references in prose, not copy-paste command blocks, which stay in CodeBlock). */
+  @media (min-width: 1280px) {
+    .step__text :global(code) {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
   }
   @media (min-width: 1280px) {
     .step__title {

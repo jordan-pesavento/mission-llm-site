@@ -1,13 +1,11 @@
 ---
 /*
- * DarkBand: the reference's full-bleed dark section (Meeting Assistant, Also on Android), in the
- * Mission navy #070F26 with white headings and mist-300 body. A Section with tone="dark".
- * - size: "lg" (default, 64 to 192 padding: the 800px grounded band) or "sm" (80 to 96: deploy band).
- * - Inside, use <div class="split split--band"> for text left, visual right (9fr | 11fr, 94 gap).
- * Usage:
- *   <DarkBand id="grounded" labelledby="grounded-title">
- *     <div class="split split--band"> <div>...</div> <Screenshot name="grounded" alt="..." /> </div>
- *   </DarkBand>
+ * DarkBand: a full-bleed navy-950 section (data-tone="dark"): white headings, #C9D2E3 body, the
+ * raised surface #1E2B52 for code blocks and diagram nodes, the accent #5B95FF. Every primitive
+ * adapts through the tone tokens. The nav turns to its light skin over it.
+ * Same props as Section (size is the v2 name; both sizes pad with --pad-y now).
+ * Inside, use <div class="split split--band"> for text 1-5 | media 6-12 (1-4 | 5-12 from 1536).
+ * Usage: <DarkBand id="grounded" labelledby="grounded-title"> ... </DarkBand>
  */
 import Section from "./Section.astro";
 
@@ -20,7 +18,7 @@ interface Props {
   class?: string;
   [key: string]: unknown;
 }
-const { size = "lg", ...rest } = Astro.props;
+const { size: _size, ...rest } = Astro.props;
 ---
 
-<Section tone="dark" pad={size === "sm" ? "band-sm" : "band"} {...rest}><slot /></Section>
+<Section tone="dark" {...rest}><slot /></Section>

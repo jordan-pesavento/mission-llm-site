@@ -1,120 +1,366 @@
 ---
 /*
- * Ready for class in four steps. Replica of the reference's "Up and running in a few clicks."
- * (section-1440x900-04): pad "section" (96 to 128), H2 48/48 (SectionIntro size="lg", 36/40 below
- * 1024), then a row of four columns 96px below it (64 on phones).
- * Columns (1440: 4 x 318 with 40 gaps): a 1px mist-300 rule on the left and 24px inset; the number
- * (Plus Jakarta Sans 32/40 400, proportional digits, mist-500) 4px below the top of the rule; the title (.h4 20/28 600,
- * 56px tall) 40px lower; a 250 x 250 illustration 20px lower; then 16/24 mist-600 text (max 250)
- * 20px lower. The rule runs the height of the tallest column. Two columns from 768, four from 1024,
- * stacked on phones with 48px between steps.
- * Illustrations: public/images/steps/*.svg, isometric line drawings in the reference's style (thin
- * mist and ink strokes, page-colored occlusion only, no gradients or stock art). They show only
- * real things: the Docker layers and port 3001, a local model runtime, the upload panel and the
- * Users page with the three real roles. Decorative (alt=""); the title and text carry the step.
- * The owner loves this art: keep the SVGs and this markup byte-identical; only the words change.
- * Step titles hold two lines or fewer in the 190px column at 1024 (the 56px title slot). Step 4 is
- * accurate because invites carry workspace ids (mission-llm server/models/invite.js:10-16).
+ * "Ready for class in four steps" (#steps), a DARK section (DESIGN-SPEC 9, 11 + HERO-REVISION.md tone).
+ * One connected scene: the four isometric drawings stand on a shared drafting-lattice ground, and from
+ * 1280 a dotted floor route runs from the server through the model and the readings to the students,
+ * with the node travelling it once when the scene enters (transform only, reduced-motion draws it and
+ * rests the node at the end). Each drawing draws itself once (Art `draw`). On the navy tone the art and
+ * the route recolor through the --art-* dark tokens. Each drawing carries its base ports (data-port) in
+ * its own viewBox units, so the route script joins them across the row.
+ * Step 3 is "Add your readings". The drawings are never height-capped (the owner's favourite art).
  */
 import Section from "../../ui/Section.astro";
-import SectionIntro from "../../ui/SectionIntro.astro";
+import Art from "../../ui/Art.astro";
 
 const steps = [
   {
     title: "Install on your server",
     body: "One container serves the app and API on port 3001, with all course files and chats in one storage folder.",
-    visual: "/images/steps/install.svg",
+    src: "images/steps/install.svg",
+    port: "29.05,173.6;125.4,229.2;221.8,173.6",
   },
   {
     title: "Connect a local model",
     body: "Point it at Ollama, LM Studio or another runtime on your campus network. Cloud providers work too.",
-    visual: "/images/steps/model.svg",
+    src: "images/steps/model.svg",
+    port: "68.48,190.52;134.56,228.67;200.63,190.52",
   },
   {
-    title: "Add the syllabus and readings",
+    title: "Add your readings",
     body: "Create a workspace for each course and drop in its files. Mission LLM indexes them on your server.",
-    visual: "/images/steps/documents.svg",
+    src: "images/steps/documents.svg",
+    port: "33.13,165.44;212.11,230.18",
   },
   {
     title: "Invite your students",
     body: "Turn on multi-user mode, invite students, and add each one to the workspaces for their courses.",
-    visual: "/images/steps/team.svg",
+    src: "images/steps/team.svg",
+    port: "38.54,173.38;206.99,227.14",
   },
 ];
 ---
 
-<Section id="steps" labelledby="steps-title">
-  <SectionIntro title="Ready for class in four steps." size="lg" id="steps-title" />
-  <ol class="steps" role="list" data-reveal>
-    {
-      steps.map((s, i) => (
-        <li class="step">
-          <span class="step__num">{i + 1}</span>
-          <h3 class="h4 step__title">{s.title}</h3>
-          <img class="step__visual" src={s.visual} width="250" height="250" alt="" loading="lazy" decoding="async" />
-          <p class="step__body">{s.body}</p>
-        </li>
-      ))
-    }
-  </ol>
+<Section id="steps" tone="dark" labelledby="steps-title">
+  <div class="intro"><h2 id="steps-title" class="h2">Ready for class in four steps.</h2></div>
+  <div class="scene" data-scene>
+    <ol class="steps" role="list">
+      {
+        steps.map((s, i) => (
+          <li class="step">
+            <div class="step__head">
+              <span class="num step__num" aria-hidden="true">{i + 1}</span>
+              <h3 class="h4 step__title">{s.title}</h3>
+            </div>
+            <div class="step__art" data-port={s.port}>
+              <Art src={s.src} draw />
+            </div>
+            <p class="step__body">{s.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <svg class="route" aria-hidden="true" focusable="false" data-route>
+      <defs>
+        <mask id="route-mask" maskUnits="userSpaceOnUse"><path class="route__reveal" data-route-reveal pathLength="1"></path></mask>
+      </defs>
+      <path class="route__trace" data-route-trace mask="url(#route-mask)"></path>
+      <g class="route__ports" data-route-ports></g>
+      <path class="route__node" data-route-node d="M0 -4.6L4.6 0L0 4.6L-4.6 0Z"></path>
+    </svg>
+  </div>
 </Section>
 
+<script>
+  // The steps route and the travelling node (from 1280). Ported to a bundled module (CSP-clean): it
+  // joins each drawing's base ports along the two floor axes and moves the node once when the scene
+  // enters. Reduced motion draws the route and rests the node at the end. Transform/opacity only.
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const scene = document.querySelector<HTMLElement>("[data-scene]");
+  if (scene) {
+    const svg = scene.querySelector("[data-route]") as SVGSVGElement | null;
+    const trace = scene.querySelector("[data-route-trace]");
+    const reveal = scene.querySelector("[data-route-reveal]");
+    const portsG = scene.querySelector("[data-route-ports]");
+    const rnode = scene.querySelector("[data-route-node]");
+    const stepArts = [...scene.querySelectorAll<HTMLElement>(".step__art[data-port]")];
+    if (svg && trace && reveal && portsG && rnode) {
+      const wide = window.matchMedia("(min-width: 1280px)");
+      const C = 0.866, S = 0.5;
+      let path: number[][] = [];
+      let state: "idle" | "running" | "done" = "idle";
+      const pointAt = (t: number) => {
+        const segs: number[] = [];
+        let total = 0;
+        for (let i = 1; i < path.length; i++) {
+          const l = Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]);
+          segs.push(l);
+          total += l;
+        }
+        let d = t * total;
+        for (let i = 0; i < segs.length; i++) {
+          if (d <= segs[i] || i === segs.length - 1) {
+            const k = segs[i] ? Math.min(d / segs[i], 1) : 0;
+            return [path[i][0] + (path[i + 1][0] - path[i][0]) * k, path[i][1] + (path[i + 1][1] - path[i][1]) * k];
+          }
+          d -= segs[i];
+        }
+        return path[path.length - 1];
+      };
+      const setNode = ([x, y]: number[]) => rnode.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+      const layout = () => {
+        if (!wide.matches) return;
+        const sr = scene.getBoundingClientRect();
+        const P = stepArts.map((a) => {
+          const s = a.querySelector("svg") as SVGSVGElement;
+          const r = s.getBoundingClientRect();
+          const vb = s.viewBox.baseVal;
+          const k = r.width / vb.width;
+          return (a.dataset.port as string).split(";").map((p) => {
+            const [x, y] = p.split(",").map(Number);
+            return [r.left - sr.left + (x - vb.x) * k, r.top - sr.top + (y - vb.y) * k];
+          });
+        });
+        const legs: number[][][] = [];
+        for (let i = 0; i < P.length - 1; i++) {
+          const a = P[i][P[i].length - 1], b = P[i + 1][0];
+          const dx = b[0] - a[0], dy = b[1] - a[1];
+          const s = (dx / C + dy / S) / 2, t = (dx / C - dy / S) / 2;
+          legs.push(s >= 0 && t >= 0 ? [a, [a[0] + s * C, a[1] + s * S], b] : [a, b]);
+        }
+        const d = legs.map((l) => "M" + l.map((p) => p.map((v) => v.toFixed(1)).join(" ")).join("L")).join("");
+        trace.setAttribute("d", d);
+        reveal.setAttribute("d", d);
+        portsG.innerHTML = legs
+          .flatMap((l) => [l[0], l[l.length - 1]])
+          .map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.8"/>`)
+          .join("");
+        path = [];
+        P.forEach((ports, i) => {
+          path.push(...(i === 0 ? ports.slice(1) : ports));
+          if (legs[i] && legs[i].length === 3) path.push(legs[i][1]);
+        });
+        if (state === "done") setNode(path[path.length - 1]);
+        if (state === "idle") setNode(path[0]);
+      };
+      const run = () => {
+        if (state !== "idle" || !wide.matches) return;
+        state = "running";
+        layout();
+        svg.classList.add("is-on");
+        const dur = 2600, t0 = performance.now() + 700;
+        const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+        const tick = (now: number) => {
+          const t = Math.min(Math.max((now - t0) / dur, 0), 1);
+          setNode(pointAt(ease(t)));
+          if (t < 1) requestAnimationFrame(tick);
+          else state = "done";
+        };
+        requestAnimationFrame(tick);
+      };
+      const finish = () => {
+        state = "done";
+        svg.classList.add("is-on", "is-instant");
+        layout();
+      };
+      const refresh = () => {
+        layout();
+        if (state === "done" || reduce) finish();
+      };
+      window.addEventListener("resize", refresh);
+      wide.addEventListener("change", refresh);
+      (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+        layout();
+        if (reduce || !("IntersectionObserver" in window)) return finish();
+        const io = new IntersectionObserver(
+          ([e]) => {
+            if (e.isIntersecting) {
+              io.disconnect();
+              setTimeout(run, 500);
+            }
+          },
+          { threshold: 0.5 },
+        );
+        io.observe(scene);
+      });
+    }
+  }
+</script>
+
 <style>
+  /* Clip the shared lattice ground's overhang to the section (it extends past the content width). */
+  :global(#steps) {
+    overflow-x: clip;
+  }
+  .scene {
+    position: relative;
+  }
   .steps {
+    position: relative;
+    isolation: isolate;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    row-gap: var(--space-12); /* 48 between stacked steps (reference 390) */
-    column-gap: var(--space-10); /* 40 (reference: 4 x 318 + 3 x 40 = 1392 at 1440) */
-    /* H2 to the row: 64 at 390, 96 from 1440 (reference). */
-    margin-top: clamp(4rem, 3.257rem + 3.048vw, 6rem);
+    gap: clamp(1.75rem, 1rem + 2vw, 2.5rem) var(--col-gap);
+    margin-top: var(--gap-intro);
   }
-  @media (min-width: 768px) {
-    .steps {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  @media (min-width: 1024px) {
-    .steps {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
+  .steps::before {
+    content: "";
+    display: none;
+    background-image: url("/images/lattice.svg");
+    background-size: 48px 27.713px;
+    background-position: center;
+    pointer-events: none;
   }
   .step {
-    min-width: 0;
-    padding-top: var(--space-1);
-    padding-left: var(--space-6);
-    border-left: 1px solid var(--color-line);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-line);
   }
-  /* From 1024 the rules are at least the reference's 550px, so the section keeps its 950px rhythm
-     even though our step texts are shorter than the reference's. */
-  @media (min-width: 1024px) {
-    .step {
-      min-height: 34.375rem;
-    }
+  .step__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
-  .step__num {
-    display: block;
-    font-family: var(--font-sans);
-    font-size: var(--fs-step-num);
-    line-height: var(--lh-step-num);
-    font-weight: var(--fw-regular);
-    color: var(--mist-500);
+  .step__art {
+    margin-top: 14px;
   }
-  .step__title {
-    min-height: 3.5rem; /* 56: two title lines, so every illustration starts on one line */
-    margin-top: var(--space-10);
-  }
-  .step__visual {
-    width: 250px;
-    max-width: 100%;
-    height: auto;
-    aspect-ratio: 1;
-    margin-top: var(--space-5);
+  .step__art :global(.art) {
+    width: min(60%, 16rem);
   }
   .step__body {
-    max-width: 250px;
-    margin-top: var(--space-5);
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    color: var(--mist-600);
+    margin-top: 14px;
+    color: var(--color-text-muted);
+  }
+
+  /* 640 to 1023 and from 1280: each step is a column that subgrids three shared rows (title, drawing,
+     words), so titles, drawings and text line up across the row whatever wraps. */
+  @media (min-width: 640px) {
+    .steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: auto;
+      row-gap: 0;
+    }
+    .step {
+      grid-row: span 3;
+      grid-template-rows: subgrid;
+      row-gap: 0;
+      margin-bottom: clamp(1.75rem, 1rem + 2vw, 2.5rem);
+    }
+    .step__art :global(.art) {
+      width: min(100%, 20rem);
+    }
+  }
+  /* 1024 to 1279: two by two rows, the drawing at least 200px beside the words. */
+  @media (min-width: 1024px) and (max-width: 1279.98px) {
+    .step {
+      grid-row: auto;
+      grid-template-rows: auto 1fr;
+      grid-template-columns: minmax(12.5rem, 2fr) minmax(0, 3fr);
+      grid-template-areas: "art head" "art body";
+      column-gap: 1.5rem;
+    }
+    .step__head {
+      grid-area: head;
+      align-self: start;
+    }
+    .step__art {
+      grid-area: art;
+      margin-top: 0;
+    }
+    .step__body {
+      grid-area: body;
+    }
+    .step__art :global(.art) {
+      width: 100%;
+    }
+  }
+  @media (min-width: 1280px) {
+    .steps {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-rows: auto auto auto;
+    }
+    .step {
+      grid-row: 1 / span 3;
+      margin-bottom: 0;
+    }
+    .step:nth-child(1) {
+      grid-column: 1;
+    }
+    .step:nth-child(2) {
+      grid-column: 2;
+    }
+    .step:nth-child(3) {
+      grid-column: 3;
+    }
+    .step:nth-child(4) {
+      grid-column: 4;
+    }
+    .steps::before {
+      display: block;
+      grid-row: 2;
+      grid-column: 1 / -1;
+      margin: -3rem calc(-1 * var(--col-gap)) -1rem;
+      /* Quiet texture, never noise (HERO-REVISION item A): low opacity, fewer and lighter lattice lines
+         (public/images/lattice.svg), and a soft radial fade so the lattice dissolves toward the edges and
+         the four step drawings clearly stand out as the focus. */
+      opacity: 0.15;
+      -webkit-mask-image: radial-gradient(ellipse 82% 64% at 50% 50%, #000 20%, transparent 84%);
+      mask-image: radial-gradient(ellipse 82% 64% at 50% 50%, #000 20%, transparent 84%);
+    }
+  }
+
+  /* The route (from 1280). Its children (the ports) are built at runtime, so the rules are global. */
+  .route {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    display: none;
+  }
+  @media (min-width: 1280px) {
+    .route {
+      display: block;
+    }
+  }
+  .route :global(.route__trace) {
+    fill: none;
+    stroke: var(--art-line-2);
+    stroke-width: 1.25;
+    stroke-dasharray: 2 4;
+    stroke-linecap: round;
+  }
+  .route :global(.route__reveal) {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 12;
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 1;
+  }
+  .route :global(.route__ports circle) {
+    fill: var(--color-bg);
+    stroke: var(--art-line);
+    stroke-width: 1.25;
+    opacity: 0;
+    transition: opacity 300ms var(--ease);
+  }
+  .route :global(.route__node) {
+    fill: var(--art-node);
+    opacity: 0;
+  }
+  .route.is-on :global(.route__reveal) {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 800ms var(--ease-io);
+  }
+  .route.is-on :global(.route__ports circle) {
+    opacity: 1;
+  }
+  .route.is-on :global(.route__node) {
+    opacity: 1;
+  }
+  .route.is-instant :global(.route__reveal) {
+    transition: none;
   }
 </style>

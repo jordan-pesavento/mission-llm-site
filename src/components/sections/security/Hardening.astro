@@ -27,7 +27,7 @@ const STEPS = [
 ];
 ---
 
-<Section id="hardening" divider labelledby="hardening-title">
+<Section id="hardening" tone="dark" labelledby="hardening-title">
   <div data-reveal>
     <SectionIntro title="Hardening an install today" size="lg" id="hardening-title" />
   </div>
@@ -36,7 +36,7 @@ const STEPS = [
     {
       STEPS.map((step, i) => (
         <li class="hd__step">
-          <span class="hd__num" aria-hidden="true">
+          <span class="num" aria-hidden="true">
             {i + 1}
           </span>
           <p class="hd__text" set:html={step} />
@@ -67,20 +67,14 @@ const STEPS = [
   }
   .hd__step {
     min-width: 0;
-    padding: var(--space-3) var(--space-6) 0 25px;
+    padding: var(--space-2) var(--space-6) 0 25px;
     border-left: 1px solid var(--color-line);
-  }
-  .hd__num {
-    display: block;
-    font-size: var(--fs-step-num);
-    line-height: var(--lh-step-num);
-    color: var(--mist-500);
   }
   .hd__text {
     max-width: 18rem;
     margin-top: var(--space-5);
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    color: var(--mist-600);
+    color: var(--color-text-muted);
   }
 </style>

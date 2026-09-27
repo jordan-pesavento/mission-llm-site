@@ -1,8 +1,9 @@
 ---
 /*
- * Security > Data flow in plain language (copy.md). The page's only dark band: a DarkBand (navy,
- * white headings, mist-300 text), size "sm" (80 to 96px padding) because the band carries a diagram
- * and two lists. Package C.
+ * Security > Data flow in plain language (copy.md). A light section (the page alternates tone by
+ * section per HERO-REVISION.md, so this sits between the dark hero and the dark Outbound band). The
+ * diagram is white nodes on the page ground, wired in the illustration line tokens; the server node
+ * carries the inline mark with an accent ring, and one dashed accent arrow leaves the boundary. Package C.
  *
  * Diagram: HTML nodes on a CSS grid, with the boundary and connectors drawn as inline SVG that
  * fill their grid cells (no fixed viewBox, so lines stay 1.5px and labels stay real text at every
@@ -14,9 +15,10 @@
  *   take the extra space, so the figure fills the container without stretching the boxes.
  * Node labels come from the design brief (Security item 2). The lists and notes are copy.md verbatim.
  */
-import DarkBand from "../../ui/DarkBand.astro";
+import Section from "../../ui/Section.astro";
 import SectionIntro from "../../ui/SectionIntro.astro";
 import Icon from "../../ui/Icon.astro";
+import Mark from "../../brand/Mark.astro";
 
 const stays = [
   "Uploaded documents and the text parsed from them.",
@@ -35,7 +37,7 @@ const leaves = [
 ];
 ---
 
-<DarkBand id="data-flow" size="sm" labelledby="data-flow-title">
+<Section id="data-flow" labelledby="data-flow-title" class="df-section">
   <SectionIntro title="Data flow in plain language" id="data-flow-title" />
 
   <figure class="df" aria-labelledby="data-flow-title" data-reveal>
@@ -84,7 +86,7 @@ const leaves = [
     </div>
 
     <div class="df__node df__node--server">
-      <img class="df__emblem" src="/mission-llm-emblem.svg" width="40" height="40" alt="" loading="lazy" />
+      <span class="df__mark"><Mark /></span>
       <span class="df__text"><span class="df__label">Mission LLM server</span></span>
     </div>
 
@@ -148,7 +150,7 @@ const leaves = [
       <p class="df-list__note">The Privacy and Data page in Settings shows how each configured provider handles your data.</p>
     </div>
   </div>
-</DarkBand>
+</Section>
 
 <style>
   /* ---------- Diagram ---------- */
@@ -157,8 +159,8 @@ const leaves = [
     --df-link: var(--space-12);
     --df-vlink: var(--space-12);
     --df-mid: var(--space-12);
-    --df-line: rgb(169 186 214 / 0.5);
-    --df-out: var(--accent-on-dark);
+    --df-line: var(--mist-400);
+    --df-out: var(--color-accent);
     position: relative;
     display: grid;
     margin-top: var(--gap-h2-content);
@@ -204,8 +206,8 @@ const leaves = [
     height: calc(100% - 1px);
   }
   .df__boundary rect {
-    fill: rgb(169 186 214 / 0.035);
-    stroke: rgb(169 186 214 / 0.3);
+    fill: rgb(7 15 38 / 0.015);
+    stroke: var(--mist-400);
     stroke-width: 1px;
   }
 
@@ -274,10 +276,10 @@ const leaves = [
     min-width: 0;
     padding: var(--space-4);
     border-radius: var(--radius-lg);
-    background: var(--navy-850);
+    background: var(--color-surface);
     box-shadow:
-      inset 0 0 0 1px rgb(169 186 214 / 0.2),
-      0 16px 32px -16px rgb(0 0 0 / 0.55);
+      inset 0 0 0 1px var(--color-line-strong),
+      var(--shadow-card);
   }
   .df__node--browser {
     grid-column: left-start / right-end;
@@ -287,8 +289,8 @@ const leaves = [
     grid-column: left-start / right-end;
     grid-row: server;
     box-shadow:
-      inset 0 0 0 1px rgb(91 149 255 / 0.6),
-      0 16px 32px -16px rgb(0 0 0 / 0.55);
+      inset 0 0 0 1.5px var(--color-accent),
+      var(--shadow-card);
   }
   .df__node--storage {
     grid-column: left;
@@ -303,7 +305,7 @@ const leaves = [
     grid-row: provider;
     background: transparent;
     box-shadow: none;
-    outline: 1px dashed rgb(155 190 255 / 0.55);
+    outline: 1px dashed var(--color-accent);
     outline-offset: -1px;
   }
   /* Storage and runtime share a row at half width; on phones the icon sits above the label. */
@@ -322,17 +324,23 @@ const leaves = [
     width: 40px;
     height: 40px;
     border-radius: var(--radius-md);
-    background: rgb(169 186 214 / 0.1);
-    color: var(--mist-100);
+    background: var(--color-surface-2);
+    color: var(--color-text-muted);
   }
   .df__node--provider .df__icon {
-    background: rgb(155 190 255 / 0.1);
-    color: var(--df-out);
+    background: rgb(43 99 224 / 0.1);
+    color: var(--color-accent);
   }
-  .df__emblem {
+  .df__mark {
     flex: none;
+    display: grid;
+    place-items: center;
     width: 40px;
     height: 40px;
+  }
+  .df__mark :global(.mark) {
+    width: 40px;
+    height: auto;
   }
   .df__text {
     min-width: 0;
@@ -461,17 +469,17 @@ const leaves = [
     stroke-width: 1.5px;
   }
   .df-key--stays circle {
-    fill: var(--navy-850);
+    fill: var(--color-surface);
     stroke: var(--mist-400);
     stroke-width: 1.5px;
   }
   .df-key--leaves line {
-    stroke: var(--accent-on-dark);
+    stroke: var(--color-accent);
     stroke-width: 1.5px;
     stroke-dasharray: 5 4;
   }
   .df-key--leaves path {
-    fill: var(--accent-on-dark);
+    fill: var(--color-accent);
   }
   .df-list__items {
     margin-top: var(--space-5);

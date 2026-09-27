@@ -1,65 +1,92 @@
 ---
 /*
- * Screenshot: a product image in the reference's frame. On light sections radius 16 with one soft,
- * centered navy-tinted shadow and no ring; in dark bands a flat radius-8 window with a 1px edge.
- * The image is ALWAYS shown whole: the frame takes the file's own aspect ratio, so nothing is
- * cropped, bled off an edge or covered.
- * Sources: public/images/product/<name>.png, real captures of the app listed in
- * scripts/image-sources.mjs. AVIF and WebP variants are generated at build.
+ * Screenshot: a product capture shown WHOLE inside a frame (HERO-REVISION.md item E, which overrides
+ * DESIGN-SPEC section 7's crop tiers). The entire captured screen is visible at every size, never
+ * cropped so UI is cut off, never distorted, never letterboxed: the frame takes the capture's own
+ * aspect ratio and the image is object-fit: contain inside it, so its aspect is always preserved and
+ * the whole screen reads. Captures are 16:9.43-ish app windows (~1.712 aspect); all captures share it,
+ * so a set that swaps in one box (the audience accordion) never changes height.
  *
  * - name: hero | feature-documents | feature-agents | feature-models | feature-workspaces |
  *         feature-users | grounded | security | security-offline | security-roles |
- *         security-history | security-telemetry
- * - alt: what the image shows. Describe the real capture; never describe features the product lacks.
- * - sizes: the rendered width for srcset selection. Defaults to the reference width at 1440.
- * - priority: the hero image only (eager, high fetch priority, preloaded).
- * - caption: optional line under the frame (16px, muted).
- * - label: optional small uppercase label above the frame's right edge (the hero's
- *   "ON-DEVICE AI THAT WORKS" pattern). Rendered as text, 14px uppercase, right-aligned, 20px above.
- * Usage: <Screenshot name="hero" priority label="Answers with sources, on your server" alt="..." />
+ *         security-history | security-telemetry (public/images/product, scripts/image-sources.mjs)
+ * - alt: what the capture shows. Describe the real capture; never features the product lacks.
+ * - frame / frameBelow: the frame's rendered width as CSS lengths for srcset selection, from 1024 and
+ *   below 1024 (defaults "50vw" and "100vw - 32px"). Give the real rendered width so the browser picks
+ *   a sharp variant; it only affects which file is fetched, not the fit.
+ * - crop / cropSm / cropMid: accepted for source compatibility but no longer change what is shown (the
+ *   whole capture is always shown). Kept so existing callers do not break; safe to drop.
+ * - priority: the first screenful only (eager, high fetch priority, preloaded).
+ * - caption: a 16px line under the frame. label: a 15px uppercase label above it.
+ * - frameClass: extra classes on the frame (for example to cap its width).
+ * The frame exposes --w and --h (the capture's natural pixels), so a section can size the frame by its
+ * aspect, e.g. max-width: calc(availableHeight * var(--w) / var(--h)).
+ * Usage: <Screenshot name="feature-users" alt="..." frame="45vw" />
  */
 import manifest from "../../data/images.generated.json";
 
 type Variant = { width: number; avif: string; webp: string };
 type Img = { width: number; height: number; variants: Variant[] };
 type Name = keyof typeof manifest;
+export type Crop = { x: number; y: number; w: number; h: number };
 
 interface Props {
   name: Name;
   alt: string;
-  sizes?: string;
+  crop?: Crop;
+  cropSm?: Crop;
+  cropMid?: Crop;
+  frame?: string;
+  frameBelow?: string;
   priority?: boolean;
   caption?: string;
   label?: string;
   class?: string;
+  frameClass?: string;
+  [key: string]: unknown;
 }
 
-const { name, alt, sizes, priority = false, caption, label, class: className } = Astro.props;
+const {
+  name,
+  alt,
+  crop: _crop,
+  cropSm: _cropSm,
+  cropMid: _cropMid,
+  frame = "50vw",
+  frameBelow = "100vw - 32px",
+  priority = false,
+  caption,
+  label,
+  class: className,
+  frameClass,
+  ...rest
+} = Astro.props;
 const img = (manifest as unknown as Record<string, Img>)[name];
 if (!img) throw new Error(`Screenshot "${String(name)}" is not in src/data/images.generated.json. Run npm run images.`);
 if (!img.variants.length) throw new Error(`Screenshot "${String(name)}" has no variants.`);
 
-// At 1440 the reference shows the hero at 867px and feature images at 714px; they grow to 891 and
-// 734 at 1920 and fill the content width (viewport minus 48px) below 1024.
-const wide = name === "hero" ? 891 : 734;
-const vw = name === "hero" ? 61 : 51;
-const autoSizes = `(min-width: 1476px) ${wide}px, (min-width: 1024px) ${vw}vw, calc(100vw - 48px)`;
-const srcSizes = sizes ?? autoSizes;
+// The whole capture is shown, so the frame width is the rendered frame length directly (no crop scale).
+const sizes = [`(max-width: 1023px) calc(${frameBelow})`, `calc(${frame})`].join(", ");
+
 const srcset = (fmt: "avif" | "webp") => img.variants.map((v) => `${v[fmt]} ${v.width}w`).join(", ");
-const fallback = img.variants.find((v) => v.width >= img.width * 2) ?? img.variants[img.variants.length - 1];
+const largest = img.variants[img.variants.length - 1];
+// The capture's natural pixels: the frame takes this aspect, and sections can size by it (--w / --h).
+const fileW = largest.width;
+const fileH = Math.round((img.height / img.width) * fileW);
+const style = `--w: ${fileW}; --h: ${fileH}`;
 ---
 
-{priority && <link rel="preload" as="image" type="image/avif" imagesrcset={srcset("avif")} imagesizes={srcSizes} fetchpriority="high" />}
-<figure class:list={["shot", className]}>
+{priority && <link rel="preload" as="image" type="image/avif" imagesrcset={srcset("avif")} imagesizes={sizes} fetchpriority="high" />}
+<figure class:list={["shot", className]} {...rest}>
   {label && <p class="label shot__label">{label}</p>}
-  <div class="shot__frame" style={`aspect-ratio: ${img.width} / ${img.height}`}>
+  <div class:list={["frame", frameClass]} style={style}>
     <picture>
-      <source type="image/avif" srcset={srcset("avif")} sizes={srcSizes} />
-      <source type="image/webp" srcset={srcset("webp")} sizes={srcSizes} />
+      <source type="image/avif" srcset={srcset("avif")} sizes={sizes} />
+      <source type="image/webp" srcset={srcset("webp")} sizes={sizes} />
       <img
-        src={fallback.webp}
-        width={img.width}
-        height={img.height}
+        src={largest.webp}
+        width={fileW}
+        height={fileH}
         alt={alt}
         loading={priority ? "eager" : "lazy"}
         decoding={priority ? "sync" : "async"}
@@ -76,37 +103,12 @@ const fallback = img.variants.find((v) => v.width >= img.width * 2) ?? img.varia
     margin: 0;
   }
   .shot__label {
-    margin-bottom: var(--space-5);
-    text-align: right;
-  }
-  :global([data-tone="dark"]) .shot__label {
-    color: var(--band-text-muted);
-  }
-  .shot__frame {
-    position: relative;
-    width: 100%;
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-shot);
-    overflow: hidden;
-  }
-  /* In dark bands the capture is a flat window, as the reference's Meeting band image: radius 8, a
-     1px edge (--shadow-shot-dark) and no drop shadow, on the band's own tone. The capture carries
-     its own window chrome. */
-  :global([data-tone="dark"]) .shot__frame {
-    border-radius: var(--radius-sm);
-    background: var(--color-bg);
-  }
-  .shot__frame picture,
-  .shot__frame img {
-    display: block;
-    width: 100%;
-    height: 100%;
+    margin-bottom: var(--space-4);
   }
   .shot__caption {
     margin-top: var(--space-4);
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
+    font-size: 1rem;
+    line-height: 1.5;
     color: var(--color-text-quiet);
   }
 </style>

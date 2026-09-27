@@ -1,64 +1,27 @@
 ---
 /*
- * ArrowLink: a text link with a trailing arrow, the reference's two "Learn more" styles.
- * - variant "strong" (default): 16/24 600, no underline, ink on light and white in dark bands
- *   ("Learn more ->" in the dark band).
- * - variant "underline": 16/24 500, 1px ink underline under the words only, arrow after
- *   ("Learn more about Document Knowledge ->" inside an open accordion item).
- * - icon: "arrow-up-right" for links that leave the site. External links get rel="noopener".
- * Usage: <ArrowLink href="/security">Learn more</ArrowLink>
- *        <ArrowLink href="/security#controls" variant="underline">Learn more about roles</ArrowLink>
+ * ArrowLink: a text link with a trailing arrow ("How your data flows ->"). 600 weight in the heading
+ * color (navy on light, white in dark bands); the words underline and the arrow nudges 3px on hover.
+ * Renders the global .arrow class, so plain markup may use it too:
+ *   <a class="arrow" href="..."><span>Label</span><svg .../></a>
+ * - icon: "arrow" (default) or "arrow-up-right" for links that leave the site (rel="noopener").
+ * - variant: v2 prop ("strong" | "underline"); both render the same now.
+ * Usage: <ArrowLink href="/security#data-flow">How your data flows</ArrowLink>
  */
 import Icon from "./Icon.astro";
 
 interface Props {
   href: string;
   variant?: "strong" | "underline";
-  icon?: "arrow-right" | "arrow-up-right";
+  icon?: "arrow" | "arrow-right" | "arrow-up-right";
   class?: string;
+  [key: string]: unknown;
 }
-const { href, variant = "strong", icon = "arrow-right", class: className } = Astro.props;
+const { href, icon = "arrow", variant: _variant, class: className, ...rest } = Astro.props;
 const external = /^https?:\/\//.test(href);
+const glyph = icon === "arrow-up-right" ? "arrow-up-right" : "arrow";
 ---
 
-<a href={href} class:list={["arrow-link", `arrow-link--${variant}`, className]} rel={external ? "noopener" : undefined}
-  ><span class="arrow-link__text"><slot /></span><Icon name={icon} size={16} class="arrow-link__icon" /></a
+<a href={href} class:list={["arrow", className]} rel={external ? "noopener" : undefined} {...rest}
+  ><span><slot /></span><Icon set="line" name={glyph} size={18} /></a
 >
-
-<style>
-  .arrow-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-height: 30px;
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    color: var(--color-link);
-    text-decoration: none;
-  }
-  .arrow-link:hover {
-    color: var(--color-link);
-  }
-  .arrow-link--strong {
-    font-weight: var(--fw-semibold);
-  }
-  .arrow-link--strong :global(.arrow-link__icon) {
-    transition: transform var(--dur-hover) var(--ease-standard);
-  }
-  .arrow-link--strong:hover :global(.arrow-link__icon) {
-    transform: translateX(2px);
-  }
-  .arrow-link--underline {
-    gap: var(--space-3);
-    font-weight: var(--fw-medium);
-  }
-  .arrow-link--underline .arrow-link__text {
-    text-decoration-line: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 6px;
-    text-decoration-color: currentColor;
-  }
-  .arrow-link--underline:hover .arrow-link__text {
-    text-decoration-thickness: 2px;
-  }
-</style>

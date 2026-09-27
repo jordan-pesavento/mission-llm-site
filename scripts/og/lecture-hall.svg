@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" fill="none" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+<title>A lecture hall on a local server</title>
+<!-- Lecture hall on a local server (prototype copy): the site's scenes/lecture-hall.svg with the new ML mark lying on the server's top plate along its left-right diagonal, drawn in the art's line style; the node is the only color. -->
+<g transform="matrix(0.95 0 0 0.95 0 0)" stroke-width="1.16">
+<defs><g id="lh-laptop"><polygon points="0,-3 33.06,16 33.06,19 13.92,30 -19.14,11 -19.14,8" fill="#F8FAFC" stroke="#47546F"/><path d="M33.06,16L13.92,27L-19.14,8M13.92,27L13.92,30" stroke="#CCD4E5"/><g transform="matrix(0.87 0.5 -0.87 0.5 0 -3)" stroke="#CCD4E5"><rect x="4" y="4" width="30" height="7.5" rx="1.5"/><rect x="12.0" y="14" width="14" height="4.5" rx="1.5"/></g><polygon points="1.74,-25 34.8,-6 34.8,15 33.06,16 0,-3 0,-24" fill="#F8FAFC" stroke="#47546F"/><path d="M34.8,-6L33.06,-5L0,-24M33.06,-5L33.06,16" stroke="#CCD4E5"/><g transform="matrix(0.87 0.5 0 1 0 -24)"><rect x="3" y="3" width="32" height="15" rx="1.5" stroke="#CCD4E5"/><path d="M7 10.5H20.900000000000002" stroke="#92A0BC" stroke-width="1.6"/></g></g></defs>
+<polygon points="176.6,49.39 298.4,119.39 298.4,173.39 261.86,194.39 140.06,124.39 140.06,70.39" fill="#F8FAFC" stroke="#47546F"/>
+<path d="M298.4,119.39L261.86,140.39L140.06,70.39M261.86,140.39L261.86,194.39" stroke="#CCD4E5"/>
+<use href="#lh-laptop" x="185.3" y="66.39"/>
+<use href="#lh-laptop" x="239.24" y="97.39"/>
+<polygon points="140.06,88.39 261.86,158.39 261.86,194.39 225.32,215.39 103.52,145.39 103.52,109.39" fill="#F8FAFC" stroke="#47546F"/>
+<path d="M261.86,158.39L225.32,179.39L103.52,109.39M225.32,179.39L225.32,215.39" stroke="#CCD4E5"/>
+<use href="#lh-laptop" x="148.76" y="105.39"/>
+<use href="#lh-laptop" x="202.7" y="136.39"/>
+<polygon points="103.52,127.39 225.32,197.39 225.32,215.39 188.78,236.39 66.98,166.39 66.98,148.39" fill="#F8FAFC" stroke="#47546F"/>
+<path d="M225.32,197.39L188.78,218.39L66.98,148.39M188.78,218.39L188.78,236.39" stroke="#CCD4E5"/>
+<use href="#lh-laptop" x="112.22" y="144.39"/>
+<use href="#lh-laptop" x="166.16" y="175.39"/>
+<path d="M265,187.3L293.96,203.94M238,195.28L273.51,215.69M220,208.44L253.07,227.44" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<circle cx="265" cy="187.3" r="1.8" fill="#F8FAFC" stroke="#47546F"/>
+<circle cx="238" cy="195.28" r="1.8" fill="#F8FAFC" stroke="#47546F"/>
+<circle cx="220" cy="208.44" r="1.8" fill="#F8FAFC" stroke="#47546F"/>
+<polygon points="300.14,226.39 354.08,257.39 354.08,269.39 300.14,300.39 246.2,269.39 246.2,257.39" fill="#F8FAFC" stroke="#47546F"/>
+<path d="M354.08,257.39L300.14,288.39L246.2,257.39M300.14,288.39L300.14,300.39" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 246.2 257.39)"><circle cx="5" cy="6" r="1.8" stroke="#47546F"/><path d="M10 6H20" stroke="#CCD4E5"/></g>
+<path transform="matrix(0.87 -0.5 0 1 300.14 288.39)" d="M27.9 3.6V8.4M34.88 3.6V8.4M41.85 3.6V8.4M48.83 3.6V8.4M55.8 3.6V8.4" stroke="#CCD4E5"/>
+<path d="M246.2,257.39L246.2,243.39M300.14,288.39L300.14,274.39M354.08,257.39L354.08,243.39" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<polygon points="300.14,200.39 354.08,231.39 354.08,243.39 300.14,274.39 246.2,243.39 246.2,231.39" fill="#F8FAFC" stroke="#47546F"/>
+<path d="M354.08,231.39L300.14,262.39L246.2,231.39M300.14,262.39L300.14,274.39" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 246.2 231.39)"><circle cx="5" cy="6" r="1.8" stroke="#47546F"/><path d="M10 6H20" stroke="#CCD4E5"/></g>
+<rect transform="matrix(0.87 0.5 -0.87 0.5 300.14 200.39)" x="12.4" y="12.4" width="37.199999999999996" height="37.199999999999996" rx="5" stroke="#CCD4E5"/>
+<path d="M284.27 237.53L284.27 225.25L289.23 225.25L294.77 228.43L291.96 230.05L288.62 228.13L288.62 237.53Z" fill="#F8FAFC" stroke="#47546F"/><path d="M305.1 237.53L316.01 237.53L316.01 235.2L309.45 235.2L309.45 225.25L304.49 225.25L298.95 228.43L301.76 230.05L305.1 228.13Z" fill="#F8FAFC" stroke="#47546F"/><path d="M296.86 229.51L299.89 231.25L296.86 232.99L293.83 231.25Z" fill="#2B63E0" stroke="#2B63E0" data-node=""/>
+<circle cx="293.96" cy="203.94" r="1.8" fill="#F8FAFC" stroke="#47546F"/>
+<circle cx="273.51" cy="215.69" r="1.8" fill="#F8FAFC" stroke="#47546F"/>
+<circle cx="253.07" cy="227.44" r="1.8" fill="#F8FAFC" stroke="#47546F"/>
+</g>
+</svg>

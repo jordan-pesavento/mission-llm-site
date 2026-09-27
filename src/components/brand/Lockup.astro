@@ -1,0 +1,37 @@
+---
+/*
+ * Lockup: the horizontal Mission LLM lockup (mark + MISSION LLM), inlined so it recolors per tone and
+ * the nav can find its node. Source: public/brand/lockup-horizontal.svg (the final logo set, 1290 x 200
+ * viewBox). Fills become classes: lk-ink (the mark and MISSION), lk-node (the node in the V), lk-acc
+ * (LLM); global.css paints them from --lk-ink and --lk-acc, which the tone sets (navy and #2B63E0 on
+ * light, white and #5B95FF on dark). Always decorative: the link around it carries the name.
+ * Size it by height only (the width follows; the lockup's height is the mark's height): the header
+ * uses --lockup-h (half of --nav-h: 34 / 36 / 40 / 42 / 44px), the footer --lockup-h-footer (30 to
+ * 38px). Never below 24px tall. Clear space: half the mark height on every side.
+ * Usage: <a href="/" aria-label="Mission LLM home"><Lockup /></a>
+ */
+import fs from "node:fs";
+import path from "node:path";
+
+interface Props {
+  class?: string;
+  [key: string]: unknown;
+}
+const { class: className, ...rest } = Astro.props;
+const src = fs.readFileSync(path.join(process.cwd(), "public/brand/lockup-horizontal.svg"), "utf8");
+const viewBox = (src.match(/viewBox="([^"]+)"/) || [])[1];
+const body = src
+  .replace(/^[\s\S]*?<svg[^>]*>/, "")
+  .replace(/<\/svg>\s*$/, "")
+  .replace(/<title>[\s\S]*?<\/title>/g, "")
+  .replace(/<!--[\s\S]*?-->/g, "")
+  .replace(/fill="#070F26"/g, 'class="lk-ink"')
+  // The first accent path is the node in the M's V; the rest of the accent is LLM.
+  .replace(/fill="#2B63E0"/, 'class="lk-node" data-node-src')
+  .replace(/fill="#2B63E0"/g, 'class="lk-acc"')
+  .replace(/\n\s*/g, "")
+  .trim();
+if (!viewBox || /fill="#/.test(body) || !body.includes("lk-node")) throw new Error("Lockup: unexpected lockup-horizontal.svg");
+---
+
+<svg class:list={["lockup", className]} viewBox={viewBox} xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" {...rest} set:html={body} />

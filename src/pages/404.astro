@@ -1,12 +1,14 @@
 ---
 /*
  * 404. Owned by package C. Astro emits dist/404.html; Vercel serves it for unknown paths.
+ * The page closes on the dark not-found section, so the footer is LIGHT (footerTone="light") to keep
+ * the dark-to-light alternation and avoid two adjacent dark bands (HERO-REVISION.md item 10).
  */
 import Base from "../layouts/Base.astro";
 import { PAGES } from "../data/site";
 import NotFound from "../components/sections/not-found/NotFound.astro";
 ---
 
-<Base title={PAGES.notFound.title} description={PAGES.notFound.description}>
+<Base title={PAGES.notFound.title} description={PAGES.notFound.description} footerTone="light">
   <NotFound />
 </Base>

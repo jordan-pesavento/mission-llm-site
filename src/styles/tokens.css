@@ -1,353 +1,325 @@
 /*
- * Mission LLM site v2: design tokens.
- * Measured from the reference (anythingllm.com, 2026-09-25 captures in D:/DevCache/claude-work/site-ref)
- * and adapted to the Mission LLM brand: the reference's Tailwind slate relationships, tinted toward
- * the Mission navy (hue 265), with the navy #070F26 in place of the reference's near-black.
- * Every size below is the reference's computed value at 1440 wide unless noted.
+ * Mission LLM site: design tokens (redesign, DESIGN-SPEC revision 3, sections 2 to 5).
  *
- * Breakpoints (Tailwind's, which the reference uses; CSS variables cannot go in @media, so use literals):
- *   sm 640px, md 768px, lg 1024px (two-column layouts and the desktop header start here),
- *   xl 1280px, 2xl 1536px. Write min-width queries: @media (min-width: 1024px) { ... }
- * Fluid values use clamp() between the 390px phone and the 1440px desktop measurements.
+ * Breakpoints (the only ones; CSS variables cannot go in @media, so write the literals):
+ *   640, 768, 1024, 1280, 1536, 1920, as min-width queries: @media (min-width: 1024px) { ... }
+ *   Breakpoints change column counts and layout mode only; sizes come from the fluid clamps below.
+ *   One height tier: @media (min-width: 1024px) and (max-height: 800px). It only tightens sizes
+ *   (see the end of this file and global.css); it never changes layout.
+ * Columns: 4, then 8 from 640, then 12 from 1024 (global.css .grid and .split).
  *
- * Section builders: use these through var(); never hardcode a color or size a token covers.
- * The "Legacy aliases" block at the end exists only so the v1 /download, /security and /editions
- * sections keep rendering while they are restyled. New code must not use it.
+ * Color: two darks only. navy-950 is every dark ground (bands, footer, the nav's dark skin, ink
+ * buttons, headings on light); navy-700 is the one raised dark surface (code blocks, diagram nodes and
+ * frames inside dark bands, ink button hover). One blue accent in two steps: #2B63E0 on light,
+ * #5B95FF on dark. Green and red appear only as form states.
+ * The --color-* names are the semantic tokens; a section with data-tone="dark" remaps them, so every
+ * primitive adapts with no per-section overrides. Never hardcode a color or size a token covers.
+ *
+ * The "Legacy" block at the end maps the v2 token names that existing sections still use onto this
+ * system. New code must not use it; delete it once nothing references those names.
  */
 
 :root {
   /* ---------- Palette ---------- */
-  /* Mist: Tailwind slate lightness and chroma, hue rotated to the Mission navy (265). */
-  --mist-50: #f8fafc; /* page background (reference slate-50) */
-  --mist-100: #f2f4fa;
-  --mist-200: #e3e8f2; /* hero gradient top, desktop header */
-  --mist-300: #ccd4e5; /* hairlines, dividers, outline buttons (reference slate-300 #CAD5E2) */
-  --mist-400: #92a0bc; /* decorative only (2.5:1 on page): list dots, disabled glyphs */
-  --mist-500: #647392; /* quiet text on the page, 4.6:1 (reference slate-500) */
-  --mist-550: #586683; /* quiet text on tinted surfaces (hero label and subhead), 4.7:1 on mist-200 */
-  --mist-600: #47546f; /* eyebrows, step and card body, 7.3:1 (reference slate-600) */
-  --mist-700: #33405b; /* stats numerals, resource card body, 9.9:1 (reference slate-700) */
-  --mist-800: #1d283f; /* accordion body, 14:1 (reference slate-800) */
-  --ink: #0b1430; /* headings and titles, 17.4:1 (reference slate-900) */
+  --navy-950: #070f26; /* logo navy */
+  --navy-700: #1e2b52; /* the raised dark surface, 1.38:1 against navy-950 */
+  --mist-50: #f8fafc; /* page ground, the illustrations' fill, the nav's light skin */
+  --mist-100: #f1f4f9;
+  --mist-200: #e3e8f2;
+  --mist-300: #ccd4e5;
+  --mist-400: #92a0bc; /* decorative only: art guides, list dots */
+  --mist-500: #647392; /* quiet text, 4.55:1 on the page; field edges */
+  --mist-600: #47546f; /* secondary text, 7.26:1 */
+  --mist-700: #33405b; /* nav links on the light skin, 9.91:1 */
+  --mist-800: #1d283f; /* body text, 14.06:1 */
+  --blue-300: #9bbeff;
+  --blue-400: #5b95ff; /* accent on dark, 6.50:1 on navy-950 */
+  --blue-500: #2b63e0; /* accent on light (the logo node), 5.06:1 on the page; white on it 5.30:1 */
+  --blue-600: #2456c8; /* accent hover; the node's side face in the art */
+  --red-600: #b3261e;
+  --red-200: #e7b4ae;
+  --red-50: #fdf1f0;
+  --green-700: #17693f;
+  --green-50: #ecf7f0;
 
-  /* Navy: the Mission brand darks. */
-  --navy-950: #070f26; /* primary buttons, header Download block, dark bands, footer (reference slate-950 / zinc-950) */
-  --navy-900: #0b1430; /* raised surfaces inside dark bands (code blocks, panels) */
-  --navy-850: #111b37;
-  --navy-800: #15203c;
-
-  /* The one accent. Use it as sparingly as the reference uses color: focus rings, selection, one
-     active indicator. Never for large fills, text gradients or glows. */
-  --accent: #2b63e0; /* 5.1:1 on the page, white on it 5.3:1 */
-  --accent-on-dark: #5b95ff; /* 6.5:1 on navy-950 */
-
-  /* ---------- Semantic color (light surfaces) ---------- */
+  /* ---------- Semantic color, light tone (default) ---------- */
   --color-bg: var(--mist-50);
-  --color-surface: #ffffff; /* screenshot frames, cards that sit on the page */
-  --color-heading: var(--ink);
-  --color-text: var(--mist-800); /* default reading text on light */
-  --color-text-muted: var(--mist-600); /* eyebrows, secondary reading text */
-  --color-text-quiet: var(--mist-500); /* metadata, stat labels, dates */
-  --color-line: var(--mist-300); /* 1px hairlines, accordion separators, step rules */
-  --color-line-soft: rgb(11 20 48 / 0.08);
-  --color-link: var(--ink); /* links are ink with an underline, as in the reference */
-  --color-focus: var(--accent);
+  --color-surface: #ffffff; /* cards, frames, the menu panel */
+  --color-surface-2: var(--mist-100); /* inline code, tints */
+  --color-heading: var(--navy-950); /* 18.16:1 */
+  --color-text: var(--mist-800); /* body */
+  --color-text-muted: var(--mist-600); /* secondary */
+  --color-text-quiet: var(--mist-500); /* quiet: metadata, labels */
+  --color-line: rgb(7 15 38 / 0.1);
+  --color-line-strong: rgb(7 15 38 / 0.2);
+  --color-accent: var(--blue-500);
+  --color-link: var(--blue-500); /* text links are accent (spec section 5) */
+  --color-focus: var(--blue-500);
   --color-selection: rgb(43 99 224 / 0.18);
-  /* Form fields and form errors (the contact form). The field edge is mist-500 (4.8:1 on the white
-     field) so the boundary is always visible. Red is only ever an error signal, never decoration. */
+  --color-btn-bg: var(--navy-950); /* primary (ink) button */
+  --color-btn-bg-hover: var(--navy-700);
+  --color-btn-fg: #ffffff;
+  --color-btn-line: var(--color-line-strong); /* secondary button ring */
+  --color-btn-line-hover: var(--color-text-quiet);
+  --color-btn-tint-hover: rgb(7 15 38 / 0.04);
+  /* Form fields and states (the contact form). Red is only ever an error, green only success. */
   --color-field: #ffffff;
-  --color-field-line: var(--mist-500);
+  --color-field-line: var(--mist-500); /* 4.8:1 on the white field */
   --color-field-line-hover: var(--mist-700);
-  --color-danger: #b3261e; /* 6.5:1 on white, 5.9:1 on the danger tint */
-  --color-danger-bg: #fdf1f0;
-  --color-danger-line: #e7b4ae;
-
-  /* Dark band (tone="dark"): white headings, mist-300 body, as the reference's zinc-950 bands. */
-  --band-bg: var(--navy-950);
-  --band-surface: var(--navy-900);
-  --band-heading: #ffffff;
-  --band-text: var(--mist-300); /* 12.8:1 on the band */
-  --band-text-muted: #a3afc8; /* 8.6:1 */
-  --band-eyebrow: rgb(255 255 255 / 0.62); /* reference "Also on Android": white at 60% */
-  --band-line: rgb(204 212 229 / 0.14);
-
-  /* Hero wash: the reference's top-to-bottom slate-200 to slate-50 fade. The emblem is the only
-     gradient in the brand; this is a background tone step, not a decorative gradient. */
-  --hero-wash: linear-gradient(180deg, var(--mist-200) 0%, var(--mist-50) 100%);
+  --color-danger: var(--red-600); /* 6.5:1 on white */
+  --color-danger-bg: var(--red-50);
+  --color-danger-line: var(--red-200);
+  --color-success: var(--green-700);
+  --color-success-bg: var(--green-50);
+  /* Lockup and mark fills (Lockup.astro, Mark.astro): ink is the mark and MISSION, acc the node and LLM. */
+  --lk-ink: var(--navy-950);
+  --lk-acc: var(--blue-500);
+  /* Illustration tokens: inline art (Art.astro) is recolored per tone by global.css. */
+  --art-line: #47546f; /* outlines */
+  --art-line-2: #92a0bc; /* dashed guides */
+  --art-line-3: #ccd4e5; /* inner lines */
+  --art-fill: var(--color-bg); /* faces take the ground, so they occlude */
+  --art-glyph: #47546f;
+  --art-tint: #e6ecf8;
+  --art-node: var(--blue-500);
+  --art-node-side: var(--blue-600);
+  --lattice-opacity: 0.18; /* the drafting lattice behind a drawing (calmed, HERO-REVISION.md item A) */
 
   /* ---------- Type ---------- */
   --font-display: "Clash Display", "Plus Jakarta Sans", system-ui, sans-serif;
   --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, monospace;
-
-  /* H1 (hero): Clash Display 500, 60/63, -1.5px at 768 and up; 48/50.4, -1.2px on phones. */
-  --fs-h1: 3rem;
-  --lh-h1: 1.05;
-  --ls-h1: -0.025em;
-  /* H2 (section): Clash Display 500, 36/40, -0.9px, at every width. */
-  --fs-h2: 2.25rem;
-  --lh-h2: 1.1111;
-  --ls-h2: -0.025em;
-  /* H2 large ("Up and running...", "Blog", final CTA): 48/48, -1.2px on desktop. Steps and cards
-     step down to the 36/40 H2 on phones; the final CTA keeps 48 everywhere (--fs-h2-cta). */
-  --fs-h2-lg: 2.25rem;
-  --lh-h2-lg: 1.1111;
-  --fs-h2-cta: 3rem;
-  --lh-h2-cta: 1;
-  --ls-h2-lg: -0.025em;
-  /* H3 (resource cards): Clash Display 500, 24/32, normal tracking. */
-  --fs-h3: 1.5rem;
-  --lh-h3: 2rem;
-  /* Accordion titles: Clash Display 500, 18/24 (rows are 60px with 18px padding). Measured: the
-     reference's "Dynamic Model Selection" is 215px wide, which is Clash 18/500 (18/400 gives 210). */
-  --fs-acc: 1.125rem;
-  --lh-acc: 1.5rem;
-  --fw-acc: 500;
-  /* Step titles: Plus Jakarta Sans 600, 20/28. */
-  --fs-h4: 1.25rem;
-  --lh-h4: 1.75rem;
-  /* Stats numerals: Clash Display 600, 48/48. Step numbers: Plus Jakarta Sans 400, 32 on a 40 line,
-     proportional digits (the reference's ink: "1" 8x24, "2" 17x25). */
-  --fs-stat: 3rem;
-  --lh-stat: 1;
-  --fs-step-num: 2rem;
-  --lh-step-num: 2.5rem;
-  /* Eyebrow line above an H2 ("No complex setup."): Plus Jakarta Sans 500, 20/28, sentence case. */
-  --fs-eyebrow: 1.25rem;
-  --lh-eyebrow: 1.75rem;
-  /* Hero subhead: 18/28. */
-  --fs-lead: 1.125rem;
-  --lh-lead: 1.75rem;
-  /* Body: 16/24; paragraphs next to an H2 use 16/26. Nothing that is read as a sentence goes below 16. */
-  --fs-body: 1rem;
-  --lh-body: 1.5rem;
-  --lh-body-relaxed: 1.625rem;
-  /* Small: 14/20, only for labels that are not sentences (stat labels, dates, footer column titles,
-     the uppercase hero label, legal fine print). */
-  --fs-small: 0.875rem;
-  --lh-small: 1.25rem;
-  --ls-label: 0.025em; /* uppercase hero label: 14px, 0.35px */
-  --ls-caps: 0.1em; /* footer column titles */
-  --fs-code: 0.9375rem; /* 15 JetBrains Mono */
+  /* Fluid sizes: rem plus vw (zoom still reaches 200 percent). Values at 390 / 1440 / 1920 / 2560. */
+  --fs-h1: clamp(2.75rem, 2rem + 2.8vw, 6.5rem); /* home hero: 44 / 72 / 86 / 104 */
+  --fs-h1-page: clamp(2.25rem, 1.85rem + 1.64vw, 4rem); /* inner-page H1: 36 / 53 / 61 / 64 */
+  --fs-h2: clamp(2rem, 1.63rem + 1.524vw, 3.5rem); /* 32 / 48 / 55 / 56 */
+  --fs-h3: clamp(1.375rem, 1.25rem + 0.5vw, 1.75rem); /* 22 / 27 / 28 / 28 */
+  --fs-h4: clamp(1.1875rem, 1.12rem + 0.3vw, 1.4375rem); /* 19 / 22 / 23 / 23 */
+  --fs-lead: clamp(1.125rem, 1.02rem + 0.36vw, 1.625rem); /* 18 / 21.5 / 23 / 25.5 */
+  --fs-body: clamp(1rem, 0.953rem + 0.19vw, 1.1875rem); /* 16 / 18 / 18.9 / 19 */
+  --fs-ui: clamp(1rem, 0.875rem + 0.2083vw, 1.1875rem); /* nav and buttons: 16 to 1024, 17 / 18 / 19 */
+  --fs-eyebrow: clamp(1rem, 0.95rem + 0.2vw, 1.1875rem);
+  --fs-stat: clamp(2.5rem, 2rem + 2vw, 4.5rem);
+  --fs-code: clamp(0.9375rem, 0.9rem + 0.15vw, 1.0625rem); /* 15 to 17 */
+  --fs-small: 0.9375rem; /* 15: labels only (never a sentence). Sentences are 16px or more. */
+  --lh-h1: 1.04;
+  --lh-h1-page: 1.06;
+  --lh-h2: 1.08;
+  --lh-h3: 1.2;
+  --lh-h4: 1.25;
+  --lh-lead: 1.5;
+  --lh-body: 1.6;
+  --lh-small: 1.4;
   --lh-code: 1.6;
-
+  --ls-h1: -0.028em;
+  --ls-h1-page: -0.022em;
+  --ls-h2: -0.022em;
+  --ls-caps: 0.06em; /* uppercase labels: footer column titles, sheet labels */
   --fw-regular: 400;
   --fw-medium: 500;
   --fw-semibold: 600;
   --fw-bold: 700;
-  --measure: 36rem; /* 576px: every paragraph beside an H2 in the reference */
+  --measure: 40rem; /* paragraph width */
 
-  /* ---------- Space ---------- */
-  --space-1: 0.25rem; /* 4 */
-  --space-2: 0.5rem; /* 8 */
-  --space-3: 0.75rem; /* 12 */
-  --space-4: 1rem; /* 16 */
-  --space-5: 1.25rem; /* 20 */
-  --space-6: 1.5rem; /* 24 */
-  --space-8: 2rem; /* 32 */
-  --space-10: 2.5rem; /* 40 */
-  --space-12: 3rem; /* 48 */
-  --space-14: 3.5rem; /* 56 */
-  --space-16: 4rem; /* 64 */
-  --space-20: 5rem; /* 80 */
-  --space-24: 6rem; /* 96 */
-  --space-28: 7rem; /* 112 */
-  --space-32: 8rem; /* 128 */
+  /* ---------- Layout (spec section 2) ---------- */
+  --gutter: clamp(1rem, 0.25rem + 3.05vw, 6rem); /* 16 at 390, 35 at 1024, 48 at 1440, 63 at 1920 */
+  --content-max: 120rem; /* 1920: full width through 1920; 320px margins at 2560 */
+  --wrap: min(100% - 2 * var(--gutter), var(--content-max)); /* header row, every section, footer */
+  --col-gap: clamp(1rem, 0.4rem + 1.6vw, 2.5rem); /* 16 on phones, 29 at 1024, 40 from 1536 */
+  /* Vertical rhythm adds svh, so short screens get tighter spacing. */
+  --pad-y: clamp(3rem, 1rem + 5svh + 1.5vw, 8rem); /* section padding: 64 at 390x844, 83 at 1440x900 */
+  --pad-hero-top: clamp(2rem, 1rem + 4svh, 4.5rem); /* inner-page heroes and the contact page */
+  --gap-intro: clamp(2rem, 1.2rem + 2.5svh + 1vw, 4rem); /* section intro to its content */
+  --gap-eyebrow: 0.75rem; /* eyebrow to heading, heading to paragraph inside an intro */
+  /* The nav's one height (HERO-REVISION.md, F5). It steps with the width only and NEVER changes with
+     scroll: 64 below 640, 68 from 640, 72 from 1024 to 1440, 76 from 1536, 80 from 1920 (the steps are
+     in the media queries below). About 72px through 1024 to 1440 and about 64px on phones (F5). Sized so
+     the logo keeps its half-mark clear space (nav = 2 * mark). The single source for the body offset,
+     scroll-padding, anchors, the sheet and menu offsets and the full-view hero (--view-h). Never hardcode
+     a nav height anywhere. */
+  --nav-h: 64px;
+  /* The header lockup (its height is the mark's height): half the nav, so the logo keeps its clear
+     space (half the mark height) above and below. 32 / 34 / 36 / 38 / 40px: the mark is 36px at
+     1024 to 1440 and 40px at 1920+ (scaled to the F5 nav heights). */
+  --lockup-h: calc(var(--nav-h) / 2);
+  --lockup-h-footer: clamp(30px, 1.4rem + 0.6vw, 40px);
+  /* The visible page under the nav: the full-view hero is min-height max(600px, var(--view-h)). The
+     svh value (below) wins where supported, so mobile toolbars never push the fold. */
+  --view-h: calc(100vh - var(--nav-h));
+  --btn-h: 48px; /* 52 from 1920 */
 
-  /* Rhythm inside a section (reference, 1440): */
-  --gap-eyebrow: 1rem; /* eyebrow to H2: 16 */
-  --gap-h2-text: 1.25rem; /* H2 to its paragraph: 20 */
-  --gap-h2-content: clamp(3rem, 2.768rem + 0.952vw, 3.625rem); /* H2 to the screenshot and accordion row: 48 to 58 */
-  --gap-h2-grid: clamp(3.5rem, 2.571rem + 3.81vw, 6rem); /* large H2 to the steps row: 56 to 96 */
-  --gap-h2-cards: 3.5rem; /* "Blog" H2 to the cards: 56 */
-  --gap-text-action: 2rem; /* paragraph or list to "Learn more" and button rows: 32 */
+  /* ---------- Space (fixed steps for small gaps inside components) ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-14: 3.5rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
 
-  /* Vertical section padding (phone value at 390, desktop value at 1440 and up). */
-  --pad-hero-top: clamp(4rem, 2.886rem + 4.571vw, 7rem); /* 64 to 112 */
-  --pad-hero-bottom: clamp(5rem, 4.257rem + 3.048vw, 7rem); /* 80 to 112 */
-  --pad-stats: 4rem; /* 64 */
-  --pad-feature: clamp(4rem, 2.886rem + 4.571vw, 7rem); /* 64 to 112: accordion sections */
-  --pad-band: clamp(4rem, 1.029rem + 12.19vw, 12rem); /* 64 to 192: grounded band (800px tall at 1440) */
-  --pad-band-sm: clamp(5rem, 4.629rem + 1.524vw, 6rem); /* 80 to 96: deploy band */
-  --pad-section: clamp(6rem, 5.257rem + 3.048vw, 8rem); /* 96 to 128: steps, resources, open source */
-  --pad-cta: clamp(7rem, 6.257rem + 3.048vw, 9rem); /* 112 to 144: final CTA */
-
-  /* ---------- Layout ---------- */
-  --gutter: 1.5rem; /* 24px side padding at every width (reference) */
-  --container-max: 92.25rem; /* 1476px box, 1428px of content */
-  --content-max: calc(var(--container-max) - 2 * var(--gutter));
-  --header-h: 4rem; /* 64 on phones; 68 from 1024 (set below). Plus a 1px bottom border. */
-  --header-pad-x: 1.25rem; /* logo inset: 20 on phones, 40 at 768, 80 from 1024 */
-  --download-block-w: 11.125rem; /* 178: the full-height dark Download block */
-  /* Two-column compositions (from 1024): */
-  --split-gap: 5.875rem; /* 94 between screenshot and accordion, and in the dark band */
-  --hero-cols: minmax(0, 11fr) minmax(0, 20fr); /* text | screenshot: 476 | 867 at 1440 */
-  --hero-gap: 3rem;
-  --feature-cols: minmax(0, 11fr) minmax(0, 9fr); /* screenshot 714 | accordion 584 */
-  --band-cols: minmax(0, 9fr) minmax(0, 11fr); /* text 584 | screenshot 714 */
-  --card-gap: 2rem; /* resource cards: 3 x 443 with 32 gaps */
-
-  /* ---------- Radii ---------- */
-  --radius-sm: 0.5rem; /* 8: buttons, inputs, badges */
-  --radius-md: 0.625rem; /* 10: resource card images */
-  --radius-lg: 1rem; /* 16: product screenshots, code panels */
+  /* ---------- Shape and depth ---------- */
+  --r-control: 10px; /* buttons, fields */
+  --r-frame: 12px; /* product frames, code blocks, notes */
+  --r-card: 16px; /* cards, the audience menu */
   --radius-full: 999px;
+  --shadow-card: 0 1px 2px rgb(7 15 38 / 0.05), 0 12px 32px -16px rgb(7 15 38 / 0.18);
+  --shadow-frame: 0 1px 2px rgb(7 15 38 / 0.06), 0 24px 56px -28px rgb(7 15 38 / 0.35);
+  --shadow-pop: 0 0 0 1px rgb(7 15 38 / 0.08), 0 30px 60px -30px rgb(7 15 38 / 0.4), 0 12px 24px -12px rgb(7 15 38 / 0.2);
+  --shadow-nav: 0 14px 32px -14px rgb(3 7 20 / 0.55), 0 2px 6px -1px rgb(3 7 20 / 0.24);
 
-  /* ---------- Depth (navy-tinted, soft; never a colored glow) ---------- */
-  /* Screenshots on light sections: one soft, centered shadow and no ring, as the reference's hero and
-     feature frames (visible about 25px above, 40px at the sides, 50px below). */
-  --shadow-shot: 0 8px 40px rgb(29 58 110 / 0.16);
-  /* Screenshots in dark bands: a flat window capture with a 1px edge and no drop shadow. */
-  --shadow-shot-dark: 0 0 0 1px rgb(204 212 229 / 0.12);
-  --shadow-card: 0 0 0 1px rgb(11 20 48 / 0.06);
-
-  /* ---------- Motion (restrained: color, opacity and height only) ---------- */
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-standard: cubic-bezier(0.2, 0, 0.38, 0.9);
-  --dur-hover: 150ms;
-  --dur-swap: 240ms; /* accordion panel and screenshot crossfade */
-  --dur-reveal: 480ms;
-  --reveal-rise: 12px;
-  --reveal-stagger: 60ms;
+  /* ---------- Motion (transform and opacity only; color on hover and the nav tone switch) ---------- */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-io: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  --t-fast: 150ms; /* hover and color */
+  --t-ui: 200ms; /* sheet, menu caret */
+  --t-tone: 200ms; /* the nav's tone crossfade (opacity of the stacked skins, and its text colors) */
+  --t-swap: 220ms; /* accordion crossfade */
+  --t-draw: 900ms; /* line art draw-on, per stroke */
 }
 
-@media (min-width: 768px) {
+@supports (height: 100svh) {
   :root {
-    --fs-h1: 3.75rem; /* 60 */
-    --header-pad-x: 2.5rem;
+    --view-h: calc(100svh - var(--nav-h));
   }
-}
-@media (min-width: 1024px) {
-  :root {
-    --fs-h2-lg: 3rem; /* 48 */
-    --lh-h2-lg: 1;
-    --header-h: 4.25rem; /* 68 */
-    --header-pad-x: 5rem; /* 80 */
-  }
-}
-
-/* ======================================================================================
- * Legacy aliases (v1 token names). Only the v1 /download, /security and /editions sections
- * use these while they are restyled. Do not use them in new code; delete this block once no
- * file references them (grep for the names below).
- * ====================================================================================== */
-:root {
-  --silver-50: var(--mist-50);
-  --silver-100: var(--mist-100);
-  --silver-200: var(--mist-200);
-  --silver-400: var(--mist-400);
-  --blue-300: #9bbeff;
-  --blue-400: var(--accent-on-dark);
-  --blue-500: var(--accent);
-  --blue-600: var(--accent);
-  --blue-700: #1f4fc0;
-  --blue-800: #1a43a3;
-  --navy-700: #173063;
-  --color-page: var(--color-bg);
-  --color-stage: #ffffff;
-  --color-stage-2: var(--mist-100);
-  --color-text-2: var(--mist-700);
-  --color-text-3: var(--mist-500);
-  --color-eyebrow: var(--mist-600);
-  --color-link-hover: var(--accent);
-  --color-accent: var(--accent);
-  --color-hairline: var(--mist-300);
-  --color-hairline-strong: #b3bed6;
-  --color-hairline-dashed: #9aa7c2;
-  --color-code-bg: var(--navy-900);
-  --color-code-text: #e6ecf8;
-  --color-code-muted: #a3afc8;
-  --color-code-hairline: rgb(204 212 229 / 0.14);
-  --color-code-placeholder: #c4d8ff;
-  --btn-secondary-ring: var(--mist-300);
-  --btn-secondary-ring-hover: #b3bed6;
-  --btn-secondary-bg-hover: rgb(11 20 48 / 0.04);
-  --fs-display: var(--fs-h1);
-  --lh-display: var(--lh-h1);
-  --ls-display: var(--ls-h1);
-  --fw-display: 500;
-  --fw-h2: 500;
-  --fs-h3-legacy: 1.5rem;
-  --ls-h3: 0;
-  --fw-h3: 500;
-  --fw-h4: 600;
-  --fs-ui: 1rem;
-  --lh-ui: 1.5;
-  --fw-ui: 500;
-  --ls-eyebrow: 0;
-  --fw-eyebrow: 500;
-  --fs-legal: 0.875rem;
-  --lh-legal: 1.5;
-  --space-7: 3rem;
-  --space-9: 6rem;
-  --space-11: 10rem;
-  --section-pad: var(--pad-section);
-  --strip-pad: var(--pad-stats);
-  --gap-heading: var(--gap-h2-text);
-  --gap-visual: var(--gap-h2-content);
-  --card-pad: clamp(1.5rem, 1.2rem + 1vw, 2rem);
-  --container: min(100% - 2 * var(--gutter), var(--content-max));
-  --grid-gap: clamp(1rem, 0.6rem + 1.2vw, 2rem);
-  --grid-cols: 4;
-  --card-cols: 1;
-  --radius-xs: 4px;
-  --radius-xl: var(--radius-lg);
-  --ring-shot: inset 0 0 0 1px rgb(11 20 48 / 0.08);
-  --dur-fade: 200ms;
 }
 @media (min-width: 640px) {
   :root {
-    --grid-cols: 8;
-    --card-cols: 2;
+    --nav-h: 68px;
   }
 }
 @media (min-width: 1024px) {
   :root {
-    --grid-cols: 12;
+    --nav-h: 72px;
   }
 }
-@media (min-width: 1280px) {
+@media (min-width: 1536px) {
   :root {
-    --card-cols: 4;
+    --nav-h: 76px;
+  }
+}
+@media (min-width: 1920px) {
+  :root {
+    --nav-h: 80px;
+    --btn-h: 52px;
+  }
+}
+
+/* The height tier: laptops with short viewports. Sizes only, never layout. */
+@media (min-width: 1024px) and (max-height: 800px) {
+  :root {
+    --gap-intro: clamp(1.5rem, 0.5rem + 2.5svh, 2.5rem);
   }
 }
 
 /*
- * Tones. A section sets data-tone="light" (default) or "dark" (the navy band). Inside a dark band the
- * semantic tokens are remapped, so shared primitives (Button, ArrowLink, Eyebrow, Screenshot,
- * CodeBlock, Badge) adapt with no per-section overrides. "silver" is a v1 tone kept for the legacy
- * pages; it now renders as the plain page.
+ * Tones. A section sets data-tone="light" (default) or "dark" (navy-950). Inside a dark band the
+ * semantic tokens are remapped. Never place two dark bands next to each other.
+ * A token whose value is var(--another) is resolved where it is declared, not where it is used, so
+ * every such token is declared again here. Add it here when you add one.
  */
 [data-tone="dark"] {
   color-scheme: dark;
-  --color-bg: var(--band-bg);
-  --color-surface: var(--band-surface);
-  --color-heading: var(--band-heading);
-  --color-text: var(--band-text);
-  --color-text-muted: var(--band-text);
-  --color-text-quiet: var(--band-text-muted);
-  --color-line: var(--band-line);
-  --color-line-soft: rgb(204 212 229 / 0.08);
-  --color-link: #ffffff;
-  --color-focus: var(--accent-on-dark);
-  --color-selection: rgb(91 149 255 / 0.3);
-  --shadow-shot: var(--shadow-shot-dark);
-  /* legacy names inside dark bands */
-  --color-page: var(--band-bg);
-  --color-stage: var(--band-surface);
-  --color-stage-2: var(--navy-850);
-  --color-text-2: var(--band-text);
-  --color-text-3: var(--band-text-muted);
-  --color-eyebrow: var(--band-text);
-  --color-accent: var(--accent-on-dark);
-  --color-link-hover: #c4d8ff;
-  --color-hairline: var(--band-line);
-  --color-hairline-strong: rgb(204 212 229 / 0.24);
-  --color-hairline-dashed: rgb(204 212 229 / 0.34);
-  --color-code-bg: #050b1d;
-  --btn-secondary-ring: rgb(204 212 229 / 0.4);
-  --btn-secondary-ring-hover: rgb(204 212 229 / 0.7);
-  --btn-secondary-bg-hover: rgb(204 212 229 / 0.08);
-  --ring-shot: inset 0 0 0 1px rgb(204 212 229 / 0.16);
+  --color-bg: var(--navy-950);
+  --color-surface: var(--navy-700);
+  --color-surface-2: var(--navy-700);
+  --color-heading: #ffffff;
+  --color-text: #c9d2e3; /* 13.79:1 on navy-950 */
+  --color-text-muted: #a9b5cc;
+  --color-text-quiet: #93a0ba;
+  --color-line: rgb(204 212 229 / 0.14);
+  --color-line-strong: rgb(204 212 229 / 0.28);
+  --color-accent: var(--blue-400);
+  --color-link: var(--blue-400);
+  --color-focus: var(--blue-400);
+  --color-selection: rgb(91 149 255 / 0.32);
+  --color-btn-bg: #ffffff;
+  --color-btn-bg-hover: var(--mist-200);
+  --color-btn-fg: var(--navy-950);
+  --color-btn-tint-hover: rgb(204 212 229 / 0.08);
+  /* Tokens defined from other tokens resolve where they are declared, so a tone redeclares them. */
+  --color-btn-line: var(--color-line-strong);
+  --color-btn-line-hover: var(--color-text-quiet);
+  --color-line-soft: var(--color-line);
+  --lk-ink: #ffffff;
+  --lk-acc: var(--blue-400);
+  --art-line: #9aa8c4;
+  --art-line-2: #5e6d8d;
+  --art-line-3: #33415f;
+  --art-fill: var(--navy-950);
+  --art-glyph: #9aa8c4;
+  --art-tint: var(--navy-700);
+  --art-node: var(--blue-400);
+  --art-node-side: #3f7ae8;
+  --lattice-opacity: 0.09;
   --shadow-card: 0 0 0 1px rgb(204 212 229 / 0.1);
+  --shadow-frame: 0 0 #0000; /* frames in dark bands: the ring only */
+  --shadow-shot: var(--shadow-frame);
+}
+
+/* ======================================================================================
+ * Legacy (v2 token names still used by sections that are not restyled yet). Mapped onto the
+ * system above so those sections keep one color system while they wait. Do not use in new code;
+ * delete each line once grep finds no var(--name) for it outside this file.
+ * ====================================================================================== */
+:root {
+  --ink: var(--navy-950);
+  --navy-900: var(--navy-700);
+  --navy-850: var(--navy-700);
+  --navy-800: var(--navy-700);
+  --mist-550: var(--mist-600);
+  --accent: var(--blue-500);
+  --accent-on-dark: var(--blue-400);
+  --band-bg: var(--navy-950);
+  --band-surface: var(--navy-700);
+  --band-heading: #ffffff;
+  --band-text: #c9d2e3;
+  --band-text-muted: #a9b5cc;
+  --band-eyebrow: #a9b5cc;
+  --band-line: rgb(204 212 229 / 0.14);
+  --color-line-soft: var(--color-line);
+  --hero-wash: none;
+  --fs-h2-lg: var(--fs-h2);
+  --lh-h2-lg: var(--lh-h2);
+  --ls-h2-lg: var(--ls-h2);
+  --fs-h2-cta: var(--fs-h2);
+  --lh-h2-cta: var(--lh-h2);
+  --fs-acc: var(--fs-h4);
+  --lh-acc: var(--lh-h4);
+  --fw-acc: 500;
+  --fs-step-num: 2rem;
+  --lh-step-num: 2.5rem;
+  --lh-eyebrow: 1.4;
+  --lh-stat: 1;
+  --lh-body-relaxed: var(--lh-body);
+  --ls-label: var(--ls-caps);
+  --gap-h2-text: var(--gap-eyebrow);
+  --gap-h2-content: var(--gap-intro);
+  --gap-h2-grid: var(--gap-intro);
+  --gap-h2-cards: var(--gap-intro);
+  --gap-text-action: 1.75rem;
+  --pad-hero-bottom: var(--pad-y);
+  --pad-stats: var(--pad-y);
+  --pad-feature: var(--pad-y);
+  --pad-band: var(--pad-y);
+  --pad-band-sm: var(--pad-y);
+  --pad-section: var(--pad-y);
+  --pad-cta: var(--pad-y);
+  --container-max: calc(var(--content-max) + 2 * var(--gutter));
+  --header-h: var(--nav-h);
+  --split-gap: calc(2 * var(--col-gap));
+  --card-gap: var(--col-gap);
+  --radius-sm: var(--r-control);
+  --radius-md: var(--r-control);
+  --radius-lg: var(--r-card);
+  --shadow-shot: var(--shadow-frame);
+  --ease-out: var(--ease);
+  --ease-standard: var(--ease);
+  --dur-hover: var(--t-fast);
+  --dur-swap: var(--t-swap);
 }

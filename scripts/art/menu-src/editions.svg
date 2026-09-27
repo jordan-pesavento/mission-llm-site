@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 443 215" width="443" height="215" fill="none" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+<title>Community today and Enterprise planned</title>
+<!-- Resource card: Editions. Isometric line drawing: two stacks on one plate. Left, two solid slabs with a check on top (Community, the full app today). Right, the same two slabs and a third slab above drawn only in dashes, with dashed corner guides; the dashed slab is filled white so it covers the slab below it, as the solid slabs do (Enterprise, planned). No text. -->
+<rect width="443" height="215" fill="#FFFFFF"/>
+<polygon points="221.5,20 373.92,108 373.92,112 221.5,200 69.08,112 69.08,108" fill="#F8FAFC" stroke="#92A0BC"/>
+<path d="M373.92,108L221.5,196L69.08,108M221.5,196L221.5,200" stroke="#CCD4E5"/>
+<polygon points="297.71,61 361.79,98 361.79,108 297.71,145 233.62,108 233.62,98" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M361.79,98L297.71,135L233.62,98M297.71,135L297.71,145" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 233.62 98)"><circle cx="7.12" cy="5" r="1.8" stroke="#47546F"/>
+<path d="M12.1 5H31.04" stroke="#CCD4E5"/></g>
+<path transform="matrix(0.87 -0.5 0 1 297.71 135)" d="M31.31 2.8V7.2M39.49 2.8V7.2M47.67 2.8V7.2M55.86 2.8V7.2M64.04 2.8V7.2" stroke="#CCD4E5"/>
+<path d="M233.62,98V85M297.71,135V122M361.79,98V85" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<polygon points="297.71,38 361.79,75 361.79,85 297.71,122 233.62,85 233.62,75" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M361.79,75L297.71,112L233.62,75M297.71,112L297.71,122" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 233.62 75)"><circle cx="7.12" cy="5" r="1.8" stroke="#47546F"/>
+<path d="M12.1 5H31.04" stroke="#CCD4E5"/></g>
+<path d="M233.62,75V62M297.71,112V99M361.79,75V62" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<polygon points="297.71,15 361.79,52 361.79,62 297.71,99 233.62,62 233.62,52" fill="#FFFFFF" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<path d="M361.79,52L297.71,89L233.62,52M297.71,89L297.71,99" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<polygon points="145.29,61 209.38,98 209.38,108 145.29,145 81.21,108 81.21,98" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M209.38,98L145.29,135L81.21,98M145.29,135L145.29,145" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 81.21 98)"><circle cx="7.12" cy="5" r="1.8" stroke="#47546F"/>
+<path d="M12.1 5H31.04" stroke="#CCD4E5"/></g>
+<path transform="matrix(0.87 -0.5 0 1 145.29 135)" d="M31.31 2.8V7.2M39.49 2.8V7.2M47.67 2.8V7.2M55.86 2.8V7.2M64.04 2.8V7.2" stroke="#CCD4E5"/>
+<path d="M81.21,98V85M145.29,135V122M209.38,98V85" stroke="#92A0BC" stroke-dasharray="1.5 3"/>
+<polygon points="145.29,38 209.38,75 209.38,85 145.29,122 81.21,85 81.21,75" fill="#FFFFFF" stroke="#47546F"/>
+<path d="M209.38,75L145.29,112L81.21,75M145.29,112L145.29,122" stroke="#CCD4E5"/>
+<g transform="matrix(0.87 0.5 0 1 81.21 75)"><circle cx="7.12" cy="5" r="1.8" stroke="#47546F"/>
+<path d="M12.1 5H31.04" stroke="#CCD4E5"/></g>
+<g transform="matrix(0.87 0.5 -0.87 0.5 145.29 38)"><rect x="15.65" y="15.65" width="42.69" height="42.69" rx="5.69" stroke="#CCD4E5"/>
+<path d="M32.8 44.84h8.4v-15.68" stroke="#47546F" stroke-width="1.6"/></g>
+</svg>
